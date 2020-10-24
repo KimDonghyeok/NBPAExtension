@@ -1,3 +1,4 @@
+/*
 chrome.runtime.onInstalled.addListener(function () {
     chrome.tabs.executeScript({ file: "app.js", allFrames: true })
 })
@@ -17,4 +18,4 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
         cmd: "previewPost"
     }; 
     chrome.tabs.sendMessage(tab.id, req);
-});
+});*/
