@@ -1,10 +1,12 @@
 {
+    "manifest_version": 2,
     "name": "NBPA Prototype",
     "version": "1.0",
     "description": "Analyze Naver Blog Post",
     "permissions": [
         "storage",
         "activeTab",
+        "declarativeContent",
         "tabs",
         "webNavigation"
     ],
@@ -22,7 +24,8 @@
         {
             "matches": [
                 "https://search.naver.com/search.naver?where=nexearch&sm=tab_jum&query=*",
-                "https://search.naver.com/search.naver?where=post&sm=tab_jum&query=*"
+                "https://search.naver.com/search.naver?where=post&sm=tab_jum&query=*",
+                "https://blog.naver.com/*"
             ],
             "all_frames": true,
             "run_at": "document_idle",
@@ -32,6 +35,5 @@
     ],
     "icons": {
         "72": "icon.png"
-    },
-    "manifest_version": 2
+    }
 }
