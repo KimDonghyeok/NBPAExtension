@@ -2,13 +2,22 @@
     "name": "NBPA Prototype",
     "version": "1.0",
     "description": "Analyze Naver Blog Post",
-    "manifest_version": 2,
     "permissions": [
         "storage",
         "activeTab",
         "tabs",
         "webNavigation"
     ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page_action": {
+        "default_popup": "main_popup.html",
+        "default_icon": {
+            "72": "icon.png"
+        }
+    },
     "content_scripts": [
         {
             "matches": [
@@ -21,14 +30,8 @@
             "js": ["app.js"]
         }
     ],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": false
+    "icons": {
+        "72": "icon.png"
     },
-    "browser_action": {
-        "default_popup": "main_popup.html",
-        "default_icon": {
-            "72": "icon.png"
-        }
-    }
+    "manifest_version": 2
 }
