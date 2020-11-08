@@ -11,11 +11,11 @@
         "webNavigation"
     ],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["js/background.js"],
         "persistent": false
     },
-    "page_action": {
-        "default_popup": "main_popup.html",
+    "browser_action": {
+        "default_popup": "popup.html",
         "default_icon": {
             "72": "icon.png"
         }
@@ -29,8 +29,8 @@
             ],
             "all_frames": true,
             "run_at": "document_idle",
-            "css": ["style.css"],
-            "js": ["app.js"]
+            "css": ["css/popup_style.css"],
+            "js": ["js/content.js"]
         }
     ],
     "icons": {
