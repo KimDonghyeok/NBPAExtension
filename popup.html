@@ -10,77 +10,118 @@
 
 <body>
 
-    <!-- 검색 페이지 팝업 -->
-    <div class="search_naver_popup">
-        <div class="ui-container ui-view-setting">
-            <h3>보기설정</h3>
-            <input type="checkbox" name="lorem-poss-view" id="lorem-poss-view">
-            <label for="lorem-poss-view">로렘 확률 표시</label><br>
-            <input type="checkbox" name="tag-corr-view" id="tag-corr-view">
-            <label for="tag-corr-view">태그 연관성 표시</label><br>
-            <input type="checkbox" name="image-ratio-view" id="image-ratio-view">
-            <label for="image-ratio-view">이미지 비율 표시</label><br>
-            <input type="checkbox" name="video-ratio-view" id="video-ratio-view">
-            <label for="video-ratio-view">영상 비율 표시</label><br>
-            <input type="checkbox" name="emoticon-ratio-view" id="emoticon-ratio-view">
-            <label for="emoticon-ratio-view">이모티콘 비율 표시</label><br>
-        </div>
-        <hr>
-        <div class="ui-container ui-filter-setting">
-            <h3>필터 설정</h3>
+<!-- 검색 페이지 팝업 -->
+<div class="search_naver_popup">
+
+    <div class="ui-container ui-view-setting">
+        <div class="title">보기설정</div>
+
+        <input type="checkbox" name="lorem-poss-view" id="lorem-poss-view">
+        <label for="lorem-poss-view">로렘 확률 표시</label><br>
+
+        <input type="checkbox" name="tag-corr-view" id="tag-corr-view">
+        <label for="tag-corr-view">태그 연관성 표시</label><br>
+
+        <input type="checkbox" name="image-ratio-view" id="image-ratio-view">
+        <label for="image-ratio-view">이미지 비율 표시</label><br>
+
+        <input type="checkbox" name="video-ratio-view" id="video-ratio-view">
+        <label for="video-ratio-view">영상 비율 표시</label><br>
+
+        <input type="checkbox" name="emoticon-ratio-view" id="emoticon-ratio-view">
+        <label for="emoticon-ratio-view">이모티콘 비율 표시</label><br>
+
+    </div>
+    <hr>
+
+    <div class="ui-container ui-filter-setting">
+        <div class="title">필터 설정</div>
+
+        <fieldset>
+            <legend>로렘 확률이 높은 게시물 회색 처리</legend>
             <input type="checkbox" name="lorem-poss-filter" id="lorem-poss-filter">
-            <label for="lorem-poss-filter">로렘 확률이 높은 게시물 회색 처리</label><br>
-            <input type="range" name="lorem-poss-range" id="lorem-poss-range" step="10"><span>% 이상</span><br>
+            <input type="range" name="lorem-poss-range" id="lorem-poss-slider" value="0" step="10">
+            <div class="slider-value" id="lorem-poss-slider-value">% 이상</div>
+            <br>
+        </fieldset>
+
+        <fieldset>
+            <legend>태그 연관성이 낮은 게시물 회색 처리</legend>
             <input type="checkbox" name="tag-corr-filter" id="tag-corr-filter">
-            <label for="tag-corr-filter">태그 연관성이 낮은 게시물 회색 처리</label><br>
-            <input type="range" name="tag-corr-range" id="tag-corr-range" step="10"><span>% 이하</span><br>
+            <input type="range" name="tag-corr-range" id="tag-corr-slider" value="0" step="10">
+            <div class="slider-value" id="tag-corr-slider-value">% 이하</div>
+            <br>
+        </fieldset>
+
+        <fieldset>
+            <legend>이미지 비율 높은 게시물 회색 처리</legend>
             <input type="checkbox" name="image-ratio-filter" id="image-ratio-filter">
-            <label for="image-ratio-filter">이미지 비율 높은 게시물 회색 처리</label><br>
-            <input type="range" name="image-ratio-range" id="image-ratio-range" step="10"><span>% 이상</span><br>
+            <input type="range" name="image-ratio-range" id="image-ratio-slider" value="0" step="10">
+            <div class="slider-value" id="image-ratio-slider-value">% 이상</div>
+            <br>
+        </fieldset>
+
+        <fieldset>
+            <legend>영상 비율 높은 게시물 회색 처리</legend>
             <input type="checkbox" name="video-ratio-filter" id="video-ratio-filter">
-            <label for="video-ratio-filter">영상 비율 높은 게시물 회색 처리</label><br>
-            <input type="range" name="video-ratio-range" id="video-ratio-range" step="10"><span>% 이상</span><br>
-        </div>
+            <input type="range" name="video-ratio-range" id="video-ratio-slider" value="0" step="10">
+            <div class="slider-value" id="video-ratio-slider-value">% 이상</div>
+            <br>
+        </fieldset>
+
+    </div>
+</div>
+
+<!-- 블로그 게시글 내부 팝업 -->
+<div class="blog_naver_popup">
+
+    <div class="ui-container view-info">
+        <div class="title">게시물 분석 정보</div>
+
+        <div class="analyze-info" id="lorem"></div>
+        <div class="analyze-info" id="tag"></div>
+        <div class="analyze-info" id="image"></div>
+
     </div>
 
-    <!-- 블로그 게시글 내부 팝업 -->
-    <div class="blog_naver_popup">
-        <div class="ui-container view-info">
-            <h3>게시물 정보</h3>
-            <div id="lorem">로렘</div>
-            <div id="tag">태그</div>
-            <div id="image">이미지</div>
-        </div>
-        <hr>
-        <div class="ui-container feedback-button">
-            <h3>피드백</h3>
-            <form action="" method="post">
-                <button type="button" name="" value="">립버전(로렘) 글이에요</button>
-                <button type="button" name="" value="">해시태그를 남발해요</button>
-                <button type="button" name="" value="">이미지 남발해요</button>
-                <button type="button" name="" value="">영상 남발해요</button>
-                <button type="button" name="" value="">시스템 개선사항</button>
-            </form>
+    <hr>
 
-        </div>
-        <hr>
-        <div class="ui-container post-view-setting">
-            <h3>게시물 보기 설정</h3>
-            <input type="checkbox" name="all-image-close" id="all-image-close"><label for="all-image-close">모든 이미지 접기</label><br>
-            <input type="checkbox" name="all-video-close" id="all-video-close"><label for="all-video-close">모든 영상 접기</label><br>
-            <input type="checkbox" name="all-emoticon-close" id="all-emoticon-close"><label for="all-emoticon-close">모든 이모티콘 접기</label><br>
-        </div>
+    <div class="ui-container feedback-button">
+        <div class="title">피드백</div>
 
-        <div class="ui-container feedback-form">
-            <h3>피드백</h3>
-            <form action="js/background.js" method="post">
-                <div id="select-feedback"></div>
-                <textarea name="" id="" cols="30" rows="5"></textarea><br>
-                <input type="submit" value="제출">
-            </form>
-        </div>
+        <button type="button" name="" value="">립버전(로렘) 글이에요</button>
+        <button type="button" name="" value="">해시태그를 남발해요</button>
+        <button type="button" name="" value="">이미지 남발해요</button>
+        <button type="button" name="" value="">영상 남발해요</button>
+        <button type="button" name="" value="">시스템 개선사항</button>
+
     </div>
 
+    <hr>
+
+    <div class="ui-container post-view-setting">
+        <div class="title">게시물 보기 설정</div>
+
+        <input type="checkbox" name="all-image-close" id="all-image-close"><label for="all-image-close">모든 이미지
+        접기</label><br>
+        <input type="checkbox" name="all-video-close" id="all-video-close"><label for="all-video-close">모든 영상 접기</label><br>
+        <input type="checkbox" name="all-emoticon-close" id="all-emoticon-close"><label for="all-emoticon-close">모든 이모티콘
+        접기</label><br>
+
+    </div>
+</div>
+
+<div class="ui-container feedback">
+    <div class="title">피드백</div>
+    <div id="selected-feedback">선택한 피드백</div>
+
+    <form action="js/background.js" method="post">
+                <textarea name="" id="feedback-description" cols="30" rows="5" required autofocus
+                          placeholder="피드백 내용을 작성해 주세요"></textarea>
+        <input type="submit" value="제출">
+    </form>
+
+</div>
 
 </body>
 

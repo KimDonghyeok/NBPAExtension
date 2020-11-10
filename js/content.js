@@ -16,7 +16,3 @@ info_container.appendChild(analyze_info)
 
 blog_list.insertBefore(analyze_info, blog_list.childNodes[0])
 */
-
-/**
- *
- */
