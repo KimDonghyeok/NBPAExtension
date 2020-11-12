@@ -133,6 +133,7 @@ body {
 }
 
 .feedback {
+    display: none;
     height: 220px;
 }
 
