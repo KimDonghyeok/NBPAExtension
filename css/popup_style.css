@@ -1,25 +1,35 @@
-* {
-    box-sizing: content-box;
-}
-
 body {
-    width: 350px;
+width: 320px;
 }
 
-.search_naver_popup {
-    display: block;
-    height: 450px;
+.table {
+    display: table;
+    margin: ;
 }
 
-.ui-container {
-    margin: 0.5rem;
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+.main_title {
+    color: #2DB400;
+    text-align: center;
 }
 
 .title {
+    margin-left: 0.5rem;
     margin-bottom: 0.5rem;
     font-size: 1.2rem;
     font-weight: bold;
     color: darkolivegreen;
+}
+
+.ui-container {
+    margin: 0.5rem;
 }
 
 .ui-container label {
@@ -80,19 +90,16 @@ body {
 /* blog_naver_popup 내부 CSS */
 .blog_naver_popup {
     display: block;
-    height: 510px;
-    overflow: hidden;
 }
 
 .view-info .analyze-info {
     display: inline-block;
-    margin-left: 0.5rem;
     text-align: center;
 }
 
 .view-info #lorem {
     height: 30px;
-    width: 100px;
+    width: 80px;
     line-height: 30px;
     font-size: 1rem;
     color: whitesmoke;
@@ -121,7 +128,6 @@ body {
 }
 
 .feedback-button button {
-    margin-left: 3rem;
     margin-bottom: 0.5rem;
     height: 40px;
     width: 250px;
@@ -133,8 +139,8 @@ body {
 }
 
 .feedback {
-    display: none;
-    height: 220px;
+    /*display: none;*/
+    /*height: 220px;*/
 }
 
 .feedback #selected-feedback {

@@ -5,16 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/popup_style.css">
-    <script src="js/background.js"></script>
+    <script src="js/background_script.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+            crossorigin="anonymous">
+    </script>
 </head>
 
 <body>
 
+<h1 class="main_title">네이버 블로그 게시글 분석기</h1>
+
 <!-- 검색 페이지 팝업 -->
 <div class="search_naver_popup">
 
+    <div class="title">보기설정</div>
     <div class="ui-container ui-view-setting">
-        <div class="title">보기설정</div>
 
         <input type="checkbox" name="lorem-poss-view" id="lorem-poss-view">
         <label for="lorem-poss-view">로렘 확률 표시</label><br>
@@ -32,17 +39,15 @@
         <label for="emoticon-ratio-view">이모티콘 비율 표시</label><br>
 
     </div>
-    <hr>
 
+    <div class="title">필터 설정</div>
     <div class="ui-container ui-filter-setting">
-        <div class="title">필터 설정</div>
 
         <fieldset>
             <legend>로렘 확률이 높은 게시물 회색 처리</legend>
             <input type="checkbox" name="lorem-poss-filter" id="lorem-poss-filter">
             <input type="range" name="lorem-poss-range" id="lorem-poss-slider" value="0" step="10">
             <div class="slider-value" id="lorem-poss-slider-value">% 이상</div>
-            <br>
         </fieldset>
 
         <fieldset>
@@ -50,7 +55,6 @@
             <input type="checkbox" name="tag-corr-filter" id="tag-corr-filter">
             <input type="range" name="tag-corr-range" id="tag-corr-slider" value="0" step="10">
             <div class="slider-value" id="tag-corr-slider-value">% 이하</div>
-            <br>
         </fieldset>
 
         <fieldset>
@@ -58,7 +62,6 @@
             <input type="checkbox" name="image-ratio-filter" id="image-ratio-filter">
             <input type="range" name="image-ratio-range" id="image-ratio-slider" value="0" step="10">
             <div class="slider-value" id="image-ratio-slider-value">% 이상</div>
-            <br>
         </fieldset>
 
         <fieldset>
@@ -66,7 +69,6 @@
             <input type="checkbox" name="video-ratio-filter" id="video-ratio-filter">
             <input type="range" name="video-ratio-range" id="video-ratio-slider" value="0" step="10">
             <div class="slider-value" id="video-ratio-slider-value">% 이상</div>
-            <br>
         </fieldset>
 
     </div>
@@ -75,8 +77,8 @@
 <!-- 블로그 게시글 내부 팝업 -->
 <div class="blog_naver_popup">
 
+    <div class="title">게시물 분석 정보</div>
     <div class="ui-container view-info">
-        <div class="title">게시물 분석 정보</div>
 
         <div class="analyze-info" id="lorem"></div>
         <div class="analyze-info" id="tag"></div>
@@ -84,10 +86,9 @@
 
     </div>
 
-    <hr>
 
+    <div class="title">피드백</div>
     <div class="ui-container feedback-button">
-        <div class="title">피드백</div>
 
         <button type="button" name="" value="">립버전(로렘) 글이에요</button>
         <button type="button" name="" value="">해시태그를 남발해요</button>
@@ -97,27 +98,28 @@
 
     </div>
 
-    <hr>
 
+    <div class="title">게시물 보기 설정</div>
     <div class="ui-container post-view-setting">
-        <div class="title">게시물 보기 설정</div>
 
         <input type="checkbox" name="all-image-close" id="all-image-close"><label for="all-image-close">모든 이미지
         접기</label><br>
-        <input type="checkbox" name="all-video-close" id="all-video-close"><label for="all-video-close">모든 영상 접기</label><br>
-        <input type="checkbox" name="all-emoticon-close" id="all-emoticon-close"><label for="all-emoticon-close">모든 이모티콘
+        <input type="checkbox" name="all-video-close" id="all-video-close"><label for="all-video-close">모든 영상
+        접기</label><br>
+        <input type="checkbox" name="all-emoticon-close" id="all-emoticon-close"><label for="all-emoticon-close">모든
+        이모티콘
         접기</label><br>
 
     </div>
 </div>
 
+<div class="title">피드백</div>
 <div class="ui-container feedback">
-    <div class="title">피드백</div>
-    <div id="selected-feedback">선택한 피드백</div>
 
-    <form action="js/background.js" method="post">
-                <textarea name="" id="feedback-description" cols="30" rows="5" required autofocus
-                          placeholder="피드백 내용을 작성해 주세요"></textarea>
+    <div id="selected-feedback">선택한 피드백</div>
+    <form action="js/background_script.js" method="post">
+            <textarea name="" id="feedback-description" cols="30" rows="5" required
+                      placeholder="피드백 내용을 작성해 주세요"></textarea>
         <input type="submit" value="제출">
     </form>
 
