@@ -8,7 +8,7 @@ const SEARCH_BLOG_REGEXP = new RegExp(/\&where\=blog/)
 
 chrome.tabs.onUpdated.addListener(tabId => {
     chrome.tabs.get(tabId, tab => {
-        chrome.tabs.sendMessage(tab.id,  {url: tab.url})
+        chrome.tabs.sendMessage(tab.id, {url: tab.url})
         console.log(tab.url)
     })
 })
