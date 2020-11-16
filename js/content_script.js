@@ -2,9 +2,14 @@ console.log("execute content script")
 
 const SEARCH_NAVER_REGEXP = new RegExp(/^https:\/\/search\.naver\.com/)
 const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
-const SEARCH_NEXEARCH_REGEXP = new RegExp(/\where\=nexearch/)
+const SEARCH_XEARCH_REGEXP = new RegExp(/\where\=nexearch/)
 const SEARCH_VIEW_REGEXP = new RegExp(/\where\=view/)
 const SEARCH_BLOG_REGEXP = new RegExp(/\where\=blog/)
+
+const BLOG_NAVER_ID = "_blog_naver"
+const SEARCH_XEARCH_ID = "_search_xearch"
+const SEARCH_VIEW_ID = "_search_view_all"
+const SEARCH_BLOG_ID = "_search_view_blog"
 
 let arr_request_url = new Array()
 let arr_xearch_url = new Array()
@@ -13,47 +18,68 @@ let arr_blog_url = new Array()
 
 let current_url
 let search_result_list
+let identifier
+let is_script_loaded = false
 
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
-        current_url = message.url
-        getBlogElementsList(current_url)
-        console.log(current_url)
-        console.log(search_result_list)
-        createAnalyzeInfoContainer(search_result_list)
+        if (!is_script_loaded) {
+            current_url = message.url
+            identifier = findCurrentTabIdentity(current_url)
+            console.log(current_url)
+            console.log(identifier)
+
+            if (identifier === SEARCH_XEARCH_ID || identifier === SEARCH_VIEW_ID || identifier === SEARCH_BLOG_ID) {
+                chrome.runtime.sendMessage("showSearchNaverPopup", response => {
+                    console.log(response)
+                })
+                getBlogElementsList(identifier)
+                console.log(search_result_list)
+                createAnalyzeInfoContainer(search_result_list)
+            }
+
+            if (identifier === SEARCH_BLOG_ID) {
+                chrome.runtime.sendMessage("showBlogNaverPopup", response => {
+                    console.log(response)
+                })
+            }
+            is_script_loaded = true
+        }
     }
 )
 
-let findCrurentTabIdentity = current_url => {
+let findCurrentTabIdentity = current_url => {
     let identifier
 
     if (SEARCH_NAVER_REGEXP.test(current_url)) {
-        if (SEARCH_NEXEARCH_REGEXP.test(current_url)) {
-            identifier = "search_xearch"
+        if (SEARCH_XEARCH_REGEXP.test(current_url)) {
+            identifier = SEARCH_XEARCH_ID
             return identifier
         }
         if (SEARCH_VIEW_REGEXP.test(current_url)) {
-            identifier = "search_view_all"
+            identifier = SEARCH_VIEW_ID
             return identifier
         }
         if (SEARCH_BLOG_REGEXP.test(current_url)) {
-            identifier = "search_view_blog"
+            identifier = SEARCH_BLOG_ID
             return identifier
         }
     }
+    if (BLOG_NAVER_REGEXP.test(current_url)) {
+        identifier = BLOG_NAVER_ID
+        return identifier
+    }
 }
 
-let getBlogElementsList = current_url => {
-    let identifier = findCrurentTabIdentity(current_url)
-    console.log(identifier)
+let getBlogElementsList = identifier => {
     switch (identifier) {
-        case "search_xearch":
+        case SEARCH_XEARCH_ID:
             search_result_list = document.querySelector("._au_view_collection ._list_base")
             break
-        case "search_view_all":
+        case SEARCH_VIEW_ID:
             search_result_list = document.querySelector("._au_view_tab ._list_base")
             break
-        case "search_view_blog":
+        case SEARCH_BLOG_ID:
             search_result_list = document.querySelector("._au_view_tab  .lst_total")
             break
         default:
