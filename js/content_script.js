@@ -74,7 +74,8 @@ let createAnalyzeInfoContainer = list => {
             let analyze_info_container = document.createElement("li")
             let analyze_info = document.createElement("div")
 
-            let analyze_content = document.createTextNode("분석정보입니다.")
+            analyze_info_container.setAttribute("class", "_analyze_info_container")
+            analyze_info.setAttribute("class", "_analyze_info")
 
             analyze_info.appendChild(analyze_content)
             analyze_info_container.appendChild(analyze_info)
