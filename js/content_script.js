@@ -14,6 +14,16 @@ let arr_blog_url = new Array()
 let current_url
 let search_result_list
 
+chrome.runtime.onMessage.addListener(
+    (message, sender, sendResponse) => {
+        current_url = message.url1
+        getBlogElementsList(current_url)
+        console.log(current_url)
+        console.log(search_result_list)
+        createAnalyzeInfoContainer(search_result_list)
+    }
+)
+
 let findCrurentTabIdentity = current_url => {
     let identifier
 
@@ -35,15 +45,13 @@ let findCrurentTabIdentity = current_url => {
 
 let getBlogElementsList = current_url => {
     let identifier = findCrurentTabIdentity(current_url)
-
     console.log(identifier)
-
     switch (identifier) {
         case "search_xearch":
             search_result_list = document.querySelector("._au_view_collection ._list_base")
             break
         case "search_view_all":
-            search_result_list = document.querySelector("._au_view_tab ._more_contents_event_base")
+            search_result_list = document.querySelector("._au_view_tab ._list_base")
             break
         case "search_view_blog":
             search_result_list = document.querySelector("._au_view_tab  .lst_total")
@@ -55,15 +63,14 @@ let getBlogElementsList = current_url => {
 
 // list의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
 let isBlogSection = element => {
-    let currentElementUrl = element.childNodes[1].childNodes[2].href
-    return BLOG_NAVER_REGEXP.test(currentNodeUrl);
+    let currentElementUrl = element.querySelector('.api_txt_lines').href
+    return BLOG_NAVER_REGEXP.test(currentElementUrl);
 }
 
 let createAnalyzeInfoContainer = list => {
     let list_length = list.childElementCount
     for (let i = 1; i <= list_length; i++) {
         if (isBlogSection(list.childNodes[i])) {
-/*
             let analyze_info_container = document.createElement("li")
             let analyze_info = document.createElement("div")
 
@@ -71,20 +78,8 @@ let createAnalyzeInfoContainer = list => {
 
             analyze_info.appendChild(analyze_content)
             analyze_info_container.appendChild(analyze_info)
-*/
-            $(list.childNodes[i]).prepend('<li class="_analyze-info-container"><div class="_analyze-info">분석정보입니다.</div></li>')
+
+            list.childNodes[i].prepend(analyze_info_container)
         }
     }
 }
-
-chrome.runtime.onMessage.addListener(
-    (message, sender, sendResponse) => {
-        current_url = message.url
-        getBlogElementsList(current_url)
-        console.log(current_url)
-        console.log(search_result_list)
-        // createAnalyzeInfoContainer(search_result_list)
-    }
-)
-
-// createAnalyzeInfoContainer()
