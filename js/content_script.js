@@ -16,7 +16,7 @@ let search_result_list
 
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
-        current_url = message.url1
+        current_url = message.url
         getBlogElementsList(current_url)
         console.log(current_url)
         console.log(search_result_list)

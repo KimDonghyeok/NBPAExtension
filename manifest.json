@@ -23,7 +23,7 @@
                 "https://blog.naver.com/*",
                 "https://www.google.com/*"
             ],
-            "run_at": "document_end",
+            "run_at": "document_idle",
             "css": ["css/content_style.css"],
             "js": ["js/content_script.js"]
         }
