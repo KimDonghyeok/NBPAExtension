@@ -75,6 +75,8 @@ chrome.tabs.onUpdated.addListener(tabId => {
             message: "tabCode",
             code: tab_code
         })
+
+        getAnalyzedInfo()
     })
 })
 
