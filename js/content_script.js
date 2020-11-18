@@ -13,7 +13,6 @@ const SEARCH_VIEW_CODE = "_search_view_all"
 const SEARCH_BLOG_CODE = "_search_view_blog"
 
 /* ------------------------------ 변수정의 ------------------------------ */
-let arr_request_url = []
 let arr_xearch_url = []
 let arr_view_url = []
 let arr_blog_url = []
@@ -34,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                 if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
                     getBlogElementsList(message.code)
-                    createAnalyzeInfoContainer(search_result_list)
+                    createAnalyzeInfoContainer(message.code, search_result_list)
 
                     console.log(message.code)
                     console.log(search_result_list)
@@ -53,7 +52,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 )
 
 /* ------------------------------ 함수정의 ------------------------------ */
-let getBlogElementsList = code => {
+let getBlogElementsList = (code) => {
     switch (code) {
         case SEARCH_XEARCH_CODE:
             search_result_list = document.querySelector("._au_view_collection ._list_base")
@@ -75,16 +74,31 @@ let isBlogSectionElement = (element) => {
     return BLOG_NAVER_REGEXP.test(currentElementUrl);
 }
 
-let getBlogUrlList = (element) => {
+let getBlogUrlList = (code, element) => {
     let currentElementUrl = element.querySelector('.api_txt_lines').href
 
-
+    switch (code) {
+        case SEARCH_XEARCH_CODE:
+            arr_xearch_url.push(currentElementUrl)
+            break
+        case SEARCH_VIEW_CODE:
+            arr_view_url.push(currentElementUrl)
+            break
+        case SEARCH_BLOG_CODE:
+            arr_blog_url.push(currentElementUrl)
+            break
+        default:
+            break
+    }
 }
 
-let createAnalyzeInfoContainer = list => {
+let createAnalyzeInfoContainer = (code, list) => {
     let list_length = list.childElementCount
     for (let i = 1; i <= list_length; i++) {
         if (isBlogSectionElement(list.childNodes[i])) {
+
+            getBlogUrlList(code, list.childNodes[i])
+
             let analyze_info_container = document.createElement("li")
             let analyze_info = document.createElement("div")
 
