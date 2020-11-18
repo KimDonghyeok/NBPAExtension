@@ -17,10 +17,6 @@ let arr_xearch_url = []
 let arr_view_url = []
 let arr_blog_url = []
 
-let arr_xearch_index = []
-let arr_view_index = []
-let arr_blog_index = []
-
 let search_result_list
 let is_script_loaded = false
 
@@ -44,7 +40,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                 if (message.code === BLOG_NAVER_CODE) {
                     console.log(message.code)
-
+                    let test = document.getElementsByTagName('body')
+                    console.log(test)
                 }
 
                 is_script_loaded = true
