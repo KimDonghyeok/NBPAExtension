@@ -66,14 +66,15 @@ chrome.pageAction.onClicked.addListener(tab => {
 chrome.tabs.onUpdated.addListener(tabId => {
 
     chrome.tabs.get(tabId, updateTab => {
-        let update_tab_url = updateTab.url
-        let tab_code = getTabCode(update_tab_url);
+        let updateTabUrl = updateTab.url
+        let tabCode = getTabCode(updateTabUrl);
 
-        console.log(update_tab_url)
+        console.log(updateTabUrl)
 
         chrome.tabs.sendMessage(tabId, {
             message: "tabCode",
-            code: tab_code
+            code: tabCode,
+            url: updateTabUrl
         })
 
         // getAnalyzedInfo()
