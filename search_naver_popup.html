@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/popup_style.css">
-    <script src="js/background_script.js"></script>
 </head>
 
 <body>
@@ -69,57 +68,7 @@
     </div>
 </div>
 
-<!-- 블로그 게시글 내부 팝업 -->
-<div class="blog_naver_popup">
-
-    <div class="title">게시물 분석 정보</div>
-    <div class="ui-container view-info">
-
-        <div class="analyze-info" id="lorem"></div>
-        <div class="analyze-info" id="tag"></div>
-        <div class="analyze-info" id="image"></div>
-
-    </div>
-
-
-    <div class="title">피드백</div>
-    <div class="ui-container feedback-button">
-
-        <button type="button" name="" value="">립버전(로렘) 글이에요</button>
-        <button type="button" name="" value="">해시태그를 남발해요</button>
-        <button type="button" name="" value="">이미지 남발해요</button>
-        <button type="button" name="" value="">영상 남발해요</button>
-        <button type="button" name="" value="">시스템 개선사항</button>
-
-    </div>
-
-
-    <div class="title">게시물 보기 설정</div>
-    <div class="ui-container post-view-setting">
-
-        <input type="checkbox" name="all-image-close" id="all-image-close"><label for="all-image-close">모든 이미지
-        접기</label><br>
-        <input type="checkbox" name="all-video-close" id="all-video-close"><label for="all-video-close">모든 영상
-        접기</label><br>
-        <input type="checkbox" name="all-emoticon-close" id="all-emoticon-close"><label for="all-emoticon-close">모든
-        이모티콘
-        접기</label><br>
-
-    </div>
-</div>
-
-<div class="title">피드백</div>
-<div class="ui-container feedback">
-
-    <div id="selected-feedback">선택한 피드백</div>
-    <form action="js/background_script.js" method="post">
-            <textarea name="" id="feedback-description" cols="30" rows="5" required
-                      placeholder="피드백 내용을 작성해 주세요"></textarea>
-        <input type="submit" value="제출">
-    </form>
-
-</div>
-
+<script type="text/javascript" src="js/search_naver_popup_script.js"></script>
 </body>
 
 </html>

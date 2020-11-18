@@ -2,19 +2,6 @@ body {
 width: 320px;
 }
 
-.table {
-    display: table;
-    margin: ;
-}
-
-.table-row {
-    display: table-row;
-}
-
-.table-cell {
-    display: table-cell;
-}
-
 .main_title {
     color: #2DB400;
     text-align: center;
@@ -109,7 +96,7 @@ width: 320px;
 
 .view-info #tag {
     height: 30px;
-    width: 100px;
+    width: 80px;
     line-height: 30px;
     font-size: 1rem;
     color: whitesmoke;
@@ -119,7 +106,7 @@ width: 320px;
 
 .view-info #image {
     height: 30px;
-    width: 100px;
+    width: 80px;
     line-height: 30px;
     font-size: 1rem;
     color: whitesmoke;
