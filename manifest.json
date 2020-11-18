@@ -34,6 +34,7 @@
         "tabs",
         "https://search.naver.com/*",
         "https://blog.naver.com/*",
-        "https://www.google.com/*"
+        "https://www.google.com/*",
+        "http://127.0.0.1:8080/"
     ]
 }

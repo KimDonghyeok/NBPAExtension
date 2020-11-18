@@ -76,7 +76,7 @@ chrome.tabs.onUpdated.addListener(tabId => {
             code: tab_code
         })
 
-        getAnalyzedInfo()
+        // getAnalyzedInfo()
     })
 })
 
@@ -116,8 +116,8 @@ let getAnalyzedInfo = () => {
         if (xhr.status === 200 || xhr.status === 201){
             const received_arr = JSON.parse(xhr.response)
             received_arr.forEach(function(elem){
-                var status = elem.status
-                var message = elem.message
+                let status = elem.status
+                let message = elem.message
                 console.log('Status : ' + status + ', message : ' + message)
 
             })

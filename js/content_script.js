@@ -70,12 +70,14 @@ let getBlogElementsList = code => {
 }
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
-let isBlogSectionElement = element => {
+let isBlogSectionElement = (element) => {
     let currentElementUrl = element.querySelector('.api_txt_lines').href
     return BLOG_NAVER_REGEXP.test(currentElementUrl);
 }
-// list 를 받아서 내부의
-let isBlogSectionList = list => {
+
+let getBlogUrlList = (element) => {
+    let currentElementUrl = element.querySelector('.api_txt_lines').href
+
 
 }
 
