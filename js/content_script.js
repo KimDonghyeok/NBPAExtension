@@ -37,6 +37,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                     console.log(message.code)
                     console.log(search_result_list)
+                    console.log(arr_xearch_url)
+                    console.log(arr_view_url)
+                    console.log(arr_blog_url)
                 }
 
                 if (message.code === BLOG_NAVER_CODE) {
@@ -55,13 +58,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 let getBlogElementsList = (code) => {
     switch (code) {
         case SEARCH_XEARCH_CODE:
-            search_result_list = document.querySelector("._au_view_collection ._list_base")
+            search_result_list = document.querySelector("._au_view_collection ._list_base").getElementsByTagName('li')
             break
         case SEARCH_VIEW_CODE:
-            search_result_list = document.querySelector("._au_view_tab ._list_base")
+            search_result_list = document.querySelector("._au_view_tab ._list_base").getElementsByTagName('li')
             break
         case SEARCH_BLOG_CODE:
-            search_result_list = document.querySelector("._au_view_tab  .lst_total")
+            search_result_list = document.querySelector("._au_view_tab  .lst_total").getElementsByTagName('li')
             break
         default:
             break
@@ -70,12 +73,13 @@ let getBlogElementsList = (code) => {
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
 let isBlogSectionElement = (element) => {
-    let currentElementUrl = element.querySelector('.api_txt_lines').href
-    return BLOG_NAVER_REGEXP.test(currentElementUrl);
+    let currentElementUrl = element.querySelector('.total_tit').href
+
+    return BLOG_NAVER_REGEXP.test(currentElementUrl)
 }
 
 let getBlogUrlList = (code, element) => {
-    let currentElementUrl = element.querySelector('.api_txt_lines').href
+    let currentElementUrl = element.querySelector('.total_tit').href
 
     switch (code) {
         case SEARCH_XEARCH_CODE:
@@ -93,21 +97,26 @@ let getBlogUrlList = (code, element) => {
 }
 
 let createAnalyzeInfoContainer = (code, list) => {
-    let list_length = list.childElementCount
-    for (let i = 1; i <= list_length; i++) {
-        if (isBlogSectionElement(list.childNodes[i])) {
+    let list_length = list.length
+    let current_node
+    for (let i = 0; i < list_length; i++) {
+        current_node = list.item(i)
 
-            getBlogUrlList(code, list.childNodes[i])
+        if (isBlogSectionElement(current_node)) {
 
-            let analyze_info_container = document.createElement("li")
+            getBlogUrlList(code, current_node)
+
+            let analyze_info_container = document.createElement("div")
             let analyze_info = document.createElement("div")
-
             let analyze_content = document.createTextNode("분석정보입니다.")
+
+            analyze_info_container.classList.add('_analyze-info-container')
+            analyze_info.classList.add('_analyze-info')
 
             analyze_info.appendChild(analyze_content)
             analyze_info_container.appendChild(analyze_info)
 
-            list.childNodes[i].prepend(analyze_info_container)
+            current_node.prepend(analyze_info_container)
         }
     }
 }
