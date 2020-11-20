@@ -60,7 +60,6 @@ chrome.pageAction.onClicked.addListener(tab => {
     }
 
     console.log(tab_code)
-    // changePopup(tab_code, popup)
 })
 
 chrome.tabs.onUpdated.addListener(tabId => {
@@ -81,9 +80,11 @@ chrome.tabs.onUpdated.addListener(tabId => {
     })
 })
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-
-})
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//     if (message.message === "urlData") {
+//
+//     }
+// })
 
 /* ------------------------------ 함수정의 ------------------------------ */
 let getTabCode = (current_url) => {
@@ -110,56 +111,29 @@ let getTabCode = (current_url) => {
 }
 
 let getAnalyzedInfo = () => {
-    let xhr = new XMLHttpRequest()
+    let xhr = new XMLHttpRequest();
 
     // After server sent data, below code will run
     xhr.onload = function() {
         if (xhr.status === 200 || xhr.status === 201){
             const received_arr = JSON.parse(xhr.response)
             received_arr.forEach(function(elem){
-                let status = elem.status
-                let message = elem.message
+                let status = elem.status;
+                let message = elem.message;
                 console.log('Status : ' + status + ', message : ' + message)
 
-            })
+            });
         } else {
-            alert('ERROR : ' + xhr.responseText)
-            console.error(xhr.responseText)
+            alert('ERROR : ' + xhr.responseText);
+            console.error(xhr.responseText);
         }
-    };
+    }
 
-    let request_url = HOST + 'myapp/user/analyzedinfo/get'
+/*    let request_url = HOST + 'myapp/user/analyzedinfo/get'
 
     xhr.open("POST", request_url)
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
 
-    // Various json object creation
-    // 1. insert data after creation
-    let json1 = {}
-    json1.url = 'https://blog.naver.com/ohmin0030/222109002875'
-
-    // 2. insert data with creation
-    let json2 = {
-        'url': 'https://blog.naver.com/jsjung1999/221822297628'
-    }
-
-    let json3 = {}
-    json3.url = 'https://blog.naver.com/seamarket0/222070563655'
-    let json4 = {}
-    json4.url = 'https://blog.naver.com/spring5867/221848503423'
-    let json5 = {}
-    json5.url = 'https://blog.naver.com/nanaflowercake/222010991755'
-
-    // Create array for send
-    let jsonArray = []
-    jsonArray.push(json1)
-    jsonArray.push(json2)
-    jsonArray.push(json3)
-    jsonArray.push(json4)
-    jsonArray.push(json5)
-
-    let dataJSON = JSON.stringify(jsonArray)
-
     // Send JSON array
-    xhr.send(dataJSON)
+    xhr.send(dataJSON);*/
 }
