@@ -37,20 +37,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.message === "TABCODE") {
 
         if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-            // getBlogElementsList(message.code)
-            // createAnalyzeInfoContainer(message.code, search_result_list)
-            // convertArrToJsonArr(message.code)
-            // showTable(message.code)
+            getBlogElementsList(message.code)
+            createAnalyzeInfoContainer(message.code, search_result_list)
+            convertArrToJsonArr(message.code)
+            showTable(message.code)
 
-            let test_arr = []
-            test_arr.push('https://blog.naver.com/lanoe600/50124020305')
-            test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
-            test_arr.push('https://blog.naver.com/vostino/70142180356')
-            test_arr.push('https://blog.naver.com/babyyej5/70145024358')
-            test_arr.push('https://blog.naver.com/gus2253/30155510721')
+            // let test_arr = []
+            // test_arr.push('https://blog.naver.com/lanoe600/50124020305')
+            // test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
+            // test_arr.push('https://blog.naver.com/vostino/70142180356')
+            // test_arr.push('https://blog.naver.com/babyyej5/70145024358')
+            // test_arr.push('https://blog.naver.com/gus2253/30155510721')
 
-            convertUrlToUrlObj(test_arr)
-            json_url_data = JSON.stringify(arr_url_obj)
+            // convertUrlToUrlObj(test_arr)
+
+            // json_url_data = JSON.stringify(arr_url_obj)
 
             chrome.runtime.sendMessage({
                 message: "URLDATA",
@@ -63,6 +64,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
         deserializeData(arr_received_data)
+        setAnalyzedInfo()
     }
 })
 /* ------------------------------ Folding ------------------------------ */
@@ -129,12 +131,8 @@ let multimedia_folding = () => {
             btnInput(getimgsrc[i]);
             continue;
         }
-        else if (src.indexOf('postfiles') != -1) {
-            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
-            btnInput(getimgsrc[i]);
-            continue;
-        }
         else {
+            btnInput(getimgsrc[i]);
             continue;
         }
 
@@ -239,12 +237,17 @@ $(function () {
         var mouse = e.button
         if (mouse == 2) {
             e.preventDefault();
-            var page = $(this).attr("href")
-            var x = page.split('//');
-            var org_url = x[1];
-            console.log(x[1]);
-            var new_url = "https://m." + org_url;
-            console.log(new_url);
+            var org_url = $(this).attr("href")
+            var splited_url = org_url.split('//');
+            var pure_url = splited_url[1];
+
+            var new_url
+            if(isBlogSectionElement(org_url)){
+                new_url = "https://m." + pure_url;
+            } else {
+                new_url = org_url
+            }
+
             var $dialog = $('<div></div>')
                 .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
                 .dialog({
@@ -276,10 +279,14 @@ let getBlogElementsList = (code) => {
 }
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
-let isBlogSectionElement = (element) => {
-    let currentElementUrl = element.querySelector('.total_tit').href
+let isBlogSectionElement = (url) => {
+    
 
-    return BLOG_NAVER_REGEXP.test(currentElementUrl)
+    // https://pointnow.blog.me/222149996848
+    // 를 아래로 변환 후 작동시키시오
+    // https://blog.naver.com/pointnow/222149996848
+
+    return BLOG_NAVER_REGEXP.test(url)
 }
 
 let getBlogUrlList = (code, element) => {
@@ -307,8 +314,8 @@ let createAnalyzeInfoContainer = (code, list) => {
     let current_node
     for (let i = 0; i < list_length; i++) {
         current_node = list.item(i)
-
-        if (isBlogSectionElement(current_node)) {
+        let currentElementUrl = current_node.querySelector('.total_tit').href
+        if (isBlogSectionElement(currentElementUrl)) {
 
             getBlogUrlList(code, current_node)
 
@@ -498,14 +505,34 @@ let setAnalyzedInfo = () => {
     let length = arr_url_obj.length
 
     for (let i = 0; i < length; i++) {
-        let analyzed_info_value = analyzed_info[i]['lorem_percentage'].toFixed(3)
-        let analyzed_info_text = "로렘확률: " + toString(analyzed_info_value)
-        analyzed_info_container.item(i).innerHTML = analyzed_info_text
-
-        for (let j = 0; j < multimedia_ratios[i].length; j++) {
-            let type_id = multimedia_ratios[i]['ratio_type_id']
-            let multimedia_ratios_value = multimedia_ratios[i]['ratio']
-            let multimedia_ratios_text = getMultimediaType(type_id) + "비율: " + toString(multimedia_ratios_value)
+        
+        if(analyzed_info[i] != undefined){
+            let current_analyzed_info = analyzed_info[i]['fields']
+            let analyzed_info_value = current_analyzed_info['lorem_percentage'].toFixed(3)
+            let analyzed_info_text = "로렘확률: " + analyzed_info_value
+            // 샘플은 로렘확률 클릭하면 팝업창으로 표시될 수 있게 하시오.
+            let sample_1 = current_analyzed_info['sample_1']
+            let sample_2 = current_analyzed_info['sample_2']
+            let sample_3 = current_analyzed_info['sample_3']
+            analyzed_info_container.item(i).innerHTML = analyzed_info_text + '<br>' + sample_1 + '<br>' + sample_2 + '<br>' + sample_3
         }
+
+        multimedia_ratio_strings = ""
+
+        current_mutlimedia_ratios = multimedia_ratios[i]
+        if (current_mutlimedia_ratios != undefined){
+            for (let j = 0; j < current_mutlimedia_ratios.length; j++) {
+
+                let multimedia_ratio = current_mutlimedia_ratios[j]['fields']
+                let multimedia_type = multimedia_ratio['ratio_type']
+    
+                if(multimedia_type <= 3){
+                    let multimedia_ratios_value = multimedia_ratio['ratio'].toFixed(3)
+                    let multimedia_ratios_text = getMultimediaType(multimedia_type) + "비율: " + multimedia_ratios_value
+                    multimedia_ratio_strings += multimedia_ratios_text + ", "
+                }
+            }
+            multimedia_ratios_container.item(i).innerHTML = multimedia_ratio_strings
+        }   
     }
 }

@@ -58,7 +58,6 @@ let showBlogNaverPopupRule_NotSecure = {
 let xhr = new XMLHttpRequest();
 
 let json_data;
-let arr_received_data = []
 
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onInstalled.addListener(function (details) {
@@ -159,6 +158,7 @@ let getAnalyzedInfo = (tabId, json) => {
             const received_arr = JSON.parse(xhr.response)
 
             let header;
+            let arr_received_data = [];
 
             received_arr.forEach( (element, index) => {
                 if (index === 0)
