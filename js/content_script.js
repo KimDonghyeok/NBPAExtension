@@ -283,7 +283,7 @@ let isBlogSectionElement = (url) => {
     
 
     // https://pointnow.blog.me/222149996848
-    // 를 아래로 변환 후 작동시키시오
+    // 를 아래로 변환 후 작동 시키도록 하시오.
     // https://blog.naver.com/pointnow/222149996848
 
     return BLOG_NAVER_REGEXP.test(url)
