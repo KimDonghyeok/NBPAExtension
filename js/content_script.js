@@ -34,72 +34,66 @@ let keywords = []
 
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.message === "TABCODE") {
+    if (message.message === "TABCODE") {
 
-            if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-                // getBlogElementsList(message.code)
-                // createAnalyzeInfoContainer(message.code, search_result_list)
-                // convertArrToJsonArr(message.code)
-                // showTable(message.code)
+        if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
+            // getBlogElementsList(message.code)
+            // createAnalyzeInfoContainer(message.code, search_result_list)
+            // convertArrToJsonArr(message.code)
+            // showTable(message.code)
 
-                let test_arr = []
-                test_arr.push('https://blog.naver.com/lanoe600/50124020305')
-                test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
-                test_arr.push('https://blog.naver.com/vostino/70142180356')
-                test_arr.push('https://blog.naver.com/babyyej5/70145024358')
-                test_arr.push('https://blog.naver.com/gus2253/30155510721')
+            let test_arr = []
+            test_arr.push('https://blog.naver.com/lanoe600/50124020305')
+            test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
+            test_arr.push('https://blog.naver.com/vostino/70142180356')
+            test_arr.push('https://blog.naver.com/babyyej5/70145024358')
+            test_arr.push('https://blog.naver.com/gus2253/30155510721')
 
-                convertUrlToUrlObj(test_arr)
-                json_url_data = JSON.stringify(arr_url_obj)
+            convertUrlToUrlObj(test_arr)
+            json_url_data = JSON.stringify(arr_url_obj)
 
-                chrome.runtime.sendMessage({message: "URLDATA", data: json_url_data})
-            }
-
-            else if (message.code === BLOG_NAVER_CODE) {
-                console.log(message.code)
-            }
-        } else if (message.message === "ANALYZEINFO") {
-            arr_received_data = message.data
-            deserializeData(arr_received_data)
+            chrome.runtime.sendMessage({
+                message: "URLDATA",
+                data: json_url_data
+            })
+        } else if (message.code === BLOG_NAVER_CODE) {
+            console.log(message.code)
         }
+    } else if (message.message === "ANALYZEINFO") {
+        arr_received_data = message.data
+        deserializeData(arr_received_data)
     }
-)
+})
 
 /* ------------------------------ PreView ------------------------------ */
+$(function () {
+    window.oncontextmenu = function () {
+        return false;
+    };
 
-$(function()
-        {                            
-            window.oncontextmenu = function () 
-            {
-                return false;
-            };  
-
-             $('a.api_txt_lines.total_tit').mousedown(function (e) 
-            {
-                var mouse=e.button
-                if(mouse == 2)
-                {
-                e.preventDefault();
-                var page = $(this).attr("href")
-                var x=page.split('//');
-                var org_url=x[1];
-                console.log(x[1]);
-                var new_url="https://m."+org_url;
-                console.log(new_url);
-                var $dialog = $('<div></div>')
+    $('a.api_txt_lines.total_tit').mousedown(function (e) {
+        var mouse = e.button
+        if (mouse == 2) {
+            e.preventDefault();
+            var page = $(this).attr("href")
+            var x = page.split('//');
+            var org_url = x[1];
+            console.log(x[1]);
+            var new_url = "https://m." + org_url;
+            console.log(new_url);
+            var $dialog = $('<div></div>')
                 .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
-                .dialog
-                ({
+                .dialog({
                     autoOpen: false,
                     modal: true,
                     height: 600,
                     width: 500,
                     title: "NBPA PreViewer"
                 });
-                $dialog.dialog('open');     
-            }   
-            });                
-        });
+            $dialog.dialog('open');
+        }
+    });
+});
 /* ------------------------------ 함수정의 ------------------------------ */
 let getBlogElementsList = (code) => {
     switch (code) {
@@ -241,47 +235,110 @@ let deserializeData = (arr) => {
     // 백그라운드 스크립트로부터 받은 분석정보를 역직렬화하여 각 변수에 저장
 
     arr.forEach((element, index) => {
-        blog_info = JSON.parse(element.blog_info)[0]
-        // let single_blog_info = JSON.parse(element.blog_info)[0]
-        // blog_info.push(single_blog_info)
+        // blog_info = JSON.parse(element.blog_info)[0]
+        let single_blog_info = JSON.parse(element.blog_info)[0]
+        blog_info.push(single_blog_info)
+        console.log({
+            single_blog_info
+        })
 
         if (element.analyzed_info) {
-            analyzed_info = JSON.parse(element.analyzed_info)[0]
-            // let single_analyzed_info = JSON.parse(element.analyzed_info)[0]
-            // analyzed_info.push(single_analyzed_info)
+            // analyzed_info = JSON.parse(element.analyzed_info)[0]
+            let single_analyzed_info = JSON.parse(element.analyzed_info)[0]
+            analyzed_info.push(single_analyzed_info)
+            console.log({
+                single_analyzed_info
+            })
         }
 
         if (element.multimedia_ratios) {
-            multimedia_ratios = JSON.parse(element.multimedia_ratios)
-            // let single_multimedia_ratios = JSON.parse(element.multimedia_ratios)
-            // multimedia_ratios.push(single_multimedia_ratios)
+            // multimedia_ratios = JSON.parse(element.multimedia_ratios)
+            let single_multimedia_ratios = JSON.parse(element.multimedia_ratios)
+            multimedia_ratios.push(single_multimedia_ratios)
+            console.log({
+                single_multimedia_ratios
+            })
         }
 
-        tags = JSON.parse(element.tags)
-        // let single_tags = JSON.parse(element.tags)
-        // tags.push(single_tags)
-        hyperlinks = JSON.parse(element.hyperlinks)
-        // let single_hyperlinks = JSON.parse(element.hyperlinks)
-        // hyperlinks.push(single_hyperlinks)
+        // tags = JSON.parse(element.tags)
+        let single_tags = JSON.parse(element.tags)
+        tags.push(single_tags)
+        // hyperlinks = JSON.parse(element.hyperlinks)
+        console.log({
+            single_tags
+        })
+
+        let single_hyperlinks = JSON.parse(element.hyperlinks)
+        hyperlinks.push(single_hyperlinks)
+        console.log({
+            single_hyperlinks
+        })
 
         if (element.keywords) {
-            keywords = JSON.parse(element.keywords)
-            // let single_keywords = JSON.parse(element.keywords)
-            // keywords.push(single_keywords)
+            // keywords = JSON.parse(element.keywords)
+            let single_keywords = JSON.parse(element.keywords)
+            keywords.push(single_keywords)
+
+            console.log({
+                single_keywords
+            })
         }
-
-        console.log("")
-        console.log({blog_info})
-        console.log({analyzed_info})
-        console.log({multimedia_ratios})
-        console.log({tags})
-        console.log({hyperlinks})
-        console.log({keywords})
     })
+
+    // console.log("")
+    // console.log(blog_info)
+    // console.log(analyzed_info)
+    // console.log(multimedia_ratios)
+    // console.log(tags)
+    // console.log(hyperlinks)
+    // console.log(keywords)
 }
 
-let setAnalyzedinfo = () => {
-    let analyzed_info_container = document.querySelector('._analyzed-info')
-    let multimedia_ratios_container = document.querySelector('._multimedia-ratios')
+let getMultimediaType = (id) => {
+    let type
+
+    switch (id) {
+        case 1:
+            type = "이미지"
+            return type
+        case 2:
+            type = "이모티콘"
+            return type
+        case 3:
+            type = "비디오"
+            return type
+        case 4:
+            type = "비디오"
+            return type
+        case 5:
+            type = "비디오"
+            return type
+        case 6:
+            type = "비디오"
+            return type
+        case 7:
+            type = "비디오"
+            return type
+        case 8:
+            type = "비디오"
+            return type
+        default:
+            type = "비디오"
+            return type
+    }
 }
 
+let setAnalyzedInfo = () => {
+    let analyzed_info_container = document.getElementsByClassName('_analyzed-info')
+    let multimedia_ratios_container = document.getElementsByClassName('_multimedia-ratios')
+
+    let length = arr_url_obj.length
+
+    for (let i = 0; i < length; i++) {
+        let analyzed_info_value = analyzed_info[i]['lorem_percentage'].toFixed(3)
+        let analyzed_info_text = "로렘확률: " + toString(analyzed_info_value)
+        analyzed_info_container.item(i).innerHTML = analyzed_info_text
+
+        let type_id = multimedia_ratios[i]['ratio_type_id']
+    }
+}

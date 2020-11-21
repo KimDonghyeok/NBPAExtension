@@ -1,4 +1,5 @@
 /* 확장프로그램 생성 요소 CSS */
 ._analyze-info-container {
+    height: 100px;
     background: #4682B4;
 }

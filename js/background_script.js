@@ -8,6 +8,7 @@ console.log("execute background script")
 /* ------------------------------ 상수정의 ------------------------------ */
 const SEARCH_NAVER_REGEXP = new RegExp(/^https:\/\/search\.naver\.com/)
 const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
+const BLOG_NAVER_REGEXP_NOT_SECURE = new RegExp(/^http:\/\/blog\.naver\.com/)
 const SEARCH_XEARCH_REGEXP = new RegExp(/\where\=nexearch/)
 const SEARCH_VIEW_REGEXP = new RegExp(/\where\=view/)
 const SEARCH_BLOG_REGEXP = new RegExp(/\where\=blog/)
@@ -44,6 +45,15 @@ let showBlogNaverPopupRule = {
     actions: [new chrome.declarativeContent.ShowPageAction()]
 }
 
+let showBlogNaverPopupRule_NotSecure = {
+    conditions: [
+        new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: {hostEquals: 'blog.naver.com', schemes: ['http']}
+        })
+    ],
+    actions: [new chrome.declarativeContent.ShowPageAction()]
+}
+
 // 서버와 통신하기 위한 XMLHttpRequest 객체
 let xhr = new XMLHttpRequest();
 
@@ -53,7 +63,7 @@ let arr_received_data = []
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onInstalled.addListener(function (details) {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-        chrome.declarativeContent.onPageChanged.addRules([showSearchNaverPopupRule, showBlogNaverPopupRule]);
+        chrome.declarativeContent.onPageChanged.addRules([showSearchNaverPopupRule, showBlogNaverPopupRule, showBlogNaverPopupRule_NotSecure]);
     })
 })
 
@@ -128,6 +138,10 @@ let getTabCode = (current_url) => {
         }
     }
     else if (BLOG_NAVER_REGEXP.test(current_url)) {
+        code = BLOG_NAVER_CODE
+        return code
+    }
+    else if (BLOG_NAVER_REGEXP_NOT_SECURE.test(current_url)) {
         code = BLOG_NAVER_CODE
         return code
     }

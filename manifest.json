@@ -20,7 +20,7 @@
             "matches": [
                 "https://search.naver.com/*",
                 "https://blog.naver.com/*",
-                "https://www.google.com/*"
+                "http://blog.naver.com/*"
             ],
             "run_at": "document_idle",
             "css": ["css/content_style.css","css/jquery-ui.css"],
@@ -35,7 +35,7 @@
         "webNavigation",
         "https://search.naver.com/*",
         "https://blog.naver.com/*",
-        "https://www.google.com/*",
+        "http://blog.naver.com/*",
         "http://nbpa.ddns.net:33067/*",
         "http://127.0.0.1:8080/*"
     ]
