@@ -153,7 +153,8 @@ let multimedia_folding = () => {
     }
     if(getViddiv.length!=0) {
         let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
-        let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+        //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+        let findNavVid = getViddiv[0].getElementsByClassName('se-video');
 
         for(let i=0; i<findYouVid.length;i++){
             btnInputVid(findYouVid[i]);
