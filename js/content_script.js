@@ -13,7 +13,6 @@ const SEARCH_VIEW_CODE = "_search_view_all"
 const SEARCH_BLOG_CODE = "_search_view_blog"
 
 /* ------------------------------ 변수정의 ------------------------------ */
-let is_script_loaded = false
 let search_result_list
 
 let arr_xearch_url = []
@@ -26,22 +25,32 @@ let json_url_data
 let arr_received_data = []
 
 // 분석정보 변수
-let blog_info
-let analyzed_info
-let multimedia_ratios
-let tags
-let hyperlinks
-let keywords
+let blog_info = []
+let analyzed_info = []
+let multimedia_ratios = []
+let tags = []
+let hyperlinks = []
+let keywords = []
 
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.message === "TABCODE") {
 
             if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-                getBlogElementsList(message.code)
-                createAnalyzeInfoContainer(message.code, search_result_list)
-                convertArrToJsonArr(message.code)
-                showTable(message.code)
+                // getBlogElementsList(message.code)
+                // createAnalyzeInfoContainer(message.code, search_result_list)
+                // convertArrToJsonArr(message.code)
+                // showTable(message.code)
+
+                let test_arr = []
+                test_arr.push('https://blog.naver.com/lanoe600/50124020305')
+                test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
+                test_arr.push('https://blog.naver.com/vostino/70142180356')
+                test_arr.push('https://blog.naver.com/babyyej5/70145024358')
+                test_arr.push('https://blog.naver.com/gus2253/30155510721')
+
+                convertUrlToUrlObj(test_arr)
+                json_url_data = JSON.stringify(arr_url_obj)
 
                 chrome.runtime.sendMessage({message: "URLDATA", data: json_url_data})
             }
@@ -51,7 +60,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             }
         } else if (message.message === "ANALYZEINFO") {
             arr_received_data = message.data
-            destructureData(arr_received_data)
+            deserializeData(arr_received_data)
         }
     }
 )
@@ -112,28 +121,28 @@ let createAnalyzeInfoContainer = (code, list) => {
 
             let analyze_info_container = document.createElement("div")
 
-            let blog_info = document.createElement("div")
+            // let blog_info = document.createElement("div")
             let analyzed_info = document.createElement("div")
             let multimedia_ratios = document.createElement("div")
-            let tags = document.createElement("div")
-            let hyperlinks = document.createElement("div")
-            let keywords = document.createElement("div")
+            // let tags = document.createElement("div")
+            // let hyperlinks = document.createElement("div")
+            // let keywords = document.createElement("div")
 
             analyze_info_container.classList.add('_analyze-info-container')
 
-            blog_info.classList.add('_blog-info')
+            // blog_info.classList.add('_blog-info')
             analyzed_info.classList.add('_analyzed-info')
             multimedia_ratios.classList.add('_multimedia-ratios')
-            tags.classList.add('_tags')
-            hyperlinks.classList.add('_hyperlinks')
-            keywords.classList.add('_keywords')
+            // tags.classList.add('_tags')
+            // hyperlinks.classList.add('_hyperlinks')
+            // keywords.classList.add('_keywords')
 
-            analyze_info_container.appendChild(blog_info)
+            // analyze_info_container.appendChild(blog_info)
             analyze_info_container.appendChild(analyzed_info)
             analyze_info_container.appendChild(multimedia_ratios)
-            analyze_info_container.appendChild(tags)
-            analyze_info_container.appendChild(hyperlinks)
-            analyze_info_container.appendChild(keywords)
+            // analyze_info_container.appendChild(tags)
+            // analyze_info_container.appendChild(hyperlinks)
+            // analyze_info_container.appendChild(keywords)
 
             current_node.prepend(analyze_info_container)
         }
@@ -172,7 +181,6 @@ let convertArrToJsonArr = (code) => {
     }
 }
 
-
 let showTable = (code) => {
     // url 배열 확인용 함수
 
@@ -194,40 +202,51 @@ let showTable = (code) => {
     console.log(JSON.parse(json_url_data))
 }
 
-let destructureData = (arr) => {
+let deserializeData = (arr) => {
     // 백그라운드 스크립트로부터 받은 분석정보를 역직렬화하여 각 변수에 저장
 
     arr.forEach((element, index) => {
-
         blog_info = JSON.parse(element.blog_info)[0]
+        // let single_blog_info = JSON.parse(element.blog_info)[0]
+        // blog_info.push(single_blog_info)
 
-        if (element.analyzed_info)
+        if (element.analyzed_info) {
             analyzed_info = JSON.parse(element.analyzed_info)[0]
+            // let single_analyzed_info = JSON.parse(element.analyzed_info)[0]
+            // analyzed_info.push(single_analyzed_info)
+        }
 
-        if (element.multimedia_ratios)
+        if (element.multimedia_ratios) {
             multimedia_ratios = JSON.parse(element.multimedia_ratios)
+            // let single_multimedia_ratios = JSON.parse(element.multimedia_ratios)
+            // multimedia_ratios.push(single_multimedia_ratios)
+        }
 
         tags = JSON.parse(element.tags)
+        // let single_tags = JSON.parse(element.tags)
+        // tags.push(single_tags)
         hyperlinks = JSON.parse(element.hyperlinks)
-        if (element.keywords)
-            keywords = JSON.parse(element.keywords)
+        // let single_hyperlinks = JSON.parse(element.hyperlinks)
+        // hyperlinks.push(single_hyperlinks)
 
-        console.log(`
-blog_info: ${blog_info}
-analyzed_info: ${analyzed_info}
-multimedia_ratios: ${multimedia_ratios}
-tags: ${tags}
-hyperlinks: ${hyperlinks}
-keywords: ${keywords}
-        `)
+        if (element.keywords) {
+            keywords = JSON.parse(element.keywords)
+            // let single_keywords = JSON.parse(element.keywords)
+            // keywords.push(single_keywords)
+        }
+
+        console.log("")
+        console.log({blog_info})
+        console.log({analyzed_info})
+        console.log({multimedia_ratios})
+        console.log({tags})
+        console.log({hyperlinks})
+        console.log({keywords})
     })
 }
 
 let setAnalyzedinfo = () => {
-    let blog_info_container = document.getElementsByClassName('_blog-info')
-    let analyzed_info_container = document.getElementsByClassName('_analyzed-info')
-    let multimedia_ratios_container = document.getElementsByClassName('_multimedia-ratios')
-    let tags_container = document.getElementsByClassName('_tags')
-    let hyperlinks_container = document.getElementsByClassName('_hyperlinks')
-    let keywords_container = document.getElementsByClassName('_keywords')
+    let analyzed_info_container = document.querySelector('._analyzed-info')
+    let multimedia_ratios_container = document.querySelector('._multimedia-ratios')
 }
+
