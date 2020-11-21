@@ -100,7 +100,11 @@ tabCode: ${tabCode}`)
                 })
             }
             else if (tabCode === BLOG_NAVER_CODE) {
-
+                chrome.tabs.sendMessage(details.tabId, {
+                    message: "TABCODE",
+                    code: tabCode,
+                    url: updateTabUrl
+                })
             }
         })
     }

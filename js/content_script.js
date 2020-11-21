@@ -308,23 +308,22 @@ let getMultimediaType = (id) => {
             type = "비디오"
             return type
         case 4:
-            type = "비디오"
+            type = "하이퍼링크"
             return type
         case 5:
-            type = "비디오"
+            type = "텍스트"
             return type
         case 6:
-            type = "비디오"
+            type = "빈칸"
             return type
         case 7:
-            type = "비디오"
+            type = "기타"
             return type
         case 8:
-            type = "비디오"
+            type = "알수없음"
             return type
         default:
-            type = "비디오"
-            return type
+            break
     }
 }
 
@@ -339,6 +338,10 @@ let setAnalyzedInfo = () => {
         let analyzed_info_text = "로렘확률: " + toString(analyzed_info_value)
         analyzed_info_container.item(i).innerHTML = analyzed_info_text
 
-        let type_id = multimedia_ratios[i]['ratio_type_id']
+        for (let j = 0; j < multimedia_ratios[i].length; j++) {
+            let type_id = multimedia_ratios[i]['ratio_type_id']
+            let multimedia_ratios_value = multimedia_ratios[i]['ratio']
+            let multimedia_ratios_text = getMultimediaType(type_id) + "비율: " + toString(multimedia_ratios_value)
+        }
     }
 }
