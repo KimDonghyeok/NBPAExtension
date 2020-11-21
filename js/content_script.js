@@ -58,12 +58,176 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         } else if (message.code === BLOG_NAVER_CODE) {
             console.log(message.code)
+            multimedia_folding()
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
         deserializeData(arr_received_data)
     }
 })
+/* ------------------------------ Folding ------------------------------ */
+/*------------------------log_no 추출 함수------------------------------*/
+let getLogNo = (document) => {
+    let blogsrc = document.getAttribute('src');
+    let blogstr = blogsrc.toString();
+    let splitSrc = blogstr.split('&');
+
+    for(let i =0; i<splitSrc.length;i++){
+        console.log(splitSrc[i]);
+        if(splitSrc[i].startsWith('logNo')){
+            console.log("이걸 잡아야함: ",splitSrc[i]);
+            test = splitSrc[i].split("=");
+            console.log(test[1]);
+            return test[1];
+        }
+
+
+    }
+}
+
+/* ------------------------------ 함수정의 ------------------------------ */
+let multimedia_folding = () => {
+    //iframe인 블로그가 존재하여 체크가 필요하다.
+    let check_iframe = document.getElementById('mainFrame')
+
+    if (check_iframe != null) {
+        document = document.getElementById('mainFrame').contentWindow.document;
+
+    }
+
+    //let testdo = document.getElementsByTagName('div');
+
+    //1.check_iframe을 실행.
+    //2.getLogNo를 통해 logno 얻기
+    //3.getelementbyid(logno)통해 하위 요소 잡기.
+    //4.getelementsbytagnname으로 img 객체 잡아내기
+    //let log_no = 222139552203;//백그라운드js로 부터 블로그의 log를 가져온다.
+    //log_no를 분리해 주는 작업
+    let log_No= getLogNo(check_iframe);
+    //let log_No=222139552203;
+    let identifier = 'post-view' + log_No;
+    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    let getimgsrc = getbody.getElementsByTagName('img');
+
+    for (let i = 0; i < getimgsrc.length; i++) {
+        let src = getimgsrc[i].getAttribute('src').toString();
+        let x = 1;
+        //블랭크 gif인 경우 넘기기
+        if (src.indexOf('https://ssl.pstatic.net') != -1) {
+            continue;
+        }
+        //섬네일의 경우 넘기기
+        else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
+            continue;
+        }
+        else if (src.indexOf('data:image') != -1) {
+            //접기용 버튼 추가.
+            continue;
+        }
+        else if (src.indexOf('storep') != -1) {
+            //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
+            btnInput(getimgsrc[i]);
+            continue;
+        }
+        else if (src.indexOf('postfiles') != -1) {
+            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+            btnInput(getimgsrc[i]);
+            continue;
+        }
+        else {
+            continue;
+        }
+
+
+    }
+    // let getVidIframe = getbody.getElementsByTagName('iframe');
+    //옛날 버전에서 네이버 비디오 접기.
+    let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
+    let getViddiv = getbody.getElementsByClassName('se-main-container');
+    if(getVidSrc.length !=0){
+
+        for (let i=0; i<getVidSrc.length;i++){
+            btnInputVid(getVidSrc[i]);
+            //console.log(getVidSrc[i]);
+        }
+    }
+    if(getViddiv.length!=0) {
+        let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
+        let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+
+        for(let i=0; i<findYouVid.length;i++){
+            btnInputVid(findYouVid[i]);
+        }
+        for (let i=0; i<findNavVid.length;i++){
+            btnInputVid(findNavVid[i]);
+        }
+    }
+
+
+}
+/*-----------------------------버튼추가----------------------------------*/
+let btnInput =(s)=>{
+    //버튼 추가
+    //1.a태그가 아닌 경우 부모노드에 자식노드 div를 만든다.
+    //2.div안에 자식 노드로 버튼 추가를 원하는 img객체를 넣는다.
+    //3.img객체 밑에 버튼을 추가한다.
+    //4.a태그인 경우 부모노드의 부모노드에 자식노드 div를 만든다. 그래야 a태그의 클릭 효과를 받지 않는다.
+    //5.2번,3번 과정과 동일.
+
+    let setinput = document.createElement('input');
+    setinput.setAttribute("value","버튼 클릭시 이미지접기");
+    setinput.setAttribute("type","button");
+    setinput.style.display = "block";
+    if(s.parentNode.nodeName ==='A'){
+        console.log(s.parentNode.nodeName);
+        s.parentNode.parentNode.insertBefore(setinput,s.parentNode);
+    }
+    else {
+        s.parentNode.insertBefore(setinput,s);
+    }
+    setinput.addEventListener('click',function (){OnOff(s);});
+}
+/*-------------------------------------------------------------------------*/
+/*-----------------------------비디오에 버튼추가----------------------------------*/
+let btnInputVid =(s)=>{
+    //버튼 추가
+    //1.a태그가 아닌 경우 부모노드에 자식노드 div를 만든다.
+    //2.div안에 자식 노드로 버튼 추가를 원하는 img객체를 넣는다.
+    //3.img객체 밑에 버튼을 추가한다.
+    //4.a태그인 경우 부모노드의 부모노드에 자식노드 div를 만든다. 그래야 a태그의 클릭 효과를 받지 않는다.
+    //5.2번,3번 과정과 동일.
+
+    let setinput = document.createElement('input');
+    setinput.setAttribute("value","버튼 클릭시 이미지접기");
+    setinput.setAttribute("type","button");
+    setinput.style.display = "block";
+    setinput.addEventListener('click',function (){OnOff(s);});
+    s.parentNode.insertBefore(setinput,s);
+}
+/*-------------------------------------------------------------------------*/
+/*---------------------------버튼 동작: 버튼 클릭시 이미지 숨기기----------------------------------------------*/
+let OnOff = (element) => {
+    if (element.style.display != 'none') {
+        element.style.display = 'none';
+    }
+    else {
+        element.style.display = 'block';
+    }
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*--------------------------동영상 위치를 잡아내는 함수----------------------------*/
+let getMediaplace = (element) => {
+    //getimgsrc[i]를 통해 넘겨 받은 객체를 분석한다.
+    //유투브 뿐만아니라 네이버, 타 플랫폼의 플레이어를 검출해낼 방법은?어차피 영상 따로 잡아야함..
+    //
+    let getvidSrc = element.getElementsByTagName('div');
+    for (let i = 0; i < getvidSrc.length; i++) {
+        let test = getvidSrc[i].getAttribute('id').toString().indexOf('player');
+        if (test == -1) {
+            btnInput(element);
+        }
+    }
+}
 
 /* ------------------------------ PreView ------------------------------ */
 $(function () {
