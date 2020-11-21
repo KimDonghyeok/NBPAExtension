@@ -84,7 +84,7 @@ width: 320px;
     text-align: center;
 }
 
-.view-info #lorem {
+.view-info #lorem_percentage {
     height: 30px;
     width: 80px;
     line-height: 30px;
@@ -94,7 +94,7 @@ width: 320px;
     border-radius: 10px;
 }
 
-.view-info #tag {
+.view-info #image_ratio {
     height: 30px;
     width: 80px;
     line-height: 30px;
@@ -104,13 +104,23 @@ width: 320px;
     border-radius: 10px;
 }
 
-.view-info #image {
+.view-info #imoticon_ratio {
     height: 30px;
     width: 80px;
     line-height: 30px;
     font-size: 1rem;
     color: whitesmoke;
     background: #6b8e23;
+    border-radius: 10px;
+}
+
+.view-info #video_ratio {
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+    font-size: 1rem;
+    color: whitesmoke;
+    background: #6b8fff;
     border-radius: 10px;
 }
 
