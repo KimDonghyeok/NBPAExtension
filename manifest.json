@@ -32,6 +32,7 @@
         "activeTab",
         "declarativeContent",
         "tabs",
+        "webNavigation",
         "https://search.naver.com/*",
         "https://blog.naver.com/*",
         "https://www.google.com/*",

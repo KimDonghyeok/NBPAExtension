@@ -13,43 +13,45 @@ const SEARCH_VIEW_CODE = "_search_view_all"
 const SEARCH_BLOG_CODE = "_search_view_blog"
 
 /* ------------------------------ 변수정의 ------------------------------ */
+let is_script_loaded = false
+let search_result_list
+
 let arr_xearch_url = []
 let arr_view_url = []
 let arr_blog_url = []
 
-let arrUrlObj = []
-let dataJSON
-let arrAnalyzeInfo = []
+let arr_url_obj = []
+let json_url_data
 
-let search_result_list
-let is_script_loaded = false
+let arr_received_data = []
+
+// 분석정보 변수
+let blog_info
+let analyzed_info
+let multimedia_ratios
+let tags
+let hyperlinks
+let keywords
 
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.message === "TABCODE") {
 
-        if (!is_script_loaded) {
+            if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
+                getBlogElementsList(message.code)
+                createAnalyzeInfoContainer(message.code, search_result_list)
+                convertArrToJsonArr(message.code)
+                showTable(message.code)
 
-            if (message.message === "tabCode") {
-
-                if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-                    getBlogElementsList(message.code)
-                    createAnalyzeInfoContainer(message.code, search_result_list)
-                    convertArrToJsonArr(message.code)
-
-                    // chrome.runtime.sendMessage({message: "urlData", data: dataJSON})
-                    showTable(message.code)
-                }
-
-                if (message.code === BLOG_NAVER_CODE) {
-                    console.log(message.code)
-                }
-
-                is_script_loaded = true
+                chrome.runtime.sendMessage({message: "URLDATA", data: json_url_data})
             }
-            if (message.message === "analyzeInfo") {
 
-                is_script_loaded = true
+            else if (message.code === BLOG_NAVER_CODE) {
+                console.log(message.code)
             }
+        } else if (message.message === "ANALYZEINFO") {
+            arr_received_data = message.data
+            destructureData(arr_received_data)
         }
     }
 )
@@ -109,14 +111,29 @@ let createAnalyzeInfoContainer = (code, list) => {
             getBlogUrlList(code, current_node)
 
             let analyze_info_container = document.createElement("div")
-            let analyze_info = document.createElement("div")
-            let analyze_content = document.createTextNode("분석정보입니다.")
+
+            let blog_info = document.createElement("div")
+            let analyzed_info = document.createElement("div")
+            let multimedia_ratios = document.createElement("div")
+            let tags = document.createElement("div")
+            let hyperlinks = document.createElement("div")
+            let keywords = document.createElement("div")
 
             analyze_info_container.classList.add('_analyze-info-container')
-            analyze_info.classList.add('_analyze-info')
 
-            analyze_info.appendChild(analyze_content)
-            analyze_info_container.appendChild(analyze_info)
+            blog_info.classList.add('_blog-info')
+            analyzed_info.classList.add('_analyzed-info')
+            multimedia_ratios.classList.add('_multimedia-ratios')
+            tags.classList.add('_tags')
+            hyperlinks.classList.add('_hyperlinks')
+            keywords.classList.add('_keywords')
+
+            analyze_info_container.appendChild(blog_info)
+            analyze_info_container.appendChild(analyzed_info)
+            analyze_info_container.appendChild(multimedia_ratios)
+            analyze_info_container.appendChild(tags)
+            analyze_info_container.appendChild(hyperlinks)
+            analyze_info_container.appendChild(keywords)
 
             current_node.prepend(analyze_info_container)
         }
@@ -124,11 +141,11 @@ let createAnalyzeInfoContainer = (code, list) => {
 }
 
 let convertUrlToUrlObj = (arr) => {
-    if(Array.isArray(arr)) {
+    if (Array.isArray(arr)) {
         arr.forEach(url => {
             let tmp_obj = {}
             tmp_obj.url = url
-            arrUrlObj.push(tmp_obj)
+            arr_url_obj.push(tmp_obj)
         })
     }
 }
@@ -140,15 +157,15 @@ let convertArrToJsonArr = (code) => {
     switch (code) {
         case SEARCH_XEARCH_CODE:
             convertUrlToUrlObj(arr_xearch_url)
-            dataJSON = JSON.stringify(arrUrlObj)
+            json_url_data = JSON.stringify(arr_url_obj)
             break
         case SEARCH_VIEW_CODE:
             convertUrlToUrlObj(arr_view_url)
-            dataJSON = JSON.stringify(arrUrlObj)
+            json_url_data = JSON.stringify(arr_url_obj)
             break
         case SEARCH_BLOG_CODE:
             convertUrlToUrlObj(arr_blog_url)
-            dataJSON = JSON.stringify(arrUrlObj)
+            json_url_data = JSON.stringify(arr_url_obj)
             break
         default:
             break
@@ -172,6 +189,44 @@ let showTable = (code) => {
         default:
             break
     }
-    console.table(arrUrlObj)
-    console.log(JSON.parse(dataJSON), null, 2)
+    console.table(arr_url_obj)
+    console.log(JSON.parse(json_url_data), null, 2)
+}
+
+let destructureData = (arr) => {
+    // 백그라운드 스크립트로부터 받은 분석정보를 역직렬화하여 각 변수에 저장
+
+    arr.forEach((element, index) => {
+
+        blog_info = JSON.parse(element.blog_info)[0]
+
+        if (element.analyzed_info)
+            analyzed_info = JSON.parse(element.analyzed_info)[0]
+
+        if (element.multimedia_ratios)
+            multimedia_ratios = JSON.parse(element.multimedia_ratios)
+
+        tags = JSON.parse(element.tags)
+        hyperlinks = JSON.parse(element.hyperlinks)
+        if (element.keywords)
+            keywords = JSON.parse(element.keywords)
+
+        console.log(`
+blog_info: ${blog_info}
+analyzed_info: ${analyzed_info}
+multimedia_ratios: ${multimedia_ratios}
+tags: ${tags}
+hyperlinks: ${hyperlinks}
+keywords: ${keywords}
+        `)
+    })
+}
+
+let setAnalyzedinfo = () => {
+    let blog_info_container = document.getElementsByClassName('_blog-info')
+    let analyzed_info_container = document.getElementsByClassName('_analyzed-info')
+    let multimedia_ratios_container = document.getElementsByClassName('_multimedia-ratios')
+    let tags_container = document.getElementsByClassName('_tags')
+    let hyperlinks_container = document.getElementsByClassName('_hyperlinks')
+    let keywords_container = document.getElementsByClassName('_keywords')
 }
