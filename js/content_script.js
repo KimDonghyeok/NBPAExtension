@@ -65,6 +65,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 )
 
+/* ------------------------------ PreView ------------------------------ */
+
+$(function()
+        {                            
+            window.oncontextmenu = function () 
+            {
+                return false;
+            };  
+
+             $('a.api_txt_lines.total_tit').mousedown(function (e) 
+            {
+                var mouse=e.button
+                if(mouse == 2)
+                {
+                e.preventDefault();
+                var page = $(this).attr("href")
+                var x=page.split('//');
+                var org_url=x[1];
+                console.log(x[1]);
+                var new_url="https://m."+org_url;
+                console.log(new_url);
+                var $dialog = $('<div></div>')
+                .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
+                .dialog
+                ({
+                    autoOpen: false,
+                    modal: true,
+                    height: 600,
+                    width: 500,
+                    title: "NBPA PreViewer"
+                });
+                $dialog.dialog('open');     
+            }   
+            });                
+        });
 /* ------------------------------ 함수정의 ------------------------------ */
 let getBlogElementsList = (code) => {
     switch (code) {

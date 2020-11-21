@@ -23,8 +23,8 @@
                 "https://www.google.com/*"
             ],
             "run_at": "document_idle",
-            "css": ["css/content_style.css"],
-            "js": ["js/content_script.js"]
+            "css": ["css/content_style.css","css/jquery-ui.css"],
+            "js": ["js/jquery.min.js","js/jquery-ui.min.js","js/content_script.js"]
         }
     ],
     "permissions": [
