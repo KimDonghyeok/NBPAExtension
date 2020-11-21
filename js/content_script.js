@@ -190,7 +190,8 @@ let showTable = (code) => {
             break
     }
     console.table(arr_url_obj)
-    console.log(JSON.parse(json_url_data), null, 2)
+    console.log(json_url_data)
+    console.log(JSON.parse(json_url_data))
 }
 
 let destructureData = (arr) => {

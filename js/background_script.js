@@ -100,10 +100,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         json_data = message.data
         console.log(JSON.parse(json_data))
 
-        // 서버로부터 분석정보를 수신하여 콘텐츠 스크립트로 전달
-        getAnalyzedInfo(tabId)
-        // 콘텐츠 스크립트로부터 받은 URL 데이터를 서버로 전송
-        sendUrlJsonData(json_data)
+        // 콘텐츠 스크립트로부터 받은 URL 데이터를 서버로 전송 -> 서버로부터 분석정보를 수신하여 콘텐츠 스크립트로 전달
+        getAnalyzedInfo(tabId, json_data)
     }
 })
 
@@ -132,11 +130,10 @@ let getTabCode = (current_url) => {
     }
 }
 
-let getAnalyzedInfo = (tabId) => {
-    // 서버로부터 분석정보를 받아와서 유효한 정보일경우 콘텐츠 스크립트로 전송
+let getAnalyzedInfo = (tabId, json) => {
+    // 백그라운드 스크립트에서 받은 JSON 을 서버로 전송 -> 서버로부터 분석정보를 받아와서 유효한 정보일경우 콘텐츠 스크립트로 전송
 
     xhr.onload = function () {
-
         if (xhr.status === 200 || xhr.status === 201) {
             const received_arr = JSON.parse(xhr.response)
 
@@ -161,10 +158,6 @@ let getAnalyzedInfo = (tabId) => {
             console.error(xhr.responseText);
         }
     }
-}
-
-let sendUrlJsonData = (json) => {
-    // 백그라운드 스크립트에서 받은 JSON 을 서버로 전송
 
     let request_url = HOST_URL_HEAD + "user/analyzedinfo/get"
 
@@ -173,20 +166,4 @@ let sendUrlJsonData = (json) => {
 
     // Send JSON array
     xhr.send(json);
-}
-
-let sendUrlStrData = (url) => {
-    // 단일 url을 url 프로퍼티를 가지고 있는 객체로 변환 후 JSON 변환하여 서버로 전송
-    let tmp_obj = {}
-    tmp_obj.url = url
-
-    let url_json = JSON.stringify(tmp_obj)
-
-    let request_url = HOST + 'myapp/user/analyzedinfo/get'
-
-    xhr.open("POST", request_url)
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-
-    // Send JSON array
-    xhr.send(url_json);
 }
