@@ -70,11 +70,13 @@ let checkboxMethodSelector = (checkbox) => {
             // 이미지 숨기기 (boolean) 함수 호출바람.
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 let tabId = tabs[0].id
+                let current_url  = tabs[0].url
 
                 chrome.tabs.sendMessage(tabId, {
-                    message: "ALLIHIDE",
+                    message: "ALLHIDE",
                     checkbox_id: checkbox.id,
-                    status: boolean
+                    status: boolean,
+                    url: current_url
                 })
             })
             break
@@ -82,11 +84,13 @@ let checkboxMethodSelector = (checkbox) => {
             // 영상 숨기기 (boolean) 함수 호출바람.
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 let tabId = tabs[0].id
+                let current_url  = tabs[0].url
 
                 chrome.tabs.sendMessage(tabId, {
-                    message: "ALLIHIDE",
+                    message: "ALLHIDE",
                     checkbox_id: checkbox.id,
-                    status: boolean
+                    status: boolean,
+                    url: current_url
                 })
             })
             break
@@ -94,11 +98,13 @@ let checkboxMethodSelector = (checkbox) => {
             // 이모티콘 (boolean) 함수 호출바람.
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 let tabId = tabs[0].id
+                let current_url  = tabs[0].url
 
                 chrome.tabs.sendMessage(tabId, {
-                    message: "ALLIHIDE",
+                    message: "ALLHIDE",
                     checkbox_id: checkbox.id,
-                    status: boolean
+                    status: boolean,
+                    url: current_url
                 })
             })
             break
