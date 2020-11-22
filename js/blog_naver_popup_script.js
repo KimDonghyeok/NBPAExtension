@@ -74,16 +74,32 @@ window.onload = function() {
     checkbox_all_image_close = document.getElementById("all-image-close")
     checkbox_all_image_close.addEventListener("change", function(){
         saveCheckboxStatus(checkbox_all_image_close)
+        
+        if(checkbox_all_image_close.checked){
+            // 이미지가 모두 접히게
+        } else{
+            // 이미지가 모두 펼쳐지게
+        }
     })
 
     checkbox_all_video_close = document.getElementById("all-video-close")
     checkbox_all_video_close.addEventListener("change", function(){
         saveCheckboxStatus(checkbox_all_video_close)
+        if(checkbox_all_image_close.checked){
+            // 영상이 모두 접히게
+        } else{
+            // 영상이 모두 펼쳐지게
+        }
     })
 
     checkbox_all_imoticon_close = document.getElementById("all-imoticon-close")
     checkbox_all_imoticon_close.addEventListener("change", function(){
         saveCheckboxStatus(checkbox_all_imoticon_close)
+        if(checkbox_all_image_close.checked){
+            // 이모티콘이 모두 접히게
+        } else{
+            // 이모티콘이 모두 펼쳐지게
+        }
     })
 
     syncCheckboxStatus(checkbox_all_image_close)
