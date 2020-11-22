@@ -241,10 +241,12 @@ let getAnalyzedInfoCallback = (xhr) =>{
             // 각 정보를 알맞게 추출한다.
             if ("analyzed_info" in received_data){
                 let analyzed_info = JSON.parse(received_data["analyzed_info"])[0]["fields"]
-                let lorem_percentage_string = analyzed_info["lorem_percentage"].toFixed(3)
+                let lorem_percentage = analyzed_info["lorem_percentage"]
+                let lorem_percentage_string = (lorem_percentage * 100).toFixed(1) + "%" 
                 // 로렘 확률 표시
                 let lorem_percentage_div = document.getElementById("lorem_percentage")
                 lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
+                lorem_percentage_div.title = "로렘 확률 계산을 위한 샘플은 다음과 같습니다." + "\n" + analyzed_info["sample_1"] + "\n" + analyzed_info["sample_2"] + "\n" + analyzed_info["sample_3"]
                 lorem_percentage_div.style.display = "inline-block"
             }
 
@@ -253,12 +255,14 @@ let getAnalyzedInfoCallback = (xhr) =>{
                 multimedia_ratios.forEach(element => {
                     let multimedia_ratio = element["fields"]
                     let ratio_type = multimedia_ratio["ratio_type"]
-                    let ratio_string = multimedia_ratio["ratio"].toFixed(3)
+                    let ratio = multimedia_ratio["ratio"]
+                    let ratio_string = (ratio * 100).toFixed(1) + "%"
 
                     let div_id = getDivIdByRatioType(ratio_type)
                     let ratio_div = document.getElementById(div_id)
                     let ratio_type_name = getRatioNameByRatioType(ratio_type)
                     ratio_div.innerHTML = ratio_type_name + " " + ratio_string
+                    ratio_div.title = "이 블로그에는 " + ratio_type_name + "이(가) " + (ratio * 100).toFixed(3)  + "% 만큼 포함되어 있습니다."
                     ratio_div.style.display = "inline-block"
                 });
             }
