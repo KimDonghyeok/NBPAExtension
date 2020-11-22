@@ -3,36 +3,15 @@ window.onload = function() {
 
     // 체크박스 리스너 등록
     checkbox_all_image_close = document.getElementById("all-image-close")
-    checkbox_all_image_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_image_close)
-
-        if(checkbox_all_image_close.checked){
-            // 이미지가 모두 접히게
-        } else{
-            // 이미지가 모두 펼쳐지게
-        }
-    })
+    addCheckboxListener(checkbox_all_image_close)
 
     checkbox_all_video_close = document.getElementById("all-video-close")
-    checkbox_all_video_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_video_close)
-        if(checkbox_all_image_close.checked){
-            // 영상이 모두 접히게
-        } else{
-            // 영상이 모두 펼쳐지게
-        }
-    })
+    addCheckboxListener(checkbox_all_video_close)
 
     checkbox_all_imoticon_close = document.getElementById("all-imoticon-close")
-    checkbox_all_imoticon_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_imoticon_close)
-        if(checkbox_all_image_close.checked){
-            // 이모티콘이 모두 접히게
-        } else{
-            // 이모티콘이 모두 펼쳐지게
-        }
-    })
+    addCheckboxListener(checkbox_all_imoticon_close)
 
+    // 스토리지와 체크박스를 동기화
     syncCheckboxStatus(checkbox_all_image_close)
     syncCheckboxStatus(checkbox_all_video_close)
     syncCheckboxStatus(checkbox_all_imoticon_close)
@@ -48,6 +27,24 @@ let booleanToCheck =(b) => {
 // checked/unchecked를 불리언으로 변환
 let checkToBoolean =(check) => {
     return check === "checked"
+}
+
+// 체크박스를 주면 리스너에 등록함.
+let addCheckboxListener = (checkbox) =>{
+    // 체크박스의 상태가 변경되면 
+    checkbox.addEventListener("change", function(){
+        // 변경된 상태를 스토리지에 저장
+        saveCheckboxStatus(checkbox)
+        
+        // 원하는 동작 처리 (ex, 이미지 모두 접기/ 비디오 모두 접기/ 이모티콘 모두 접기)
+        let boolean = checkbox.checked
+
+        if(boolean){
+            console.log("do checked method")
+        } else{
+            console.log("do unchecked method")
+        }
+    })
 }
 
 // 체크박스 스토리지 저장
