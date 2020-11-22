@@ -228,10 +228,10 @@ let multimedia_folding = () => {
         }
     }
     if(getiframe.length!=0){
-        let getVidifram = getiframe[0].outerHTML
-                console.log(getVidifram)
-        if(getVidifram.indexOf("youtube")!=-1){
-            btnInputVid(getVidifram)
+        let getVidifram = getiframe[0]
+                console.log(getiframe[0])
+        if(getVidifram.outerHTML.indexOf("youtube")!=-1){
+            btnInputVid(getVidifram.parentNode)
         }
     }
 }
@@ -316,7 +316,9 @@ let fold_all_image = (boolean) => {
         let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
         if (getimgsrcnew.length!=0){
             for (let i = 0; i < getimgsrcnew.length; i++) {
-                let src = getimgsrcnew[i].getAttribute('src').toString();
+                let src = getimgsrcnew[i].outerHTML
+
+                //let src = getimgsrcnew[i].getAttribute('src').toString();
                 //블랭크 gif인 경우 넘기기
                 if (src.indexOf('postfiles') != -1) {
                     //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
@@ -350,8 +352,8 @@ let fold_all_image = (boolean) => {
     }
     else{
         for (let i = 0; i < getimgsrcold.length; i++) {
-            let src = getimgsrcold[i].getAttribute('src').toString();
-            let x = 1;
+            let src = getimgsrcold[i].outerHTML
+            //let src = getimgsrcold[i].getAttribute('src').toString();
             //블랭크 gif인 경우 넘기기
           if (src.indexOf('postfiles') != -1) {
                 //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
@@ -405,11 +407,15 @@ let fold_all_imoticon = (boolean) => {
   let getmaincontainer = getbody.getElementsByClassName('se-main-container');
   let getimgsrcold =  getbody.getElementsByTagName('img');
   if(getmaincontainer.length!=0){
+      
     let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
 }
   if(getimgsrcnew.length!=0){
       for (let i = 0; i < getimgsrcnew.length; i++) {
-          let src = getimgsrcnew[i].getAttribute('src').toString();
+          
+            let src = getimgsrcnew[i].outerHTML
+
+          //let src = getimgsrcnew[i].getAttribute('src').toString();
           let x = 1;
           //블랭크 gif인 경우 넘기기
          if (src.indexOf('storep') != -1) {
@@ -443,7 +449,9 @@ let fold_all_imoticon = (boolean) => {
   }
   else{
       for (let i = 0; i < getimgsrcold.length; i++) {
-          let src = getimgsrcold[i].getAttribute('src').toString();
+            let src = getimgsrcold[i].outerHTML
+
+         // let src = getimgsrcold[i].getAttribute('src').toString();
           let x = 1;
           //블랭크 gif인 경우 넘기기
           if (src.indexOf('storep') != -1) {
@@ -543,6 +551,21 @@ let fold_all_video = (boolean) => {
         }
       }
   }
+
+  if(getiframe.length!=0){
+    let getVidifram = getiframe[0]
+            console.log(getiframe[0])
+    if(getVidifram.outerHTML.indexOf("youtube")!=-1){
+        if(boolean){
+            getVidifram[i].style.display = 'none'
+            continue
+        }
+        else{
+            getVidifram[i].style.display = 'block'
+            continue
+        }
+    }
+}
 }
 /*--------------------------------------------------------------------------------------------------------*/
 
