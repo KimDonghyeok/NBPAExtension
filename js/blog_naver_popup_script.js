@@ -72,7 +72,7 @@ let checkboxMethodSelector = (checkbox) => {
                 let tabId = tabs[0].id
 
                 chrome.tabs.sendMessage(tabId, {
-                    message: "ALLIMAGEHIDE",
+                    message: "ALLIHIDE",
                     checkbox_id: checkbox.id,
                     status: boolean
                 })
@@ -80,9 +80,27 @@ let checkboxMethodSelector = (checkbox) => {
             break
         case "all-video-close":
             // 영상 숨기기 (boolean) 함수 호출바람.
+            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                let tabId = tabs[0].id
+
+                chrome.tabs.sendMessage(tabId, {
+                    message: "ALLIHIDE",
+                    checkbox_id: checkbox.id,
+                    status: boolean
+                })
+            })
             break
         case "all-imoticon-close":
             // 이모티콘 (boolean) 함수 호출바람.
+            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                let tabId = tabs[0].id
+
+                chrome.tabs.sendMessage(tabId, {
+                    message: "ALLIHIDE",
+                    checkbox_id: checkbox.id,
+                    status: boolean
+                })
+            })
             break
     }
 }

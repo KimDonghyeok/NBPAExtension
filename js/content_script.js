@@ -70,11 +70,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         setAnalyzedInfo_SearchNaver()
         setAnalyzeInfoEvent()
     }
-    else if (message.message === "ALLIMAGEHIDE") {
+    else if (message.message === "ALLHIDE") {
         let checkbox_id = message.checkbox_id
         let checkbox_status = message.status
 
         console.log("blog popup message is received!")
+
+        hideAllMultimediaByType(checkbox_id, checkbox_status)
     }
 })
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
@@ -1059,5 +1061,19 @@ let setAnalyzeInfoEvent = () => {
         current_keyword_preview_button.addEventListener("click", () => {
             showPostKeyword(i)
         })
+    }
+}
+
+let hideAllMultimediaByType = (checkbox_id, checkbox_status) => {
+    switch (checkbox_id){
+    case "all-image-close":
+        fold_all_image(checkbox_status)
+        break
+    case "all-video-close":
+        fold_all_imoticon(checkbox_status)
+        break
+    case"all-imoticon-close":
+        fold_all_video(checkbox_status)
+        break
     }
 }
