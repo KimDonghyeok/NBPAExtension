@@ -63,6 +63,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         setAnalyzedInfo_SearchNaver()
         setAnalyzeInfoEvent()
     }
+    else if (message.message === "ALLIMAGEHIDE") {
+        let checkbox_id = message.checkbox_id
+        let checkbox_status = message.status
+
+        console.log("blog popup message is received!")
+    }
 })
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
 let getLogNo = (document) => {
@@ -700,12 +706,10 @@ let setAnalyzedInfo_SearchNaver = () => {
 
     for (let i = 0; i < length; i++) {
 
-        //
         /* ---------- 분석정보 배열에서 로렘 확률 정보를 추출하여 출력 ----------*/
-        let current_analyzed_info = analyzed_info[i]['fields']
-
         if (analyzed_info[i].constructor === Object && Object.keys(analyzed_info[i]).length !== 0) {
             // 현재 객체가 비어있지 않을때 정보 출력 작업
+            let current_analyzed_info = analyzed_info[i]['fields']
             let current_lorem_info_value = current_analyzed_info['lorem_percentage'].toFixed(3)
             let lorem_info_text = "로렘확률: " + current_lorem_info_value
 
@@ -715,7 +719,6 @@ let setAnalyzedInfo_SearchNaver = () => {
             // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
         }
 
-        // Array.isArray(current_multimedia_ratios) && !current_multimedia_ratios.length
         /* ---------- 멀티미디어 배열에서 멀티미디어 정보(이미지, 이모티콘, 영상 비율)를 추출하여 출력 ----------*/
         let current_multimedia_ratios = multimedia_ratios[i]
 
