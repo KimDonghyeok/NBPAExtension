@@ -15,6 +15,15 @@ window.onload = function() {
     syncCheckboxStatus(checkbox_all_image_close)
     syncCheckboxStatus(checkbox_all_video_close)
     syncCheckboxStatus(checkbox_all_imoticon_close)
+    
+    // 피드백 제출 버튼 리스너 등록
+    send_feedback = document.getElementById("send-feedback")
+    send_feedback.addEventListener("click", function(){
+        // 제출 시 페이지가 전환되는걸 막음
+        event.preventDefault()
+        // 피드백 타입 선택 체크, 본문 비어있는지 체크.
+        
+    })
 }
 
 
