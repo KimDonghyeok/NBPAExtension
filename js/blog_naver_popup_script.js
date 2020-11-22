@@ -1,18 +1,45 @@
-class BlogPopup {
-    constructor() {
-        this.popup_blog_naver = document.querySelector(".blog_naver_popup")
-        this.popup_feedback = document.querySelector(".feedback")
-    }
+window.onload = function() {
+    console.log("onload" + Date())
 
-    get blog_naver_popup() {
-        return this.popup_blog_naver
-    }
+    // 체크박스 리스너 등록
+    checkbox_all_image_close = document.getElementById("all-image-close")
+    checkbox_all_image_close.addEventListener("change", function(){
+        saveCheckboxStatus(checkbox_all_image_close)
 
-    get feedback_popup() {
-        return this.popup_feedback
-    }
+        if(checkbox_all_image_close.checked){
+            // 이미지가 모두 접히게
+        } else{
+            // 이미지가 모두 펼쳐지게
+        }
+    })
+
+    checkbox_all_video_close = document.getElementById("all-video-close")
+    checkbox_all_video_close.addEventListener("change", function(){
+        saveCheckboxStatus(checkbox_all_video_close)
+        if(checkbox_all_image_close.checked){
+            // 영상이 모두 접히게
+        } else{
+            // 영상이 모두 펼쳐지게
+        }
+    })
+
+    checkbox_all_imoticon_close = document.getElementById("all-imoticon-close")
+    checkbox_all_imoticon_close.addEventListener("change", function(){
+        saveCheckboxStatus(checkbox_all_imoticon_close)
+        if(checkbox_all_image_close.checked){
+            // 이모티콘이 모두 접히게
+        } else{
+            // 이모티콘이 모두 펼쳐지게
+        }
+    })
+
+    syncCheckboxStatus(checkbox_all_image_close)
+    syncCheckboxStatus(checkbox_all_video_close)
+    syncCheckboxStatus(checkbox_all_imoticon_close)
 }
 
+
+/* ------------------------- 팝업 요소 상태 처리 함수 정의 ------------------------- */
 // 불리언을 checked/unchecked로 변환
 let booleanToCheck =(b) => {
     return b ? "checked" : "unchecked"
@@ -67,42 +94,3 @@ let syncCheckboxStatus = (checkbox) =>{
     }
 }
 
-window.onload = function() {
-    console.log("onload" + Date())
-
-    // 체크박스 리스너 등록
-    checkbox_all_image_close = document.getElementById("all-image-close")
-    checkbox_all_image_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_image_close)
-        
-        if(checkbox_all_image_close.checked){
-            // 이미지가 모두 접히게
-        } else{
-            // 이미지가 모두 펼쳐지게
-        }
-    })
-
-    checkbox_all_video_close = document.getElementById("all-video-close")
-    checkbox_all_video_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_video_close)
-        if(checkbox_all_image_close.checked){
-            // 영상이 모두 접히게
-        } else{
-            // 영상이 모두 펼쳐지게
-        }
-    })
-
-    checkbox_all_imoticon_close = document.getElementById("all-imoticon-close")
-    checkbox_all_imoticon_close.addEventListener("change", function(){
-        saveCheckboxStatus(checkbox_all_imoticon_close)
-        if(checkbox_all_image_close.checked){
-            // 이모티콘이 모두 접히게
-        } else{
-            // 이모티콘이 모두 펼쳐지게
-        }
-    })
-
-    syncCheckboxStatus(checkbox_all_image_close)
-    syncCheckboxStatus(checkbox_all_video_close)
-    syncCheckboxStatus(checkbox_all_imoticon_close)
-}
