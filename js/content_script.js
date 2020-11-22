@@ -2,6 +2,7 @@ console.log("execute content script")
 
 /* ------------------------------ 상수정의 ------------------------------ */
 const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
+const BLOG_NAVER_ME_REGEXP = new RegExp(/blog\.me/)
 
 const BLOG_NAVER_CODE = "_blog_naver"
 const SEARCH_XEARCH_CODE = "_search_xearch"
@@ -305,16 +306,40 @@ let getBlogElementsList = (code) => {
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
 let isBlogSectionElement = (url) => {
-    // TODO https://pointnow.blog.me/222149996848 -> https://blog.naver.com/pointnow/222149996848 변환 작업 필요
 
-
-
-    return BLOG_NAVER_REGEXP.test(url)
+    if (BLOG_NAVER_REGEXP.test(url) || BLOG_NAVER_ME_REGEXP.test(url))
+        return true
+    else
+        return false
 }
 
-let getBlogUrlList = (code, element) => {
+let convertBlogMeUrl = (url) => {
+    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+
+    let url_obj = new URL(url)
+
+    let url_host = url_obj.host
+    let url_path = url_obj.pathname
+
+    let url_host_frag = url_host.split(".")
+    let url_path_frag = url_path.split("/")
+
+    let blog_me_url_info = [url_host_frag[0], url_path_frag[1]]
+
+    let normalize_url = "https://blog.naver.com/" + blog_me_url_info[0] + "/" + blog_me_url_info[1]
+
+    return normalize_url
+}
+
+let getBlogUrlList = (code, url) => {
     // 현재 페이지 코드와 한개의 html 요소를 인자로 받아 해당 요소의 url 을 코드에 따라 해당 배열에 push
-    let currentElementUrl = element.querySelector('.total_tit').href
+    // TODO https://pointnow.blog.me/222149996848 -> https://blog.naver.com/pointnow/222149996848 변환 작업 필요
+
+    let currentElementUrl = url
+
+    if (BLOG_NAVER_ME_REGEXP.test(currentElementUrl)) {
+        currentElementUrl = convertBlogMeUrl(url)
+    }
 
     switch (code) {
         case SEARCH_XEARCH_CODE:
@@ -342,8 +367,7 @@ let createAnalyzeInfoContainer = (code, list) => {
         current_node_url = current_node.querySelector('.total_tit').href
 
         if (isBlogSectionElement(current_node_url)) {
-
-            getBlogUrlList(code, current_node)
+            getBlogUrlList(code, current_node_url)
 
             // 각 분석정보 컨테이너가 들어가는 div
             let analyze_info_container = document.createElement("div")
