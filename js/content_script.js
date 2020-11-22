@@ -33,21 +33,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.message === "TABCODE") {
 
         if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-            // getBlogElementsList(message.code)
-            // createAnalyzeInfoContainer(message.code, search_result_list)
-            // convertArrToJsonArr(message.code)
-            // showTable(message.code)
+            getBlogElementsList(message.code)
+            createAnalyzeInfoContainer(message.code, search_result_list)
+            convertArrToJsonArr(message.code)
+            showTable(message.code)
 
-            let test_arr = []
-            test_arr.push('https://blog.naver.com/lanoe600/50124020305')
-            test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
-            test_arr.push('https://blog.naver.com/vostino/70142180356')
-            test_arr.push('https://blog.naver.com/babyyej5/70145024358')
-            test_arr.push('https://blog.naver.com/gus2253/30155510721')
-
-            convertUrlToUrlObj(test_arr)
-
-            json_url_data = JSON.stringify(arr_url_obj)
+            // let test_arr = []
+            // test_arr.push('https://blog.naver.com/lanoe600/50124020305')
+            // test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
+            // test_arr.push('https://blog.naver.com/vostino/70142180356')
+            // test_arr.push('https://blog.naver.com/babyyej5/70145024358')
+            // test_arr.push('https://blog.naver.com/gus2253/30155510721')
+            //
+            // convertUrlToUrlObj(test_arr)
+            //
+            // json_url_data = JSON.stringify(arr_url_obj)
 
             chrome.runtime.sendMessage({
                 message: "URLDATA",
@@ -67,7 +67,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
 let getLogNo = (document) => {
     // log_no 추출 함수
-    
+
     let blogsrc = document.getAttribute('src');
     let blogstr = blogsrc.toString();
     let splitSrc = blogstr.split('&');
@@ -744,18 +744,18 @@ let setAnalyzedInfo_SearchNaver = () => {
 
 let showSampleText = (index) => {
     // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
-    console.log("lorem button")
+    console.log("showSampleText")
 }
 
 let showPostPreview = (index) => {
     // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
-    console.log("preview button")
+    console.log("showPostPreview")
 
 }
 
 let showPostKeyword = (index) => {
     // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
-    console.log("keyword button")
+    console.log("showPostKeyword")
 
 }
 
@@ -772,8 +772,14 @@ let setAnalyzeInfoEvent = () => {
         let current_post_preview_button = post_preview_button.item(i)
         let current_keyword_preview_button = keyword_preview_button.item(i)
 
-        current_lorem_info_container.addEventListener("onclick", showSampleText(i))
-        current_post_preview_button.addEventListener("onclick", showPostPreview(i))
-        current_keyword_preview_button.addEventListener("onclick", showPostKeyword(i))
+        current_lorem_info_container.addEventListener("click", () => {
+            showSampleText(i)
+        })
+        current_post_preview_button.addEventListener("click", () => {
+            showPostPreview(i)
+        })
+        current_keyword_preview_button.addEventListener("click", () => {
+            showPostKeyword(i)
+        })
     }
 }
