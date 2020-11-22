@@ -1,5 +1,9 @@
-const HOST_IP = "127.0.0.1"
-const HOST_PORT = "8080"
+const HOST_IP = "nbpa.ddns.net"
+const HOST_PORT = "33067"
+
+// const HOST_IP = "127.0.0.1"
+// const HOST_PORT = "8080"
+
 const HOST_URL_HEAD = "http://" + HOST_IP + ":" + HOST_PORT + "/request/"
 
 window.onload = function() {
@@ -201,6 +205,28 @@ let submitFeedback = (feedback_type, message) => {
     })   
 }
 
+let getDivIdByRatioType = (ratio_type) => {
+    switch(ratio_type){
+        case 1:
+            return "image_ratio"
+        case 2:
+            return "imoticon_ratio"
+        case 3:
+            return "video_ratio"
+    }
+}
+
+let getRatioNameByRatioType = (ratio_type) => {
+    switch(ratio_type){
+        case 1:
+            return "이미지 비율"
+        case 2:
+            return "이모티콘 비율"
+        case 3:
+            return "비디오 비율"
+    }
+}
+
 // 서버로부터 분석정보 받아옴
 let getAnalyzedInfoCallback = (xhr) =>{
     if (xhr.status === 200 || xhr.status === 201) {
@@ -208,15 +234,33 @@ let getAnalyzedInfoCallback = (xhr) =>{
 
         let header = received_arr[0]
 
-        arr_received_data = []
-
-        for (i = 1; i < received_arr.length ; i++ ){
-            arr_received_data.push(element)
-        }
-
         // 분석정보 가져오는데 성공했다면
         if (header.success === "True") {
-            arr_received_data
+            let received_data = received_arr[1]
+
+            // 각 정보를 알맞게 추출한다.
+            if ("analyzed_info" in received_data){
+                let analyzed_info = JSON.parse(received_data["analyzed_info"])[0]["fields"]
+                let lorem_percentage_string = analyzed_info["lorem_percentage"].toFixed(3)
+                // 로렘 확률 표시
+                let lorem_percentage_div = document.getElementById("lorem_percentage")
+                lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
+            }
+
+            if ("multimedia_ratios" in received_data){
+                let multimedia_ratios = JSON.parse(received_data["multimedia_ratios"])
+                multimedia_ratios.forEach(element => {
+                    let multimedia_ratio = element["fields"]
+                    let ratio_type = multimedia_ratio["ratio_type"]
+                    let ratio_string = multimedia_ratio["ratio"].toFixed(3)
+
+                    let div_id = getDivIdByRatioType(ratio_type)
+                    let ratio_div = document.getElementById(div_id)
+                    let ratio_type_name = getRatioNameByRatioType(ratio_type)
+                    ratio_div.innerHTML = ratio_type_name + " : " + ratio_string
+                });
+            }
+            
             console.log('success')
         } else{
             console.error(header.message)
@@ -235,8 +279,8 @@ let getAnalyzedInfo = () =>{
             alert("[getAnalyzedInfo] current_url is undefined!")
             return
         }
-
         data = {}
+        
         data['url'] = current_url
 
         // 서버와 통신하기 위한 XMLHttpRequest 객체
@@ -254,7 +298,8 @@ let getAnalyzedInfo = () =>{
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
 
         // Send JSON array
-        json = JSON.stringify(data)
+        all_data = [data, ]
+        json = JSON.stringify(all_data)
         xhr.send(json);
     })
 }
