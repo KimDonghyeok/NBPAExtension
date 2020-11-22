@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         } else if (message.code === BLOG_NAVER_CODE) {
             console.log(message.code)
-            fold_all_video(true)
+           // fold_all_image(true)
             multimedia_folding()
         }
     } else if (message.message === "ANALYZEINFO") {
@@ -103,61 +103,65 @@ let multimedia_folding = () => {
     //3.getelementbyid(logno)통해 하위 요소 잡기.
     //4.getelementsbytagnname으로 img 객체 잡아내기
     //log_no를 분리해 주는 작업
-    let log_No= getLogNo(check_iframe);
+    let log_No = getLogNo(check_iframe);
     let identifier = 'post-view' + log_No;
     let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
-    
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
-    let getimgsrcold =  getbody.getElementsByTagName('img');
+    //이미지 접기
 
-    let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
-    if(getimgsrcnew.length!=0){
-        for (let i = 0; i < getimgsrcnew.length; i++) {
-            let src = getimgsrcnew[i].getAttribute('src').toString();
-            let x = 1;
-            //블랭크 gif인 경우 넘기기
-            if (src.indexOf('https://ssl.pstatic.net') != -1) {
-                continue;
-            }
-            //섬네일의 경우 넘기기
-            else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
-                continue;
-            }
-            else if (src.indexOf('dthumb') != -1) {
-                continue;
-            }
-            else if (src.indexOf('data:image') != -1) {
-                //접기용 버튼 추가.
-                continue;
-            }
-            else if (src.indexOf('storep') != -1) {
-                //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-                btnInput(getimgsrcnew[i]);
-                continue;
-            }
-            else if(src.indexOf('sticker') != -1){
-                btnInput(getimgsrcnew[i]);
-                continue;
-            }
-            else if (src.indexOf('postfiles') != -1) {
-                //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
-                btnInput(getimgsrcnew[i]);
-                continue;
-            }
-            else if (src.indexOf('blogfiles') != -1) {
-                //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
-                btnInput(getimgsrcnew[i]);
-                continue;
-            }
-            else {
-                continue;
-            }
 
+    let getimgsrcold = getbody.getElementsByTagName('img');
+    if (getmaincontainer.length != 0) {
+        let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+        if (getimgsrcnew.length != 0) {
+            for (let i = 0; i < getimgsrcnew.length; i++) {
+                //let src = getimgsrcnew[i].getAttribute('src').toString();
+                let src = getimgsrcnew[i].outerHTML
+                //블랭크 gif인 경우 넘기기
+                if (src.indexOf('https://ssl.pstatic.net') != -1) {
+                    continue;
+                }
+                //섬네일의 경우 넘기기
+                else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
+                    continue;
+                }
+                else if (src.indexOf('dthumb') != -1) {
+                    continue;
+                }
+                else if (src.indexOf('data:image') != -1) {
+                    //접기용 버튼 추가.
+                    continue;
+                }
+                else if (src.indexOf('storep') != -1) {
+                    //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
+                    btnInput(getimgsrcnew[i]);
+                    continue;
+                }
+                else if (src.indexOf('sticker') != -1) {
+                    btnInput(getimgsrcnew[i]);
+                    continue;
+                }
+                else if (src.indexOf('postfiles') != -1) {
+                    //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+                    btnInput(getimgsrcnew[i]);
+                    continue;
+                }
+                else if (src.indexOf('blogfiles') != -1) {
+                    //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+                    btnInput(getimgsrcnew[i]);
+                    continue;
+                }
+                else {
+                    continue;
+                }
+
+            }
         }
     }
-    else{
+    else {
         for (let i = 0; i < getimgsrcold.length; i++) {
-            let src = getimgsrcold[i].getAttribute('src').toString();
+            //let src = getimgsrcold[i].getAttribute('src').toString();
+            let src = getimgsrcold[i].outerHTML
             let x = 1;
             //블랭크 gif인 경우 넘기기
             if (src.indexOf('https://ssl.pstatic.net') != -1) {
@@ -179,7 +183,7 @@ let multimedia_folding = () => {
                 btnInput(getimgsrcold[i]);
                 continue;
             }
-            else if(src.indexOf('sticker') != -1){
+            else if (src.indexOf('sticker') != -1) {
                 btnInput(getimgsrcold[i]);
                 continue;
             }
@@ -199,30 +203,37 @@ let multimedia_folding = () => {
 
         }
     }
+
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
     let getViddiv = getbody.getElementsByClassName('se-main-container');
-    if(getVidSrc.length !=0){
+    let getiframe = getbody.getElementsByTagName('iframe')
+    if (getVidSrc.length != 0) {
 
-        for (let i=0; i<getVidSrc.length;i++){
+        for (let i = 0; i < getVidSrc.length; i++) {
             btnInputVid(getVidSrc[i]);
             //console.log(getVidSrc[i]);
         }
     }
-    if(getViddiv.length!=0) {
+    if (getViddiv.length != 0) {
         let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
         //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
         let findNavVid = getViddiv[0].getElementsByClassName('se-video');
 
-        for(let i=0; i<findYouVid.length;i++){
+        for (let i = 0; i < findYouVid.length; i++) {
             btnInputVid(findYouVid[i]);
         }
-        for (let i=0; i<findNavVid.length;i++){
+        for (let i = 0; i < findNavVid.length; i++) {
             btnInputVid(findNavVid[i]);
         }
     }
-
-
+    if(getiframe.length!=0){
+        let getVidifram = getiframe[0].outerHTML
+                console.log(getVidifram)
+        if(getVidifram.indexOf("youtube")!=-1){
+            btnInputVid(getVidifram)
+        }
+    }
 }
 /*-----------------------------버튼추가----------------------------------*/
 let btnInput =(s)=>{
@@ -298,67 +309,43 @@ let fold_all_image = (boolean) => {
     let log_No= getLogNo(check_iframe);
     let identifier = 'post-view' + log_No;
     let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
-    
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
+    
     let getimgsrcold =  getbody.getElementsByTagName('img');
-
-    let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
-    if(getimgsrcnew.length!=0){
-        for (let i = 0; i < getimgsrcnew.length; i++) {
-            let src = getimgsrcnew[i].getAttribute('src').toString();
-            let x = 1;
-            //블랭크 gif인 경우 넘기기
-            if (src.indexOf('storep') != -1) {
-                //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-                if(boolean){
-                    getimgsrcnew[i].style.display = "none"
-                    continue
+    if(getmaincontainer.length !=0){
+        let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+        if (getimgsrcnew.length!=0){
+            for (let i = 0; i < getimgsrcnew.length; i++) {
+                let src = getimgsrcnew[i].getAttribute('src').toString();
+                //블랭크 gif인 경우 넘기기
+                if (src.indexOf('postfiles') != -1) {
+                    //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+                    if(boolean){
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else{
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    }                continue;
                 }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
-                }                continue;
-            }
-            else if(src.indexOf('sticker') != -1){
-                if(boolean){
-                    getimgsrcnew[i].style.display = "none"
-                    continue
+                else if (src.indexOf('blogfiles') != -1) {
+                    //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+                    if(boolean){
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else{
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    } 
                 }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
-                }                continue;
-            }
-            else if (src.indexOf('postfiles') != -1) {
-                //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
-                if(boolean){
-                    getimgsrcnew[i].style.display = "none"
-                    continue
+                else {
+                    continue;
                 }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
-                }                continue;
             }
-            else if (src.indexOf('blogfiles') != -1) {
-                //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
-                if(boolean){
-                    getimgsrcnew[i].style.display = "none"
-                    continue
-                }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
-                }                continue;
-            }
-            else {
-                continue;
-            }
-
         }
     }
     else{
@@ -366,30 +353,7 @@ let fold_all_image = (boolean) => {
             let src = getimgsrcold[i].getAttribute('src').toString();
             let x = 1;
             //블랭크 gif인 경우 넘기기
-           if (src.indexOf('storep') != -1) {
-                //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-                if(boolean){
-                    getimgsrcold[i].style.display = "none"
-                    continue
-                }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcold[i].style.display = "block"
-                    continue
-                }                         continue;
-            }
-            else if(src.indexOf('sticker') != -1){
-                if(boolean){
-                    getimgsrcold[i].style.display = "none"
-                    continue
-                }
-                else{
-                    //false인 경우 모두 펼치기
-                    getimgsrcold[i].style.display = "block"
-                    continue
-                }                         continue;
-            }
-            else if (src.indexOf('postfiles') != -1) {
+          if (src.indexOf('postfiles') != -1) {
                 //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                 if(boolean){
                     getimgsrcold[i].style.display = "none"
@@ -419,7 +383,6 @@ let fold_all_image = (boolean) => {
 
         }
     }
-  
 }
 /*--------------------------------------------------------------------------------------------------------*/
 
@@ -441,8 +404,9 @@ let fold_all_imoticon = (boolean) => {
   
   let getmaincontainer = getbody.getElementsByClassName('se-main-container');
   let getimgsrcold =  getbody.getElementsByTagName('img');
-
-  let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+  if(getmaincontainer.length!=0){
+    let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+}
   if(getimgsrcnew.length!=0){
       for (let i = 0; i < getimgsrcnew.length; i++) {
           let src = getimgsrcnew[i].getAttribute('src').toString();
