@@ -1,13 +1,19 @@
 console.log("execute content script")
 
 /* ------------------------------ 상수정의 ------------------------------ */
-const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
-const BLOG_NAVER_ME_REGEXP = new RegExp(/blog\.me/)
-
-const BLOG_NAVER_CODE = "_blog_naver"
-const SEARCH_XEARCH_CODE = "_search_xearch"
-const SEARCH_VIEW_CODE = "_search_view_all"
-const SEARCH_BLOG_CODE = "_search_view_blog"
+import {
+    SEARCH_NAVER_REGEXP,
+    BLOG_NAVER_REGEXP,
+    BLOG_NAVER_ME_REGEXP,
+    BLOG_NAVER_REGEXP_NOT_SECURE,
+    SEARCH_XEARCH_REGEXP,
+    SEARCH_VIEW_REGEXP,
+    SEARCH_BLOG_REGEXP,
+    SEARCH_XEARCH_CODE,
+    SEARCH_VIEW_CODE,
+    SEARCH_BLOG_CODE,
+    BLOG_NAVER_CODE,
+    HOST_URL_HEAD} from "./constants";
 
 /* ------------------------------ 변수정의 ------------------------------ */
 let search_result_list
@@ -61,7 +67,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             multimedia_folding()
             // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
             //서버로 단일 URL 전송
-            // sendSingleBlogURL(current_url)
+            sendSingleBlogURL(current_url)
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
@@ -72,6 +78,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     else if (message.message === "ALLIMAGEHIDE") {
         let checkbox_id = message.checkbox_id
         let checkbox_status = message.status
+        let current_blog_url = message.url
 
         console.log("blog popup message is received!")
     }
