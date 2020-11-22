@@ -61,6 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         arr_received_data = message.data
         deserializeData(arr_received_data)
         setAnalyzedInfo_SearchNaver()
+        setAnalyzeInfoEvent()
     }
 })
 /* ------------------------------ Folding ------------------------------ */
@@ -572,11 +573,39 @@ let setAnalyzedInfo_SearchNaver = () => {
     }
 }
 
+let showSampleText = (index) => {
+    // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
+    console.log("lorem button")
+}
+
+let showPostPreview = (index) => {
+    // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
+    console.log("preview button")
+
+}
+
+let showPostKeyword = (index) => {
+    // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
+    console.log("keyword button")
+
+}
+
 let setAnalyzeInfoEvent = () => {
+    // 분석 정보 컨테이너의 로렘확률 컨테이너, 게시글 미리보기 버튼, 게시글 키워드 보기 버튼에 대해 이벤트를 추가
+
     let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
     let post_preview_button = document.getElementsByClassName("_post-preview")
     let keyword_preview_button = document.getElementsByClassName("_keyword-preview")
 
+    let length = arr_url_obj.length
+    for (let i = 0; i < length; i++) {
+        let current_lorem_info_container = lorem_info_container.item(i)
+        let current_post_preview_button = post_preview_button.item(i)
+        let current_keyword_preview_button = keyword_preview_button.item(i)
 
+        current_lorem_info_container.addEventListener("onclick", showSampleText(i))
+        current_post_preview_button.addEventListener("onclick", showPostPreview(i))
+        current_keyword_preview_button.addEventListener("onclick", showPostKeyword(i))
+    }
 }
 
