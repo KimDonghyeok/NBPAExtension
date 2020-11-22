@@ -776,19 +776,75 @@ let normalizePostViewUrl = (url) => {
 }
 
 let showSampleText = (index) => {
+    let sample1,sample2,sample3=""
+
+    sample1=analyzed_info[index]['fields']['sample_1']
+    sample2=analyzed_info[index]['fields']['sample_2']
+    sample3=analyzed_info[index]['fields']['sample_3']
+
+
+    let $dialog = $('<div></div>')
+    .html('<p>' + sample1 +"<br>" +sample2 +"<br>"+ sample3 +"<br>"+ '</p>')
+    .dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "KeyWord PreViewer"
+    });
+$dialog.dialog('open');
     // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
     console.log("showSampleText")
 }
 
 let showPostPreview = (index) => {
     // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
-    console.log("showPostPreview")
-    let target_blog_url = blog_info[index]['fields']['url']
 
+    let target_blog_url = normalizePostViewUrl(blog_info[index]['fields']['url'])
+    let splited_url = target_blog_url.split('//');
+    let pure_url = splited_url[1];
+    let new_url
+    if (isBlogSectionElement(target_blog_url)) {
+        new_url = "https://m." + pure_url;
+    } else {
+        new_url = target_blog_url
+    }
+    let $dialog = $('<div></div>')
+    .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
+    .dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "NBPA PreViewer"
+    });
+$dialog.dialog('open');
 }
 
 let showPostKeyword = (index) => {
     // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
+    let all_Key=""
+    let temp_key=""
+    for(i=0;i<keywords[index].length;i++)
+    {
+        Key=keywords[index][i]['fields']['word']
+        temp_key= (i+1) + " : " + Key
+        all_Key=  all_Key+ "<br>" +temp_key
+    }
+    console.log(all_Key)
+
+    let $dialog = $('<div></div>')
+    .html('<p>' + all_Key+ '</p>')
+    .dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "KeyWord PreViewer"
+    });
+$dialog.dialog('open');
+
+
     console.log("showPostKeyword")
 }
 
