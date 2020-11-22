@@ -786,6 +786,7 @@ let showSampleText = (index) => {
     let $dialog = $('<div></div>')
     .html('<p>' + sample1 +"<br>" +sample2 +"<br>"+ sample3 +"<br>"+ '</p>')
     .dialog({
+        z_index : 100000,
         autoOpen: false,
         modal: true,
         height: 600,
@@ -813,6 +814,7 @@ let showPostPreview = (index) => {
     .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
     .dialog({
         autoOpen: false,
+        z_index : 100000,
         modal: true,
         height: 600,
         width: 500,
@@ -825,10 +827,19 @@ let showPostKeyword = (index) => {
     // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
     let all_Key=""
     let temp_key=""
+    let hash=""
     for(i=0;i<keywords[index].length;i++)
     {
         Key=keywords[index][i]['fields']['word']
-        temp_key= (i+1) + " : " + Key
+        if(tags[index][i]===undefined)
+        {
+            hash=""
+        }
+        else
+        {
+            hash=tags[index][i]
+        }
+        temp_key= (i+1) + " : " + Key + "<t>" +"<t>" +"#" +hash
         all_Key=  all_Key+ "<br>" +temp_key
     }
     console.log(all_Key)
@@ -836,6 +847,7 @@ let showPostKeyword = (index) => {
     let $dialog = $('<div></div>')
     .html('<p>' + all_Key+ '</p>')
     .dialog({
+        z_index : 100000,
         autoOpen: false,
         modal: true,
         height: 600,
