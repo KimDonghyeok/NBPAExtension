@@ -102,7 +102,7 @@ let addSliderListener = (slider) =>{
         // 변경된 값을 스토리지에 저장
         saveSliderStatus(slider)
         // 슬라이더 값이 변경되었을 때 수행하는 명령 호출
-        // sliderMethodSelector(slider))
+        sliderMethodSelector(slider)
     })
 }
 
@@ -135,6 +135,19 @@ let checkboxMethodSelector = (checkbox) => {
     }   
 }
 
+let sliderMethodSelector = (slider) => {
+    let sliderId = slider.id
+
+    switch(sliderId) {
+        case "lorem-poss-slider":
+        case "image-ratio-slider":
+        case "video-ratio-slider":
+        case "imoticon-ratio-slider":
+            // 슬라이더 디스플레이어 동기화 함수 호출
+            syncSliderValue(sliderId)
+    }
+}
+
 /* ------------------------- 로직 ------------------------- */
 
 // 체크박스 ID를 주면 슬라이더 ID를 반환
@@ -157,6 +170,31 @@ let changeSliderStatus = (sliderId, enabled) =>{
     if (slider != undefined){
         slider.disabled = !enabled
     }
+}
+
+// 슬라이더 ID를 주면 디스플레이어 ID를 반환
+let getDislpayerId = (sliderId) =>{
+    switch (sliderId){
+        case "lorem-poss-slider":
+            return "lorem-poss-slider-value"
+        case "image-ratio-slider":
+            return "image-ratio-slider-value"
+        case "video-ratio-slider":
+            return "video-ratio-slider-value"
+        case "imoticon-ratio-slider":
+            return "imoticon-ratio-slider-value"
+    }
+}
+
+// 변경된 슬라이더 값과 디스플레이어를 동기화
+let syncSliderValue = (sliderId) =>{
+    let slider = document.getElementById(sliderId)
+    let sliderValue = slider.value
+
+    let displayerId = getDislpayerId(sliderId)
+    let displayer = document.getElementById(displayerId)
+
+    displayer.textContent = sliderValue + "% 이상"
 }
 
 /* ------------------------- 스토리지 관련 하드코딩 ------------------------- */
@@ -273,30 +311,43 @@ let syncSliderStatus = (slider) =>{
         case "lorem-poss-slider":
             chrome.storage.local.get("lorem_poss_slider",function(obj){
                 if (obj.lorem_poss_slider != undefined){
-                    slider.value = obj.lorem_poss_slider
+                    let sliderValue =  obj.lorem_poss_slider
+                    slider.value = sliderValue
+
+                    syncSliderValue(slider.id)
                 }
             })
             break
         case "image-ratio-slider":
             chrome.storage.local.get("image_ratio_slider",function(obj){
                 if (obj.image_ratio_slider != undefined){
-                    slider.value = obj.image_ratio_slider
+                    let sliderValue =  obj.image_ratio_slider
+                    slider.value = sliderValue
+
+                    syncSliderValue(slider.id)
                 }
             })
             break
         case "video-ratio-slider":
             chrome.storage.local.get("video_ratio_slider",function(obj){
                 if (obj.video_ratio_slider != undefined){
-                    slider.value = obj.video_ratio_slider
+                    let sliderValue =  obj.video_ratio_slider
+                    slider.value = sliderValue
+
+                    syncSliderValue(slider.id)
                 }
             })
             break
         case "imoticon-ratio-slider":
             chrome.storage.local.get("imoticon_ratio_slider",function(obj){
                 if (obj.imoticon_ratio_slider != undefined){
-                    slider.value = obj.imoticon_ratio_slider
+                    let sliderValue =  obj.imoticon_ratio_slider
+                    slider.value = sliderValue
+
+                    syncSliderValue(slider.id)
                 }
             })
             break
     }
 }
+
