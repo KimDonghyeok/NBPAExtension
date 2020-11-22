@@ -50,14 +50,21 @@ let addCheckboxListener = (checkbox) =>{
 // checkbox의 id로 실행할 메소드를 실행
 let checkboxMethodSelector = (checkbox) => {
     let boolean = checkbox.checked
-    if(checkbox.id === "all-image-close"){
-        // 이미지 숨기기 (boolean) 함수 호출바람.
-    } else if(checkbox.id === "all-video-close"){
-        // 영상 숨기기 (boolean) 함수 호출바람.
-    } else if(checkbox.id === "all-imoticon-close"){
-        // 이모티콘 (boolean) 함수 호출바람.
+    switch(checkbox.id){
+        case "all-image-close":
+            // 이미지 숨기기 (boolean) 함수 호출바람.
+            break
+        case "all-video-close":
+            // 영상 숨기기 (boolean) 함수 호출바람.
+            break
+        case "all-imoticon-close":
+            // 이모티콘 (boolean) 함수 호출바람.
+            break
     }
 }
+
+/* ------------------------- 로직 ------------------------- */
+
 
 /* ------------------------- 스토리지 관련 하드코딩 ------------------------- */
 
@@ -66,41 +73,36 @@ let saveCheckboxStatus = (checkbox) =>{
 
     let checked_string = booleanToCheck(checkbox.checked, false)
 
-    if(checkbox.id === "all-image-close"){
-        chrome.storage.local.set({"all_image_close": checked_string},function(){
-            console.log("all_image_close " + checked_string + " saved")
-        })
-    } else if(checkbox.id === "all-video-close"){
-        chrome.storage.local.set({"all_video_close": checked_string},function(){
-            console.log("all_video_close " + checked_string + " saved")
-        })
+    switch(checkbox.id){
+        case "all-image-close":
+            chrome.storage.local.set({"all_image_close": checked_string},function(){})
+            break
+        case "all-video-close":
+            chrome.storage.local.set({"all_video_close": checked_string},function(){})
+            break
+        case "all-imoticon-close":
+            chrome.storage.local.set({"all_imoticon_close": checked_string},function(){})
+            break
     }
-    else if(checkbox.id === "all-imoticon-close"){
-        chrome.storage.local.set({"all_imoticon_close": checked_string},function(){
-            console.log("all_imoticon_close " + checked_string + " saved")
-        })
-    }
-    return 
 }
 
 // 체크박스를 주면 스토리지에서 동기화
 let syncCheckboxStatus = (checkbox) =>{
-    if(checkbox.id === "all-image-close"){
-        chrome.storage.local.get("all_image_close",function(obj){
-            bool = checkToBoolean(obj.all_image_close, false)
-            checkbox.checked = bool
-        })
-    } 
-    else if(checkbox.id === "all-video-close"){
-        chrome.storage.local.get("all_video_close",function(obj){
-            bool = checkToBoolean(obj.all_video_close, false)
-            checkbox.checked = bool
-        })
-    }
-    else if(checkbox.id === "all-imoticon-close"){
-        chrome.storage.local.get("all_imoticon_close",function(obj){
-            bool = checkToBoolean(obj.all_imoticon_close, false)
-            checkbox.checked = bool
-        })
+    switch(checkbox.id){
+        case "all-image-close":
+            chrome.storage.local.get("all_image_close",function(obj){
+                checkbox.checked = checkToBoolean(obj.all_image_close, false)
+            })
+            break
+        case "all-video-close":
+            chrome.storage.local.get("all_video_close",function(obj){
+                checkbox.checked = checkToBoolean(obj.all_video_close, false)
+            })
+            break
+        case "all-imoticon-close":
+            chrome.storage.local.get("all_imoticon_close",function(obj){
+                checkbox.checked = checkToBoolean(obj.all_imoticon_close, false)
+            })
+            break
     }
 }
