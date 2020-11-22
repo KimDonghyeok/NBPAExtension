@@ -53,17 +53,17 @@ let saveCheckboxStatus = (checkbox) =>{
     let checked_string = booleanToCheck(checkbox.checked)
 
     if(checkbox.id === "all-image-close"){
-        chrome.storage.local.set({"all_image_checkbox": checked_string},function(){
-            console.log("all_video_checkbox " + checked_string + " saved")
+        chrome.storage.local.set({"all_image_close": checked_string},function(){
+            console.log("all_image_close " + checked_string + " saved")
         })
     } else if(checkbox.id === 'all-video-close'){
-        chrome.storage.local.set({"all_video_checkbox": checked_string},function(){
-            console.log("all_video_checkbox " + checked_string + " saved")
+        chrome.storage.local.set({"all_video_close": checked_string},function(){
+            console.log("all_video_close " + checked_string + " saved")
         })
     }
     else if(checkbox.id === 'all-imoticon-close'){
-        chrome.storage.local.set({"all_imoticon_checkbox": checked_string},function(){
-            console.log("all_imoticon_checkbox " + checked_string + " saved")
+        chrome.storage.local.set({"all_imoticon_close": checked_string},function(){
+            console.log("all_imoticon_close " + checked_string + " saved")
         })
     }
     return 
@@ -72,20 +72,20 @@ let saveCheckboxStatus = (checkbox) =>{
 // 체크박스를 주면 스토리지에서 동기화
 let syncCheckboxStatus = (checkbox) =>{
     if(checkbox.id === "all-image-close"){
-        chrome.storage.local.get("all_image_checkbox",function(obj){
-            bool = checkToBoolean(obj.all_image_checkbox)
+        chrome.storage.local.get("all_image_close",function(obj){
+            bool = checkToBoolean(obj.all_image_close)
             checkbox.checked = bool
         })
     } 
     else if(checkbox.id === 'all-video-close'){
-        chrome.storage.local.get("all_video_checkbox",function(obj){
-            bool = checkToBoolean(obj.all_video_checkbox)
+        chrome.storage.local.get("all_video_close",function(obj){
+            bool = checkToBoolean(obj.all_video_close)
             checkbox.checked = bool
         })
     }
     else if(checkbox.id === 'all-imoticon-close'){
-        chrome.storage.local.get("all_imoticon_checkbox",function(obj){
-            bool = checkToBoolean(obj.all_imoticon_checkbox)
+        chrome.storage.local.get("all_imoticon_close",function(obj){
+            bool = checkToBoolean(obj.all_imoticon_close)
             checkbox.checked = bool
         })
     }
