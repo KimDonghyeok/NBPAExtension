@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             multimedia_folding()
             // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
             //서버로 단일 URL 전송
-            sendSingleBlogURL(current_url)
+            // sendSingleBlogURL(current_url)
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
