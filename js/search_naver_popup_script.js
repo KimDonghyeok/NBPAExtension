@@ -37,6 +37,19 @@ window.onload = function() {
     checkbox_imoticon_ratio_filter = document.getElementById("imoticon-ratio-filter")
     addCheckboxListener(checkbox_imoticon_ratio_filter)
 
+    // 필터 슬라이더 리스너 등록
+    lorem_poss_slider = document.getElementById("lorem-poss-slider")
+    addSliderListener(lorem_poss_slider)
+
+    image_ratio_slider = document.getElementById("image-ratio-slider")
+    addSliderListener(image_ratio_slider)
+
+    video_ratio_slider = document.getElementById("video-ratio-slider")
+    addSliderListener(video_ratio_slider)
+
+    imoticon_ratio_slider = document.getElementById("imoticon-ratio-slider")
+    addSliderListener(imoticon_ratio_slider)
+
     // 스토리지와 체크박스를 동기화
     syncCheckboxStatus(checkbox_lorem_poss_view)
     syncCheckboxStatus(checkbox_image_ratio_view)
@@ -46,6 +59,12 @@ window.onload = function() {
     syncCheckboxStatus(checkbox_image_ratio_filter)
     syncCheckboxStatus(checkbox_video_ratio_filter)
     syncCheckboxStatus(checkbox_imoticon_ratio_filter)
+
+    // 스토리지와 슬라이더를 동기화
+    syncSliderStatus(lorem_poss_slider)
+    syncSliderStatus(image_ratio_slider)
+    syncSliderStatus(video_ratio_slider)
+    syncSliderStatus(imoticon_ratio_slider)
 }
 
 /* ------------------------- 팝업 요소 상태 처리 함수 정의 ------------------------- */
@@ -78,6 +97,15 @@ let addCheckboxListener = (checkbox) =>{
     })
 }
 
+let addSliderListener = (slider) =>{
+    slider.addEventListener("change", function(){
+        // 변경된 값을 스토리지에 저장
+        saveSliderStatus(slider)
+        // 슬라이더 값이 변경되었을 때 수행하는 명령 호출
+        // sliderMethodSelector(slider))
+    })
+}
+
 // checkbox의 id로 실행할 메소드를 실행
 let checkboxMethodSelector = (checkbox) => {
     let checkboxId = checkbox.id
@@ -104,8 +132,7 @@ let checkboxMethodSelector = (checkbox) => {
             sliderId = getSliderId(checkboxId)
             changeSliderStatus(sliderId, boolean)
             break
-    }
-    
+    }   
 }
 
 /* ------------------------- 로직 ------------------------- */
@@ -127,7 +154,9 @@ let getSliderId = (checkboxId) =>{
 // 슬라이더 ID와 활성화여부를 받으면 슬라이더를 활성화/비활성화 함
 let changeSliderStatus = (sliderId, enabled) =>{
     slider = document.getElementById(sliderId)
-    slider.disabled = !enabled
+    if (slider != undefined){
+        slider.disabled = !enabled
+    }
 }
 
 /* ------------------------- 스토리지 관련 하드코딩 ------------------------- */
@@ -190,23 +219,84 @@ let syncCheckboxStatus = (checkbox) =>{
         case "lorem-poss-filter":
             chrome.storage.local.get("lorem_poss_filter",function(obj){
                 checkbox.checked = checkToBoolean(obj.lorem_poss_filter, false)
+                let sliderId = getSliderId(checkbox.id)
+                changeSliderStatus(sliderId, checkbox.checked)
             })
             break
         case "image-ratio-filter":
             chrome.storage.local.get("image_ratio_filter",function(obj){
                 checkbox.checked = checkToBoolean(obj.image_ratio_filter, false)
+                let sliderId = getSliderId(checkbox.id)
+                changeSliderStatus(sliderId, checkbox.checked)
             })
             break
         case "video-ratio-filter":
             chrome.storage.local.get("video_ratio_filter",function(obj){
                 checkbox.checked = checkToBoolean(obj.video_ratio_filter, false)
+                let sliderId = getSliderId(checkbox.id)
+                changeSliderStatus(sliderId, checkbox.checked)
             })
             break
         case "imoticon-ratio-filter":
             chrome.storage.local.get("imoticon_ratio_filter",function(obj){
                 checkbox.checked = checkToBoolean(obj.imoticon_ratio_filter, false)
+                let sliderId = getSliderId(checkbox.id)
+                changeSliderStatus(sliderId, checkbox.checked)
             })
             break
     }
-    
+}
+
+// 슬라이더 상태 스토리지 저장
+let saveSliderStatus = (slider) =>{
+    let value_string = slider.value
+
+    switch(slider.id){
+        case "lorem-poss-slider":
+            chrome.storage.local.set({"lorem_poss_slider": value_string},function(){})
+            break
+        case "image-ratio-slider":
+            chrome.storage.local.set({"image_ratio_slider": value_string},function(){})
+            break
+        case "video-ratio-slider":
+            chrome.storage.local.set({"video_ratio_slider": value_string},function(){})
+            break
+        case "imoticon-ratio-slider":
+            chrome.storage.local.set({"imoticon_ratio_slider": value_string},function(){})
+            break
+    }
+}
+
+// 슬라이더를 주면 스토리지에서 동기화
+let syncSliderStatus = (slider) =>{
+    switch(slider.id){
+        case "lorem-poss-slider":
+            chrome.storage.local.get("lorem_poss_slider",function(obj){
+                if (obj.lorem_poss_slider != undefined){
+                    slider.value = obj.lorem_poss_slider
+                }
+            })
+            break
+        case "image-ratio-slider":
+            chrome.storage.local.get("image_ratio_slider",function(obj){
+                if (obj.image_ratio_slider != undefined){
+                    slider.value = obj.image_ratio_slider
+                }
+            })
+            break
+        case "video-ratio-slider":
+            chrome.storage.local.get("video_ratio_slider",function(obj){
+                if (obj.video_ratio_slider != undefined){
+                    slider.value = obj.video_ratio_slider
+                }
+            })
+            break
+        case "imoticon-ratio-slider":
+            chrome.storage.local.get("imoticon_ratio_slider",function(obj){
+                if (obj.imoticon_ratio_slider != undefined){
+                    slider.value = obj.imoticon_ratio_slider
+                }
+            })
+            break
+    }
 }
