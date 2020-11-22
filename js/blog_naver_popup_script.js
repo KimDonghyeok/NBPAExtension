@@ -219,11 +219,11 @@ let getDivIdByRatioType = (ratio_type) => {
 let getRatioNameByRatioType = (ratio_type) => {
     switch(ratio_type){
         case 1:
-            return "이미지 비율"
+            return "이미지"
         case 2:
-            return "이모티콘 비율"
+            return "이모티콘"
         case 3:
-            return "비디오 비율"
+            return "비디오"
     }
 }
 
@@ -245,6 +245,7 @@ let getAnalyzedInfoCallback = (xhr) =>{
                 // 로렘 확률 표시
                 let lorem_percentage_div = document.getElementById("lorem_percentage")
                 lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
+                lorem_percentage_div.style.display = "inline-block"
             }
 
             if ("multimedia_ratios" in received_data){
@@ -257,7 +258,8 @@ let getAnalyzedInfoCallback = (xhr) =>{
                     let div_id = getDivIdByRatioType(ratio_type)
                     let ratio_div = document.getElementById(div_id)
                     let ratio_type_name = getRatioNameByRatioType(ratio_type)
-                    ratio_div.innerHTML = ratio_type_name + " : " + ratio_string
+                    ratio_div.innerHTML = ratio_type_name + " " + ratio_string
+                    ratio_div.style.display = "inline-block"
                 });
             }
             
