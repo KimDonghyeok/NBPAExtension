@@ -1,11 +1,7 @@
 console.log("execute content script")
 
 /* ------------------------------ 상수정의 ------------------------------ */
-const SEARCH_NAVER_REGEXP = new RegExp(/^https:\/\/search\.naver\.com/)
 const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
-const SEARCH_XEARCH_REGEXP = new RegExp(/\where\=nexearch/)
-const SEARCH_VIEW_REGEXP = new RegExp(/\where\=view/)
-const SEARCH_BLOG_REGEXP = new RegExp(/\where\=blog/)
 
 const BLOG_NAVER_CODE = "_blog_naver"
 const SEARCH_XEARCH_CODE = "_search_xearch"
@@ -102,10 +98,8 @@ let multimedia_folding = () => {
     //2.getLogNo를 통해 logno 얻기
     //3.getelementbyid(logno)통해 하위 요소 잡기.
     //4.getelementsbytagnname으로 img 객체 잡아내기
-    //let log_no = 222139552203;//백그라운드js로 부터 블로그의 log를 가져온다.
     //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    //let log_No=222139552203;
+    let log_No= getLogNo(check_iframe);
     let identifier = 'post-view' + log_No;
     let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     let getimgsrc = getbody.getElementsByTagName('img');
@@ -120,15 +114,26 @@ let multimedia_folding = () => {
         //섬네일의 경우 넘기기
         else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
             continue;
-        } else if (src.indexOf('data:image') != -1) {
+        }
+        else if (src.indexOf('data:image') != -1) {
             //접기용 버튼 추가.
             continue;
-        } else if (src.indexOf('storep') != -1) {
+        }
+        else if (src.indexOf('storep') != -1) {
             //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
             btnInput(getimgsrc[i]);
             continue;
-        } else {
+        }
+        else if(src.indexOf('sticker') != -1){
             btnInput(getimgsrc[i]);
+            continue;
+        }
+        else if (src.indexOf('postfiles') != -1) {
+            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+            btnInput(getimgsrc[i]);
+            continue;
+        }
+        else {
             continue;
         }
 
@@ -138,21 +143,22 @@ let multimedia_folding = () => {
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
     let getViddiv = getbody.getElementsByClassName('se-main-container');
-    if (getVidSrc.length != 0) {
+    if(getVidSrc.length !=0){
 
-        for (let i = 0; i < getVidSrc.length; i++) {
+        for (let i=0; i<getVidSrc.length;i++){
             btnInputVid(getVidSrc[i]);
             //console.log(getVidSrc[i]);
         }
     }
-    if (getViddiv.length != 0) {
+    if(getViddiv.length!=0) {
         let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
-        let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+        //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+        let findNavVid = getViddiv[0].getElementsByClassName('se-video');
 
-        for (let i = 0; i < findYouVid.length; i++) {
+        for(let i=0; i<findYouVid.length;i++){
             btnInputVid(findYouVid[i]);
         }
-        for (let i = 0; i < findNavVid.length; i++) {
+        for (let i=0; i<findNavVid.length;i++){
             btnInputVid(findNavVid[i]);
         }
     }
@@ -299,8 +305,9 @@ let getBlogElementsList = (code) => {
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
 let isBlogSectionElement = (url) => {
-
     // TODO https://pointnow.blog.me/222149996848 -> https://blog.naver.com/pointnow/222149996848 변환 작업 필요
+
+
 
     return BLOG_NAVER_REGEXP.test(url)
 }
@@ -349,8 +356,8 @@ let createAnalyzeInfoContainer = (code, list) => {
             let button_post_preview = document.createElement("button")
             let button_keyword_preview  = document.createElement("button")
 
+            // 각 요소에 클래스 속성 추가
             analyze_info_container.classList.add('_analyze-info-container')
-
             lorem_percentage.classList.add('_button')
             lorem_percentage.classList.add('_lorem-percentage-container')
             multimedia_image_ratio.classList.add('_multimedia-image-ratio-container')
@@ -361,9 +368,14 @@ let createAnalyzeInfoContainer = (code, list) => {
             button_keyword_preview.classList.add('_button')
             button_keyword_preview.classList.add('_keyword-preview')
 
+            // 버튼에 type 속성 추가
             lorem_percentage.setAttribute("type" ,"button")
             button_post_preview.setAttribute("type" ,"button")
             button_keyword_preview.setAttribute("type" ,"button")
+
+            // 버튼 내부에 텍스트 추가
+            button_post_preview.textContent = "게시글 미리보기"
+            button_keyword_preview.textContent = "키워드 정보 미리보기"
 
             analyze_info_container.appendChild(lorem_percentage)
             analyze_info_container.appendChild(multimedia_image_ratio)
@@ -503,7 +515,7 @@ let setAnalyzedInfo_SearchNaver = () => {
             let lorem_info_text = "로렘확률: " + current_lorem_info_value
 
             // 추출한 정보를 컨테이너 내부 텍스트로 할당
-            lorem_info_container.item(i).innerHTML = lorem_info_text
+            lorem_info_container.item(i).textContent = lorem_info_text
             
             // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
         }
@@ -525,11 +537,11 @@ let setAnalyzedInfo_SearchNaver = () => {
 
                     // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
                     if (getMultimediaType(current_single_multimedia_type) === "이미지")
-                        multimedia_image_ratio_container.item(i).innerHTML = current_multimedia_ratio_text
+                        multimedia_image_ratio_container.item(i).textContent = current_multimedia_ratio_text
                     else if (getMultimediaType(current_single_multimedia_type) === "이모티콘")
-                        multimedia_emoticon_ratio_container.item(i).innerHTML = current_multimedia_ratio_text
+                        multimedia_emoticon_ratio_container.item(i).textContent = current_multimedia_ratio_text
                     else if (getMultimediaType(current_single_multimedia_type) === "영상")
-                        multimedia_video_ratio_container.item(i).innerHTML = current_multimedia_ratio_text
+                        multimedia_video_ratio_container.item(i).textContent = current_multimedia_ratio_text
                 }
             }
         }
@@ -537,6 +549,10 @@ let setAnalyzedInfo_SearchNaver = () => {
 }
 
 let setAnalyzeInfoEvent = () => {
+    let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
+    let post_preview_button = document.getElementsByClassName("_post-preview")
+    let keyword_preview_button = document.getElementsByClassName("_keyword-preview")
+
 
 }
 
