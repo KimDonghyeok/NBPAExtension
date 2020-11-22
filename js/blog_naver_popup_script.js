@@ -23,6 +23,9 @@ window.onload = function() {
     // 피드백 제출 리스너 등록
     send_feedback = document.getElementById("send-feedback")
     addSendFeedbackListener(send_feedback)
+
+    // 서버에게서 정보 받아오기
+    getAnalyzedInfo()
 }
 
 
@@ -143,19 +146,12 @@ let clearFeedback = () =>{
     }
 }
 
+// 피드백 전송 이후 서버의 응답 처리
 let feedbackCallback = (xhr) => {
     if (xhr.status === 200 || xhr.status === 201) {
         const received_arr = JSON.parse(xhr.response)
 
-        let header;
-        let arr_received_data = [];
-
-        received_arr.forEach( (element, index) => {
-            if (index === 0)
-                header = element
-            else
-                arr_received_data.push(element)
-        })
+        let header = received_arr[0]
 
         // 서버의 응답 표시
         alert(header.message)
@@ -170,19 +166,17 @@ let feedbackCallback = (xhr) => {
     }
 }
 
+// 서버로 피드백 데이터 전송
 let submitFeedback = (feedback_type, message) => {
-    data = {}
-
     // 현재 페이지의 URL 추출
-    let current_url 
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        current_url  = tabs[0].url
+        let current_url  = tabs[0].url
 
         if (current_url == undefined){
             alert("[submitFeedback] current_url is undefined!")
             return
         }
-
+        data = {}
         data['url'] = current_url
         data['feedback_type'] = feedback_type
         data['message'] = message
@@ -204,9 +198,65 @@ let submitFeedback = (feedback_type, message) => {
         // Send JSON array
         json = JSON.stringify(data)
         xhr.send(json);
-        console.log('hihihi')
+    })   
+}
+
+// 서버로부터 분석정보 받아옴
+let getAnalyzedInfoCallback = (xhr) =>{
+    if (xhr.status === 200 || xhr.status === 201) {
+        const received_arr = JSON.parse(xhr.response)
+
+        let header = received_arr[0]
+
+        arr_received_data = []
+
+        for (i = 1; i < received_arr.length ; i++ ){
+            arr_received_data.push(element)
+        }
+
+        // 분석정보 가져오는데 성공했다면
+        if (header.success === "True") {
+            arr_received_data
+            console.log('success')
+        } else{
+            console.error(header.message)
+        }
+
+    } else {
+        console.error(xhr.responseText);
+    }
+}
+
+// 서버로 url 전송하고 관련 데이터 받아옴
+let getAnalyzedInfo = () =>{
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        let current_url  = tabs[0].url
+        if (current_url == undefined){
+            alert("[getAnalyzedInfo] current_url is undefined!")
+            return
+        }
+
+        data = {}
+        data['url'] = current_url
+
+        // 서버와 통신하기 위한 XMLHttpRequest 객체
+        let xhr = new XMLHttpRequest();
+
+        // 콜백 함수 등록
+        xhr.onload = function () {
+            getAnalyzedInfoCallback(xhr)
+        }
+
+        // 전송
+        let request_url = HOST_URL_HEAD + "user/analyzedinfo/get"
+
+        xhr.open("POST", request_url)
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+
+        // Send JSON array
+        json = JSON.stringify(data)
+        xhr.send(json);
     })
-    
 }
 
 /* ------------------------- 로직 ------------------------- */
