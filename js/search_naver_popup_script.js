@@ -32,20 +32,26 @@ window.onload = function() {
 }
 
 
-// 불리언을 checked/unchecked로 변환
-let booleanToCheck =(b) => {
+// 불리언을 checked/unchecked로 변환, undefined면 defaultValue 반환
+let booleanToCheck =(b, defaultValue) => {
+    if (b === undefined){
+        return defaultValue
+    }
     return b ? "checked" : "unchecked"
 }
 
-// checked/unchecked를 불리언으로 변환
-let checkToBoolean =(check) => {
+// checked/unchecked를 불리언으로 변환, undefined면 defaultValue 반환
+let checkToBoolean =(check, defaultValue) => {
+    if (check === undefined){
+        return defaultValue
+    }
     return check === "checked"
 }
 
 // 체크박스 스토리지 저장
 let saveCheckboxStatus = (checkbox) =>{
 
-    let checked_string = booleanToCheck(checkbox.checked)
+    let checked_string = booleanToCheck(checkbox.checked, false)
 
     if(checkbox.id === "lorem-poss-view"){
         chrome.storage.local.set({"lorem_poss_view": checked_string},function(){
@@ -72,25 +78,25 @@ let saveCheckboxStatus = (checkbox) =>{
 let syncCheckboxStatus = (checkbox) =>{
     if(checkbox.id === "lorem-poss-view"){
         chrome.storage.local.get("lorem_poss_view",function(obj){
-            bool = checkToBoolean(obj.lorem_poss_view)
+            bool = checkToBoolean(obj.lorem_poss_view, true)
             checkbox.checked = bool
         })
     } 
     else if(checkbox.id === 'image-ratio-view'){
         chrome.storage.local.get("image_ratio_view",function(obj){
-            bool = checkToBoolean(obj.image_ratio_view)
+            bool = checkToBoolean(obj.image_ratio_view, true)
             checkbox.checked = bool
         })
     }
     else if(checkbox.id === 'video-ratio-view'){
         chrome.storage.local.get("video_ratio_view",function(obj){
-            bool = checkToBoolean(obj.video_ratio_view)
+            bool = checkToBoolean(obj.video_ratio_view, true)
             checkbox.checked = bool
         })
     }
     else if(checkbox.id === 'imoticon-ratio-view'){
         chrome.storage.local.get("imoticon_ratio_view",function(obj){
-            bool = checkToBoolean(obj.imoticon_ratio_view)
+            bool = checkToBoolean(obj.imoticon_ratio_view, true)
             checkbox.checked = bool
         })
     }
