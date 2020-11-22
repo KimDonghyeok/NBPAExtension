@@ -409,7 +409,7 @@ let fold_all_imoticon = (boolean) => {
   if(getmaincontainer.length!=0){
       
     let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
-}
+    }
   if(getimgsrcnew.length!=0){
       for (let i = 0; i < getimgsrcnew.length; i++) {
           
@@ -447,35 +447,35 @@ let fold_all_imoticon = (boolean) => {
           }
       }
   }
-  else{
+  else {
       for (let i = 0; i < getimgsrcold.length; i++) {
-            let src = getimgsrcold[i].outerHTML
+          let src = getimgsrcold[i].outerHTML
 
-         // let src = getimgsrcold[i].getAttribute('src').toString();
+          // let src = getimgsrcold[i].getAttribute('src').toString();
           let x = 1;
           //블랭크 gif인 경우 넘기기
           if (src.indexOf('storep') != -1) {
               //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-              if(boolean){
-                getimgsrcold[i].style.display = "none"
-                continue
-            }
-            else{
-                //false인 경우 모두 펼치기
-                getimgsrcold[i].style.display = "block"
-                continue
-            }
+              if (boolean) {
+                  getimgsrcold[i].style.display = "none"
+                  continue
+              }
+              else {
+                  //false인 경우 모두 펼치기
+                  getimgsrcold[i].style.display = "block"
+                  continue
+              }
           }
-          else if(src.indexOf('sticker') != -1){
-            if(boolean){
-                getimgsrcold[i].style.display = "none"
-                continue
-            }
-            else{
-                //false인 경우 모두 펼치기
-                getimgsrcold[i].style.display = "block"
-                continue
-            }
+          else if (src.indexOf('sticker') != -1) {
+              if (boolean) {
+                  getimgsrcold[i].style.display = "none"
+                  continue
+              }
+              else {
+                  //false인 경우 모두 펼치기
+                  getimgsrcold[i].style.display = "block"
+                  continue
+              }
           }
           else {
               continue;
@@ -552,21 +552,22 @@ let fold_all_video = (boolean) => {
       }
   }
 
-  if(getiframe.length!=0){
-    let getVidifram = getiframe[0]
-            console.log(getiframe[0])
-    if(getVidifram.outerHTML.indexOf("youtube")!=-1){
-        if(boolean){
-            getVidifram[i].style.display = 'none'
-            continue
-        }
-        else{
-            getVidifram[i].style.display = 'block'
-            continue
+    if (getiframe.length != 0) {
+        let getVidifram = getiframe[0]
+        console.log(getiframe[0])
+        if (getVidifram.outerHTML.indexOf("youtube") != -1) {
+            if (boolean) {
+                getVidifram[i].style.display = 'none'
+                
+            }
+            else {
+                getVidifram[i].style.display = 'block'
+                
+            }
         }
     }
-}
-}
+}   
+
 /*--------------------------------------------------------------------------------------------------------*/
 
 
