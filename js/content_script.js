@@ -1,11 +1,8 @@
 console.log("execute content script")
 
 /* ------------------------------ 상수정의 ------------------------------ */
-const SEARCH_NAVER_REGEXP = new RegExp(/^https:\/\/search\.naver\.com/)
 const BLOG_NAVER_REGEXP = new RegExp(/^https:\/\/blog\.naver\.com/)
-const SEARCH_XEARCH_REGEXP = new RegExp(/\where\=nexearch/)
-const SEARCH_VIEW_REGEXP = new RegExp(/\where\=view/)
-const SEARCH_BLOG_REGEXP = new RegExp(/\where\=blog/)
+const BLOG_NAVER_ME_REGEXP = new RegExp(/blog\.me/)
 
 const BLOG_NAVER_CODE = "_blog_naver"
 const SEARCH_XEARCH_CODE = "_search_xearch"
@@ -15,42 +12,43 @@ const SEARCH_BLOG_CODE = "_search_view_blog"
 /* ------------------------------ 변수정의 ------------------------------ */
 let search_result_list
 
-let arr_xearch_url = []
-let arr_view_url = []
-let arr_blog_url = []
+const arr_xearch_url = []
+const arr_view_url = []
+const arr_blog_url = []
 
-let arr_url_obj = []
+const arr_url_obj = []
 let json_url_data
-
-let arr_received_data = []
+let arr_received_data
 
 // 분석정보 변수
-let blog_info = []
-let analyzed_info = []
-let multimedia_ratios = []
-let tags = []
-let hyperlinks = []
-let keywords = []
+const blog_info = []
+const analyzed_info = []
+const multimedia_ratios = []
+const tags = []
+const hyperlinks = []
+const keywords = []
 
 /* ------------------------------ 이벤트처리기 ------------------------------ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.message === "TABCODE") {
 
         if (message.code === SEARCH_XEARCH_CODE || message.code === SEARCH_VIEW_CODE || message.code === SEARCH_BLOG_CODE) {
-            // getBlogElementsList(message.code)
-            // createAnalyzeInfoContainer(message.code, search_result_list)
-            // convertArrToJsonArr(message.code)
-            // showTable(message.code)
+            getBlogElementsList(message.code)
+            createAnalyzeInfoContainer(message.code, search_result_list)
+            convertArrToJsonArr(message.code)
+            addPreviewButtonListener()
+            showTable(message.code)
 
-            let test_arr = []
-            test_arr.push('https://blog.naver.com/lanoe600/50124020305')
-            test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
-            test_arr.push('https://blog.naver.com/vostino/70142180356')
-            test_arr.push('https://blog.naver.com/babyyej5/70145024358')
-            test_arr.push('https://blog.naver.com/gus2253/30155510721')
-
-            convertUrlToUrlObj(test_arr)
-            json_url_data = JSON.stringify(arr_url_obj)
+            // let test_arr = []
+            // test_arr.push('https://blog.naver.com/lanoe600/50124020305')
+            // test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
+            // test_arr.push('https://blog.naver.com/vostino/70142180356')
+            // test_arr.push('https://blog.naver.com/babyyej5/70145024358')
+            // test_arr.push('https://blog.naver.com/gus2253/30155510721')
+            //
+            // convertUrlToUrlObj(test_arr)
+            //
+            // json_url_data = JSON.stringify(arr_url_obj)
 
             chrome.runtime.sendMessage({
                 message: "URLDATA",
@@ -58,33 +56,60 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         } else if (message.code === BLOG_NAVER_CODE) {
             console.log(message.code)
-           // fold_all_image(true)
+
+            let current_url = message.url
+            fold_all_imoticon(true)
             multimedia_folding()
+            // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
+            //서버로 단일 URL 전송
+            // sendSingleBlogURL(current_url)
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
         deserializeData(arr_received_data)
+        setAnalyzedInfo_SearchNaver()
+        setAnalyzeInfoEvent()
+    }
+    else if (message.message === "ALLHIDE") {
+        let checkbox_id = message.checkbox_id
+        let checkbox_status = message.status
+
+        console.log("blog popup message is received!")
+
+        hideAllMultimediaByType(checkbox_id, checkbox_status)
     }
 })
-/* ------------------------------ Folding ------------------------------ */
-/*------------------------log_no 추출 함수------------------------------*/
+/* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
+let addPreviewButtonListener = () => {
+    arr_url_obj.forEach((element, index) => {
+        let post_preview_button = document.getElementsByClassName("_post-preview")
+        let current_post_preview_button = post_preview_button.item(index)
+        current_post_preview_button.addEventListener("click", () => {
+            showPostPreview(element["url"])
+        })
+    });
+}
+
 let getLogNo = (document) => {
+    // log_no 추출 함수
+
     let blogsrc = document.getAttribute('src');
     let blogstr = blogsrc.toString();
     let splitSrc = blogstr.split('&');
 
-    for(let i =0; i<splitSrc.length;i++){
+    for (let i = 0; i < splitSrc.length; i++) {
         console.log(splitSrc[i]);
-        if(splitSrc[i].startsWith('logNo')){
-            console.log("이걸 잡아야함: ",splitSrc[i]);
-            test = splitSrc[i].split("=");
-            console.log(test[1]);
-            return test[1];
+        if (splitSrc[i].startsWith('logNo')) {
+            console.log("이걸 잡아야함: ", splitSrc[i]);
+            addPreviewButtonListener = splitSrc[i].split("=");
+            console.log(addPreviewButtonListener[1]);
+            return addPreviewButtonListener[1];
         }
 
 
     }
 }
+
 
 /* ------------------------------ 멀티미디어 접기 ------------------------------ */
 let multimedia_folding = () => {
@@ -406,83 +431,81 @@ let fold_all_imoticon = (boolean) => {
   
   let getmaincontainer = getbody.getElementsByClassName('se-main-container');
   let getimgsrcold =  getbody.getElementsByTagName('img');
-  if(getmaincontainer.length!=0){
-      
-    let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+    if (getmaincontainer.length != 0) {
+        let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
+        if (getimgsrcnew.length != 0) {
+            for (let i = 0; i < getimgsrcnew.length; i++) {
+
+                let src = getimgsrcnew[i].outerHTML
+
+                //let src = getimgsrcnew[i].getAttribute('src').toString();
+                let x = 1;
+                //블랭크 gif인 경우 넘기기
+                if (src.indexOf('storep') != -1) {
+                    //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
+                    if (boolean) {
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else {
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    }
+                }
+                else if (src.indexOf('sticker') != -1) {
+                    if (boolean) {
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else {
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    }
+                }
+                else {
+                    continue;
+                }
+            }
+        }
     }
-  if(getimgsrcnew.length!=0){
-      for (let i = 0; i < getimgsrcnew.length; i++) {
-          
-            let src = getimgsrcnew[i].outerHTML
+    else {
+        for (let i = 0; i < getimgsrcold.length; i++) {
+            let src = getimgsrcold[i].outerHTML
 
-          //let src = getimgsrcnew[i].getAttribute('src').toString();
-          let x = 1;
-          //블랭크 gif인 경우 넘기기
-         if (src.indexOf('storep') != -1) {
-              //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-              btnInput(getimgsrcnew[i]);
-              if(boolean){
-                getimgsrcnew[i].style.display = "none"
-                continue
+            // let src = getimgsrcold[i].getAttribute('src').toString();
+            let x = 1;
+            //블랭크 gif인 경우 넘기기
+            if (src.indexOf('storep') != -1) {
+                //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
+                if (boolean) {
+                    getimgsrcold[i].style.display = "none"
+                    continue
+                }
+                else {
+                    //false인 경우 모두 펼치기
+                    getimgsrcold[i].style.display = "block"
+                    continue
+                }
             }
-            else{
-                //false인 경우 모두 펼치기
-                getimgsrcnew[i].style.display = "block"
-                continue
+            else if (src.indexOf('sticker') != -1) {
+                if (boolean) {
+                    getimgsrcold[i].style.display = "none"
+                    continue
+                }
+                else {
+                    //false인 경우 모두 펼치기
+                    getimgsrcold[i].style.display = "block"
+                    continue
+                }
             }
-          }
-          else if(src.indexOf('sticker') != -1){
-            if(boolean){
-                getimgsrcnew[i].style.display = "none"
-                continue
+            else {
+                continue;
             }
-            else{
-                //false인 경우 모두 펼치기
-                getimgsrcnew[i].style.display = "block"
-                continue
-            }
-          }
-          else {
-              continue;
-          }
-      }
-  }
-  else {
-      for (let i = 0; i < getimgsrcold.length; i++) {
-          let src = getimgsrcold[i].outerHTML
 
-          // let src = getimgsrcold[i].getAttribute('src').toString();
-          let x = 1;
-          //블랭크 gif인 경우 넘기기
-          if (src.indexOf('storep') != -1) {
-              //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-              if (boolean) {
-                  getimgsrcold[i].style.display = "none"
-                  continue
-              }
-              else {
-                  //false인 경우 모두 펼치기
-                  getimgsrcold[i].style.display = "block"
-                  continue
-              }
-          }
-          else if (src.indexOf('sticker') != -1) {
-              if (boolean) {
-                  getimgsrcold[i].style.display = "none"
-                  continue
-              }
-              else {
-                  //false인 경우 모두 펼치기
-                  getimgsrcold[i].style.display = "block"
-                  continue
-              }
-          }
-          else {
-              continue;
-          }
-
-      }
-  }
+        }
+    }
 }
 /*--------------------------------------------------------------------------------------------------------*/
 
@@ -568,26 +591,28 @@ let fold_all_video = (boolean) => {
     }
 }   
 
-/*--------------------------------------------------------------------------------------------------------*/
-
-
-/* ------------------------------ PreView ------------------------------ */
+/* ------------------------------ 미리보기 기능 ------------------------------ */
 $(function () {
     window.oncontextmenu = function () {
         return false;
     };
 
     $('a.api_txt_lines.total_tit').mousedown(function (e) {
-        var mouse = e.button
+        let mouse = e.button
         if (mouse == 2) {
             e.preventDefault();
-            var page = $(this).attr("href")
-            var x = page.split('//');
-            var org_url = x[1];
-            console.log(x[1]);
-            var new_url = "https://m." + org_url;
-            console.log(new_url);
-            var $dialog = $('<div></div>')
+            let org_url = $(this).attr("href")
+            let splited_url = org_url.split('//');
+            let pure_url = splited_url[1];
+
+            let new_url
+            if (isBlogSectionElement(org_url)) {
+                new_url = "https://m." + pure_url;
+            } else {
+                new_url = org_url
+            }
+
+            let $dialog = $('<div></div>')
                 .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
                 .dialog({
                     autoOpen: false,
@@ -600,7 +625,28 @@ $(function () {
         }
     });
 });
-/* ------------------------------ 함수정의 ------------------------------ */
+/* ------------------------------------------------------------------------------------------ 함수정의 ------------------------------------------------------------------------------------------ */
+let showTable = (code) => {
+    // url 배열 확인용 함수
+
+    switch (code) {
+        case SEARCH_XEARCH_CODE:
+            console.table(arr_xearch_url)
+            break
+        case SEARCH_VIEW_CODE:
+            console.table(arr_view_url)
+            break
+        case SEARCH_BLOG_CODE:
+            console.table(arr_blog_url)
+            break
+        default:
+            break
+    }
+    console.table(arr_url_obj)
+    console.log(json_url_data)
+    console.log(JSON.parse(json_url_data))
+}
+
 let getBlogElementsList = (code) => {
     switch (code) {
         case SEARCH_XEARCH_CODE:
@@ -618,15 +664,41 @@ let getBlogElementsList = (code) => {
 }
 
 // list 의 한 요소를 받아서 내부의 a 태그의 href 값을 통해 블로그 URL 인지 판별
-let isBlogSectionElement = (element) => {
-    let currentElementUrl = element.querySelector('.total_tit').href
+let isBlogSectionElement = (url) => {
 
-    return BLOG_NAVER_REGEXP.test(currentElementUrl)
+    if (BLOG_NAVER_REGEXP.test(url) || BLOG_NAVER_ME_REGEXP.test(url))
+        return true
+    else
+        return false
 }
 
-let getBlogUrlList = (code, element) => {
+let convertBlogMeUrl = (url) => {
+    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+
+    let url_obj = new URL(url)
+
+    let url_host = url_obj.host
+    let url_path = url_obj.pathname
+
+    let url_host_frag = url_host.split(".")
+    let url_path_frag = url_path.split("/")
+
+    let blog_me_url_info = [url_host_frag[0], url_path_frag[1]]
+
+    let normalize_url = "https://blog.naver.com/" + blog_me_url_info[0] + "/" + blog_me_url_info[1]
+
+    return normalize_url
+}
+
+let getBlogUrlList = (code, url) => {
     // 현재 페이지 코드와 한개의 html 요소를 인자로 받아 해당 요소의 url 을 코드에 따라 해당 배열에 push
-    let currentElementUrl = element.querySelector('.total_tit').href
+    // TODO https://pointnow.blog.me/222149996848 -> https://blog.naver.com/pointnow/222149996848 변환 작업 필요
+
+    let currentElementUrl = url
+
+    if (BLOG_NAVER_ME_REGEXP.test(currentElementUrl)) {
+        currentElementUrl = convertBlogMeUrl(url)
+    }
 
     switch (code) {
         case SEARCH_XEARCH_CODE:
@@ -645,39 +717,55 @@ let getBlogUrlList = (code, element) => {
 
 let createAnalyzeInfoContainer = (code, list) => {
     let list_length = list.length
-
     let current_node
+    let current_node_url
+
     for (let i = 0; i < list_length; i++) {
+
         current_node = list.item(i)
+        current_node_url = current_node.querySelector('.total_tit').href
 
-        if (isBlogSectionElement(current_node)) {
+        if (isBlogSectionElement(current_node_url)) {
+            getBlogUrlList(code, current_node_url)
 
-            getBlogUrlList(code, current_node)
-
+            // 각 분석정보 컨테이너가 들어가는 div
             let analyze_info_container = document.createElement("div")
 
-            // let blog_info = document.createElement("div")
-            let analyzed_info = document.createElement("div")
-            let multimedia_ratios = document.createElement("div")
-            // let tags = document.createElement("div")
-            // let hyperlinks = document.createElement("div")
-            // let keywords = document.createElement("div")
+            // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [키워드 미리보기 버튼 (키워드, 해시태그, 하이퍼링크)]
+            let lorem_percentage = document.createElement("button")
+            let multimedia_image_ratio = document.createElement("div")
+            let multimedia_emoticon_ratio = document.createElement("div")
+            let multimedia_video_ratio = document.createElement("div")
+            let button_post_preview = document.createElement("button")
+            let button_keyword_preview = document.createElement("button")
 
+            // 각 요소에 클래스 속성 추가
             analyze_info_container.classList.add('_analyze-info-container')
+            lorem_percentage.classList.add('_button')
+            lorem_percentage.classList.add('_lorem-percentage-container')
+            multimedia_image_ratio.classList.add('_multimedia-image-ratio-container')
+            multimedia_emoticon_ratio.classList.add('_multimedia-emoticon-ratio-container')
+            multimedia_video_ratio.classList.add('_multimedia-video-ratio-container')
+            button_post_preview.classList.add('_button')
+            button_post_preview.classList.add('_post-preview')
+            button_keyword_preview.classList.add('_button')
+            button_keyword_preview.classList.add('_keyword-preview')
 
-            // blog_info.classList.add('_blog-info')
-            analyzed_info.classList.add('_analyzed-info')
-            multimedia_ratios.classList.add('_multimedia-ratios')
-            // tags.classList.add('_tags')
-            // hyperlinks.classList.add('_hyperlinks')
-            // keywords.classList.add('_keywords')
+            // 버튼에 type 속성 추가
+            lorem_percentage.setAttribute("type", "button")
+            button_post_preview.setAttribute("type", "button")
+            button_keyword_preview.setAttribute("type", "button")
 
-            // analyze_info_container.appendChild(blog_info)
-            analyze_info_container.appendChild(analyzed_info)
-            analyze_info_container.appendChild(multimedia_ratios)
-            // analyze_info_container.appendChild(tags)
-            // analyze_info_container.appendChild(hyperlinks)
-            // analyze_info_container.appendChild(keywords)
+            // 버튼 내부에 텍스트 추가
+            button_post_preview.textContent = "게시글 미리보기"
+            button_keyword_preview.textContent = "키워드 정보 미리보기"
+
+            analyze_info_container.appendChild(lorem_percentage)
+            analyze_info_container.appendChild(multimedia_image_ratio)
+            analyze_info_container.appendChild(multimedia_emoticon_ratio)
+            analyze_info_container.appendChild(multimedia_video_ratio)
+            analyze_info_container.appendChild(button_post_preview)
+            analyze_info_container.appendChild(button_keyword_preview)
 
             current_node.prepend(analyze_info_container)
         }
@@ -716,88 +804,46 @@ let convertArrToJsonArr = (code) => {
     }
 }
 
-let showTable = (code) => {
-    // url 배열 확인용 함수
-
-    switch (code) {
-        case SEARCH_XEARCH_CODE:
-            console.table(arr_xearch_url)
-            break
-        case SEARCH_VIEW_CODE:
-            console.table(arr_view_url)
-            break
-        case SEARCH_BLOG_CODE:
-            console.table(arr_blog_url)
-            break
-        default:
-            break
-    }
-    console.table(arr_url_obj)
-    console.log(json_url_data)
-    console.log(JSON.parse(json_url_data))
-}
-
 let deserializeData = (arr) => {
     // 백그라운드 스크립트로부터 받은 분석정보를 역직렬화하여 각 변수에 저장
 
     arr.forEach((element, index) => {
-        // blog_info = JSON.parse(element.blog_info)[0]
         let single_blog_info = JSON.parse(element.blog_info)[0]
         blog_info.push(single_blog_info)
-        console.log({
-            single_blog_info
-        })
+
+        console.log({single_blog_info})
 
         if (element.analyzed_info) {
-            // analyzed_info = JSON.parse(element.analyzed_info)[0]
             let single_analyzed_info = JSON.parse(element.analyzed_info)[0]
             analyzed_info.push(single_analyzed_info)
-            console.log({
-                single_analyzed_info
-            })
+
+            console.log({single_analyzed_info})
         }
 
         if (element.multimedia_ratios) {
-            // multimedia_ratios = JSON.parse(element.multimedia_ratios)
             let single_multimedia_ratios = JSON.parse(element.multimedia_ratios)
             multimedia_ratios.push(single_multimedia_ratios)
-            console.log({
-                single_multimedia_ratios
-            })
+
+            console.log({single_multimedia_ratios})
         }
 
-        // tags = JSON.parse(element.tags)
         let single_tags = JSON.parse(element.tags)
         tags.push(single_tags)
-        // hyperlinks = JSON.parse(element.hyperlinks)
-        console.log({
-            single_tags
-        })
+        console.log({single_tags})
 
         let single_hyperlinks = JSON.parse(element.hyperlinks)
         hyperlinks.push(single_hyperlinks)
-        console.log({
-            single_hyperlinks
-        })
+        console.log({single_hyperlinks})
 
         if (element.keywords) {
-            // keywords = JSON.parse(element.keywords)
             let single_keywords = JSON.parse(element.keywords)
             keywords.push(single_keywords)
 
-            console.log({
-                single_keywords
-            })
+            console.log({single_keywords})
         }
-    })
 
-    // console.log("")
-    // console.log(blog_info)
-    // console.log(analyzed_info)
-    // console.log(multimedia_ratios)
-    // console.log(tags)
-    // console.log(hyperlinks)
-    // console.log(keywords)
+        console.log("")
+    })
 }
 
 let getMultimediaType = (id) => {
@@ -811,7 +857,7 @@ let getMultimediaType = (id) => {
             type = "이모티콘"
             return type
         case 3:
-            type = "비디오"
+            type = "영상"
             return type
         case 4:
             type = "하이퍼링크"
@@ -833,21 +879,202 @@ let getMultimediaType = (id) => {
     }
 }
 
-let setAnalyzedInfo = () => {
-    let analyzed_info_container = document.getElementsByClassName('_analyzed-info')
-    let multimedia_ratios_container = document.getElementsByClassName('_multimedia-ratios')
+let setAnalyzedInfo_SearchNaver = () => {
+    let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
+    let multimedia_image_ratio_container = document.getElementsByClassName('_multimedia-image-ratio-container')
+    let multimedia_emoticon_ratio_container = document.getElementsByClassName('_multimedia-emoticon-ratio-container')
+    let multimedia_video_ratio_container = document.getElementsByClassName('_multimedia-video-ratio-container')
 
     let length = arr_url_obj.length
 
     for (let i = 0; i < length; i++) {
-        let analyzed_info_value = analyzed_info[i]['lorem_percentage'].toFixed(3)
-        let analyzed_info_text = "로렘확률: " + toString(analyzed_info_value)
-        analyzed_info_container.item(i).innerHTML = analyzed_info_text
+        /* ---------- 분석정보 배열에서 로렘 확률 정보를 추출하여 출력 ----------*/
+        if (analyzed_info[i].constructor === Object && Object.keys(analyzed_info[i]).length !== 0) {
+            // 현재 객체가 비어있지 않을때 정보 출력 작업
+            let current_analyzed_info = analyzed_info[i]['fields']
+            let current_lorem_info_value = current_analyzed_info['lorem_percentage'].toFixed(3)
+            let lorem_info_text = "로렘확률: " + current_lorem_info_value
 
-        for (let j = 0; j < multimedia_ratios[i].length; j++) {
-            let type_id = multimedia_ratios[i]['ratio_type_id']
-            let multimedia_ratios_value = multimedia_ratios[i]['ratio']
-            let multimedia_ratios_text = getMultimediaType(type_id) + "비율: " + toString(multimedia_ratios_value)
+            // 추출한 정보를 컨테이너 내부 텍스트로 할당
+            lorem_info_container.item(i).textContent = lorem_info_text
+
+            // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
         }
+
+        /* ---------- 멀티미디어 배열에서 멀티미디어 정보(이미지, 이모티콘, 영상 비율)를 추출하여 출력 ----------*/
+        let current_multimedia_ratios = multimedia_ratios[i]
+
+        if (Array.isArray(current_multimedia_ratios) && !current_multimedia_ratios.length) {
+            // 현재 블로그에 해당하는 멀티미디어 배열이 비어있지않을때 정보 출력
+
+            for (let j = 0; j < current_multimedia_ratios.length; j++) {
+
+                let current_single_multimedia_ratio = current_multimedia_ratios[j]['fields']
+                let current_single_multimedia_type = current_single_multimedia_ratio['ratio_type']
+
+                if (current_single_multimedia_type <= 3) {
+                    let current_single_multimedia_ratio_value = current_single_multimedia_ratio['ratio'].toFixed(3)
+                    let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + "비율: " + current_single_multimedia_ratio_value
+
+                    // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
+                    if (getMultimediaType(current_single_multimedia_type) === "이미지")
+                        multimedia_image_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                    else if (getMultimediaType(current_single_multimedia_type) === "이모티콘")
+                        multimedia_emoticon_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                    else if (getMultimediaType(current_single_multimedia_type) === "영상")
+                        multimedia_video_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                }
+            }
+        }
+    }
+}
+
+let normalizePostViewUrl = (url) => {
+    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+
+    let url_obj = new URL(url)
+
+    console.log(url_obj)
+
+    let url_search_param_obj = url_obj.searchParams
+
+    console.log(url_search_param_obj)
+
+    let url_blog_id = url_search_param_obj.get('blogId')
+    let url_log_no = url_search_param_obj.get('logNo')
+
+    console.log(url_blog_id)
+    console.log(url_log_no)
+
+    let normalize_url = "https://blog.naver.com/" + url_blog_id + "?Redirect=Log&logNo=" + url_log_no
+
+    return  normalize_url
+}
+
+let showSampleText = (index) => {
+    let sample1,sample2,sample3=""
+
+    sample1=analyzed_info[index]['fields']['sample_1']
+    sample2=analyzed_info[index]['fields']['sample_2']
+    sample3=analyzed_info[index]['fields']['sample_3']
+
+
+    let $dialog = $('<div></div>')
+    .html('<p>' + sample1 +"<br>" +sample2 +"<br>"+ sample3 +"<br>"+ '</p>')
+    .dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "KeyWord PreViewer"
+    });
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
+    // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
+    console.log("showSampleText")
+    
+}
+
+let showPostPreview = (url) => {
+    // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
+    let target_blog_url
+    if (url.indexOf("PostView.nhn") != -1){
+        target_blog_url = normalizePostViewUrl(url)
+    } else{
+        target_blog_url = url
+    }
+    let splited_url = target_blog_url.split('//');
+    let pure_url = splited_url[1];
+    let new_url
+    if (isBlogSectionElement(target_blog_url)) {
+        new_url = "https://m." + pure_url;
+    } else {
+        new_url = target_blog_url
+    }
+    let $dialog = $('<div></div>')
+    .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
+    .dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "NBPA PreViewer"
+    });
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
+}
+
+let showPostKeyword = (index) => {
+    // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
+    let all_Key=""
+    let temp_key=""
+    let hash=""
+    for(i=0;i<keywords[index].length;i++)
+    {
+        Key=keywords[index][i]['fields']['word']
+        if(tags[index][i]===undefined)
+        {
+            hash=""
+        }
+        else
+        {
+            hash=tags[index][i]
+        }
+        temp_key= (i+1) + " : " + Key + "<t>" +"<t>" +"#" +hash
+        all_Key=  all_Key+ "<br>" +temp_key
+    }
+    console.log(all_Key)
+
+    let $dialog = $('<div></div>')
+    .html('<p>' + all_Key+ '</p>')
+    .dialog({
+        z_index : 100000,
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 500,
+        title: "KeyWord PreViewer"
+    });
+$dialog.dialog('open');
+
+
+    console.log("showPostKeyword")
+}
+
+let setAnalyzeInfoEvent = () => {
+    // 분석 정보 컨테이너의 로렘확률 컨테이너, 게시글 미리보기 버튼, 게시글 키워드 보기 버튼에 대해 이벤트를 추가
+
+    let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
+    let keyword_preview_button = document.getElementsByClassName("_keyword-preview")
+
+    let length = arr_url_obj.length
+    for (let i = 0; i < length; i++) {
+        let current_lorem_info_container = lorem_info_container.item(i)
+        
+        let current_keyword_preview_button = keyword_preview_button.item(i)
+
+        current_lorem_info_container.addEventListener("click", () => {
+            showSampleText(i)
+        })
+        
+        current_keyword_preview_button.addEventListener("click", () => {
+            showPostKeyword(i)
+        })
+    }
+}
+
+let hideAllMultimediaByType = (checkbox_id, checkbox_status) => {
+    switch (checkbox_id){
+    case "all-image-close":
+        fold_all_image(checkbox_status)
+        break
+    case "all-video-close":
+        fold_all_imoticon(checkbox_status)
+        break
+    case"all-imoticon-close":
+        fold_all_video(checkbox_status)
+        break
     }
 }
