@@ -55,7 +55,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         } else if (message.code === BLOG_NAVER_CODE) {
             console.log(message.code)
+
+            let current_url = message.url
+
             multimedia_folding()
+            // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
+            //서버로 단일 URL 전송
+            // sendSingleBlogURL(current_url)
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
@@ -745,6 +751,28 @@ let setAnalyzedInfo_SearchNaver = () => {
             }
         }
     }
+}
+
+let normalizePostViewUrl = (url) => {
+    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+
+    let url_obj = new URL(url)
+
+    console.log(url_obj)
+
+    let url_search_param_obj = url_obj.searchParams
+
+    console.log(url_search_param_obj)
+
+    let url_blog_id = url_search_param_obj.get('blogId')
+    let url_log_no = url_search_param_obj.get('logNo')
+
+    console.log(url_blog_id)
+    console.log(url_log_no)
+
+    let normalize_url = "https://blog.naver.com/" + url_blog_id + "?Redirect=Log&logNo=" + url_log_no
+
+    return  normalize_url
 }
 
 let showSampleText = (index) => {
