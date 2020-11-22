@@ -1,5 +1,9 @@
-const HOST_IP = "127.0.0.1"
-const HOST_PORT = "8080"
+const HOST_IP = "nbpa.ddns.net"
+const HOST_PORT = "33067"
+
+// const HOST_IP = "127.0.0.1"
+// const HOST_PORT = "8080"
+
 const HOST_URL_HEAD = "http://" + HOST_IP + ":" + HOST_PORT + "/request/"
 
 window.onload = function() {
@@ -23,6 +27,9 @@ window.onload = function() {
     // 피드백 제출 리스너 등록
     send_feedback = document.getElementById("send-feedback")
     addSendFeedbackListener(send_feedback)
+
+    // 서버에게서 정보 받아오기
+    getAnalyzedInfo()
 }
 
 
@@ -143,19 +150,12 @@ let clearFeedback = () =>{
     }
 }
 
+// 피드백 전송 이후 서버의 응답 처리
 let feedbackCallback = (xhr) => {
     if (xhr.status === 200 || xhr.status === 201) {
         const received_arr = JSON.parse(xhr.response)
 
-        let header;
-        let arr_received_data = [];
-
-        received_arr.forEach( (element, index) => {
-            if (index === 0)
-                header = element
-            else
-                arr_received_data.push(element)
-        })
+        let header = received_arr[0]
 
         // 서버의 응답 표시
         alert(header.message)
@@ -170,19 +170,17 @@ let feedbackCallback = (xhr) => {
     }
 }
 
+// 서버로 피드백 데이터 전송
 let submitFeedback = (feedback_type, message) => {
-    data = {}
-
     // 현재 페이지의 URL 추출
-    let current_url 
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        current_url  = tabs[0].url
+        let current_url  = tabs[0].url
 
         if (current_url == undefined){
             alert("[submitFeedback] current_url is undefined!")
             return
         }
-
+        data = {}
         data['url'] = current_url
         data['feedback_type'] = feedback_type
         data['message'] = message
@@ -204,9 +202,106 @@ let submitFeedback = (feedback_type, message) => {
         // Send JSON array
         json = JSON.stringify(data)
         xhr.send(json);
-        console.log('hihihi')
+    })   
+}
+
+let getDivIdByRatioType = (ratio_type) => {
+    switch(ratio_type){
+        case 1:
+            return "image_ratio"
+        case 2:
+            return "imoticon_ratio"
+        case 3:
+            return "video_ratio"
+    }
+}
+
+let getRatioNameByRatioType = (ratio_type) => {
+    switch(ratio_type){
+        case 1:
+            return "이미지 비율"
+        case 2:
+            return "이모티콘 비율"
+        case 3:
+            return "비디오 비율"
+    }
+}
+
+// 서버로부터 분석정보 받아옴
+let getAnalyzedInfoCallback = (xhr) =>{
+    if (xhr.status === 200 || xhr.status === 201) {
+        const received_arr = JSON.parse(xhr.response)
+
+        let header = received_arr[0]
+
+        // 분석정보 가져오는데 성공했다면
+        if (header.success === "True") {
+            let received_data = received_arr[1]
+
+            // 각 정보를 알맞게 추출한다.
+            if ("analyzed_info" in received_data){
+                let analyzed_info = JSON.parse(received_data["analyzed_info"])[0]["fields"]
+                let lorem_percentage_string = analyzed_info["lorem_percentage"].toFixed(3)
+                // 로렘 확률 표시
+                let lorem_percentage_div = document.getElementById("lorem_percentage")
+                lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
+            }
+
+            if ("multimedia_ratios" in received_data){
+                let multimedia_ratios = JSON.parse(received_data["multimedia_ratios"])
+                multimedia_ratios.forEach(element => {
+                    let multimedia_ratio = element["fields"]
+                    let ratio_type = multimedia_ratio["ratio_type"]
+                    let ratio_string = multimedia_ratio["ratio"].toFixed(3)
+
+                    let div_id = getDivIdByRatioType(ratio_type)
+                    let ratio_div = document.getElementById(div_id)
+                    let ratio_type_name = getRatioNameByRatioType(ratio_type)
+                    ratio_div.innerHTML = ratio_type_name + " : " + ratio_string
+                });
+            }
+            
+            console.log('success')
+        } else{
+            console.error(header.message)
+        }
+
+    } else {
+        console.error(xhr.responseText);
+    }
+}
+
+// 서버로 url 전송하고 관련 데이터 받아옴
+let getAnalyzedInfo = () =>{
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        let current_url  = tabs[0].url
+        if (current_url == undefined){
+            alert("[getAnalyzedInfo] current_url is undefined!")
+            return
+        }
+        data = {}
+        
+        data['url'] = current_url
+
+        // 서버와 통신하기 위한 XMLHttpRequest 객체
+        let xhr = new XMLHttpRequest();
+
+        // 콜백 함수 등록
+        xhr.onload = function () {
+            getAnalyzedInfoCallback(xhr)
+        }
+
+        // 전송
+        let request_url = HOST_URL_HEAD + "user/analyzedinfo/get"
+
+        xhr.open("POST", request_url)
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+
+        // Send JSON array
+        all_data = [data, ]
+        json = JSON.stringify(all_data)
+        xhr.send(json);
     })
-    
 }
 
 /* ------------------------- 로직 ------------------------- */
