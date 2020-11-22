@@ -58,6 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         } else if (message.code === BLOG_NAVER_CODE) {
             console.log(message.code)
+            fold_all_video()
             multimedia_folding()
         }
     } else if (message.message === "ANALYZEINFO") {
@@ -85,7 +86,7 @@ let getLogNo = (document) => {
     }
 }
 
-/* ------------------------------ 함수정의 ------------------------------ */
+/* ------------------------------ 멀티미디어 접기 ------------------------------ */
 let multimedia_folding = () => {
     //iframe인 블로그가 존재하여 체크가 필요하다.
     let check_iframe = document.getElementById('mainFrame')
@@ -101,10 +102,8 @@ let multimedia_folding = () => {
     //2.getLogNo를 통해 logno 얻기
     //3.getelementbyid(logno)통해 하위 요소 잡기.
     //4.getelementsbytagnname으로 img 객체 잡아내기
-    //let log_no = 222139552203;//백그라운드js로 부터 블로그의 log를 가져온다.
     //log_no를 분리해 주는 작업
     let log_No= getLogNo(check_iframe);
-    //let log_No=222139552203;
     let identifier = 'post-view' + log_No;
     let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     let getimgsrc = getbody.getElementsByTagName('img');
@@ -129,7 +128,16 @@ let multimedia_folding = () => {
             btnInput(getimgsrc[i]);
             continue;
         }
+        else if(src.indexOf('sticker') != -1){
+            btnInput(getimgsrc[i]);
+            continue;
+        }
         else if (src.indexOf('postfiles') != -1) {
+            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+            btnInput(getimgsrc[i]);
+            continue;
+        }
+        else if (src.indexOf('blogfiles') != -1) {
             //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
             btnInput(getimgsrc[i]);
             continue;
@@ -140,7 +148,6 @@ let multimedia_folding = () => {
 
 
     }
-    // let getVidIframe = getbody.getElementsByTagName('iframe');
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
     let getViddiv = getbody.getElementsByClassName('se-main-container');
@@ -216,19 +223,191 @@ let OnOff = (element) => {
     }
 }
 /*--------------------------------------------------------------------------------------------------------*/
-/*--------------------------동영상 위치를 잡아내는 함수----------------------------*/
-let getMediaplace = (element) => {
-    //getimgsrc[i]를 통해 넘겨 받은 객체를 분석한다.
-    //유투브 뿐만아니라 네이버, 타 플랫폼의 플레이어를 검출해낼 방법은?어차피 영상 따로 잡아야함..
-    //
-    let getvidSrc = element.getElementsByTagName('div');
-    for (let i = 0; i < getvidSrc.length; i++) {
-        let test = getvidSrc[i].getAttribute('id').toString().indexOf('player');
-        if (test == -1) {
-            btnInput(element);
+
+/*--------------------------이미지 싹다 잡는 코드----------------------------------------------------------*/
+let fold_all_image = (boolean) => {
+    //모든 이미지 접기 체크박스 체크되었는가?
+  //iframe인 블로그가 존재하여 체크가 필요하다.
+  let check_iframe = document.getElementById('mainFrame')
+
+  if (check_iframe != null) {
+      document = document.getElementById('mainFrame').contentWindow.document;
+  }
+
+
+  //1.check_iframe을 실행.
+  //2.getLogNo를 통해 logno 얻기
+  //3.getelementbyid(logno)통해 하위 요소 잡기.
+  //4.getelementsbytagnname으로 img 객체 잡아내기
+  //log_no를 분리해 주는 작업
+  let log_No= getLogNo(check_iframe);
+  let identifier = 'post-view' + log_No;
+  let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+  let getimgsrc = getbody.getElementsByTagName('img');
+
+  for (let i = 0; i < getimgsrc.length; i++) {
+      let src = getimgsrc[i].getAttribute('src').toString();
+      let x = 1;
+      //블랭크 gif인 경우 넘기기
+      if (src.indexOf('postfiles') != -1) {
+          //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+          //btnInput(getimgsrc[i]);
+          if(boolean){
+              //bool=true인 경우만
+              getimgsrc[i].style.display = "none"; 
+              continue
+          }
+          else{
+              getimgsrc[i].style.display = "block"; 
+              continue
+          }          
+          continue;
+      }
+      else if (src.indexOf('blogfiles') != -1) {
+        if(boolean){
+            //bool=true인 경우만
+            getimgsrc[i].style.display = "none";
+            continue
+        }
+        else{
+            getimgsrc[i].style.display = "block";
+            continue
         }
     }
+      else {
+          continue;
+      }
+  }
+  
 }
+/*--------------------------------------------------------------------------------------------------------*/
+
+/*--------------------------이모티콘 싹다 잡는 코드--------------------------------------------------------*/
+let fold_all_imoticon = (boolean) => {
+    //모든 이미지 접기 체크박스 체크되었는가?
+  //iframe인 블로그가 존재하여 체크가 필요하다.
+  let check_iframe = document.getElementById('mainFrame')
+
+  if (check_iframe != null) {
+      document = document.getElementById('mainFrame').contentWindow.document;
+
+  }
+
+  //let testdo = document.getElementsByTagName('div');
+
+  //1.check_iframe을 실행.
+  //2.getLogNo를 통해 logno 얻기
+  //3.getelementbyid(logno)통해 하위 요소 잡기.
+  //4.getelementsbytagnname으로 img 객체 잡아내기
+  //log_no를 분리해 주는 작업
+  let log_No= getLogNo(check_iframe);
+  let identifier = 'post-view' + log_No;
+  let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+  let getimgsrc = getbody.getElementsByTagName('img');
+
+  for (let i = 0; i < getimgsrc.length; i++) {
+      let src = getimgsrc[i].getAttribute('src').toString();
+      let x = 1;
+      //블랭크 gif인 경우 넘기기
+      if (src.indexOf('storep') != -1) {
+          //true인 경우 접기
+          if(boolean){
+              getimgsrc[i].style.display = "none"
+              continue
+          }
+          else{
+              //false인 경우 모두 펼치기
+              getimgsrc[i].style.display = "block"
+              continue
+          }
+      }
+      else if(src.indexOf('sticker') != -1){
+        if(boolean){
+            getimgsrc[i].style.display = "none"
+            continue
+        }
+        else{
+            //false인 경우 모두 펼치기
+            getimgsrc[i].style.display = "block"
+            continue
+        }
+    }
+      else {
+          continue;
+      }
+  }
+
+}
+/*--------------------------------------------------------------------------------------------------------*/
+
+/*--------------------------비디오 싹다 잡는 코드----------------------------------------------------------*/
+let fold_all_video = (boolean) => {
+    //모든 이미지 접기 체크박스 체크되었는가?
+  //iframe인 블로그가 존재하여 체크가 필요하다.
+  let check_iframe = document.getElementById('mainFrame')
+
+  if (check_iframe != null) {
+      document = document.getElementById('mainFrame').contentWindow.document;
+
+  }
+
+  //let testdo = document.getElementsByTagName('div');
+
+  //1.check_iframe을 실행.
+  //2.getLogNo를 통해 logno 얻기
+  //3.getelementbyid(logno)통해 하위 요소 잡기.
+  //4.getelementsbytagnname으로 img 객체 잡아내기
+  //log_no를 분리해 주는 작업
+  let log_No= getLogNo(check_iframe);
+  let identifier = 'post-view' + log_No;
+  let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+
+  //옛날 버전에서 네이버 비디오 접기.
+  let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
+  let getViddiv = getbody.getElementsByClassName('se-main-container');
+  if(getVidSrc.length !=0){
+
+      for (let i=0; i<getVidSrc.length;i++){
+        if(boolean){
+            findYouVid[i].style.display = 'none'
+            continue
+        }
+        else{
+            findYouVid[i].style.display = 'block'
+            continue
+        }
+      }
+  }
+  if(getViddiv.length!=0) {
+      let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
+      //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+      let findNavVid = getViddiv[0].getElementsByClassName('se-video');
+
+      for(let i=0; i<findYouVid.length;i++){
+          //btnInputVid(findYouVid[i]);
+        if(boolean){
+            findYouVid[i].style.display = 'none'
+            continue
+        }
+        else{
+            findYouVid[i].style.display = 'block'
+            continue
+        }
+      }
+      for (let i=0; i<findNavVid.length;i++){
+        if(boolean){
+            findYouVid[i].style.display = 'none'
+            continue
+        }
+        else{
+            findYouVid[i].style.display = 'block'
+            continue
+        }
+      }
+  }
+}
+/*--------------------------------------------------------------------------------------------------------*/
+
 
 /* ------------------------------ PreView ------------------------------ */
 $(function () {
