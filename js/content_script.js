@@ -964,16 +964,18 @@ let showSampleText = (index) => {
     let $dialog = $('<div></div>')
     .html('<p>' + sample1 +"<br>" +sample2 +"<br>"+ sample3 +"<br>"+ '</p>')
     .dialog({
-        z_index : 100000,
         autoOpen: false,
         modal: true,
         height: 600,
         width: 500,
         title: "KeyWord PreViewer"
     });
-$dialog.dialog('open');
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
     // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
     console.log("showSampleText")
+    
 }
 
 let showPostPreview = (url) => {
@@ -996,13 +998,14 @@ let showPostPreview = (url) => {
     .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
     .dialog({
         autoOpen: false,
-        z_index : 100000,
         modal: true,
         height: 600,
         width: 500,
         title: "NBPA PreViewer"
     });
-$dialog.dialog('open');
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
 }
 
 let showPostKeyword = (index) => {
