@@ -84,7 +84,8 @@ let getLogNo = (document) => {
     }
 }
 
-/* ------------------------------ 함수정의 ------------------------------ */
+/* ------------------------------------------------------------------------------------------ 함수정의 ------------------------------------------------------------------------------------------ */
+/* ------------------------------ 멀티미디어 접기 기능 ------------------------------ */
 let multimedia_folding = () => {
     //iframe인 블로그가 존재하여 체크가 필요하다.
     let check_iframe = document.getElementById('mainFrame')
@@ -101,7 +102,7 @@ let multimedia_folding = () => {
     //3.getelementbyid(logno)통해 하위 요소 잡기.
     //4.getelementsbytagnname으로 img 객체 잡아내기
     //log_no를 분리해 주는 작업
-    let log_No= getLogNo(check_iframe);
+    let log_No = getLogNo(check_iframe);
     let identifier = 'post-view' + log_No;
     let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     let getimgsrc = getbody.getElementsByTagName('img');
@@ -116,60 +117,57 @@ let multimedia_folding = () => {
         //섬네일의 경우 넘기기
         else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
             continue;
-        }
-        else if (src.indexOf('data:image') != -1) {
+        } else if (src.indexOf('data:image') != -1) {
             //접기용 버튼 추가.
             continue;
-        }
-        else if (src.indexOf('storep') != -1) {
+        } else if (src.indexOf('storep') != -1) {
             //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
             btnInput(getimgsrc[i]);
             continue;
-        }
-        else if(src.indexOf('sticker') != -1){
+        } else if (src.indexOf('sticker') != -1) {
             btnInput(getimgsrc[i]);
             continue;
-        }
-        else if (src.indexOf('postfiles') != -1) {
+        } else if (src.indexOf('postfiles') != -1) {
             //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
             btnInput(getimgsrc[i]);
             continue;
-        }
-        else {
+        } else if (src.indexOf('blogfiles') != -1) {
+            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+            btnInput(getimgsrc[i]);
+            continue;
+        } else {
             continue;
         }
 
 
     }
-    // let getVidIframe = getbody.getElementsByTagName('iframe');
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
     let getViddiv = getbody.getElementsByClassName('se-main-container');
-    if(getVidSrc.length !=0){
+    if (getVidSrc.length != 0) {
 
-        for (let i=0; i<getVidSrc.length;i++){
+        for (let i = 0; i < getVidSrc.length; i++) {
             btnInputVid(getVidSrc[i]);
             //console.log(getVidSrc[i]);
         }
     }
-    if(getViddiv.length!=0) {
+    if (getViddiv.length != 0) {
         let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
         //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
         let findNavVid = getViddiv[0].getElementsByClassName('se-video');
 
-        for(let i=0; i<findYouVid.length;i++){
+        for (let i = 0; i < findYouVid.length; i++) {
             btnInputVid(findYouVid[i]);
         }
-        for (let i=0; i<findNavVid.length;i++){
+        for (let i = 0; i < findNavVid.length; i++) {
             btnInputVid(findNavVid[i]);
         }
     }
-
-
 }
-/*-----------------------------버튼추가----------------------------------*/
+
 let btnInput = (s) => {
-    //버튼 추가
+    // 이미지에 버튼 추가
+
     //1.a태그가 아닌 경우 부모노드에 자식노드 div를 만든다.
     //2.div안에 자식 노드로 버튼 추가를 원하는 img객체를 넣는다.
     //3.img객체 밑에 버튼을 추가한다.
@@ -190,10 +188,10 @@ let btnInput = (s) => {
         OnOff(s);
     });
 }
-/*-------------------------------------------------------------------------*/
-/*-----------------------------비디오에 버튼추가----------------------------------*/
+
 let btnInputVid = (s) => {
-    //버튼 추가
+    //영상에 버튼 추가
+
     //1.a태그가 아닌 경우 부모노드에 자식노드 div를 만든다.
     //2.div안에 자식 노드로 버튼 추가를 원하는 img객체를 넣는다.
     //3.img객체 밑에 버튼을 추가한다.
@@ -209,18 +207,19 @@ let btnInputVid = (s) => {
     });
     s.parentNode.insertBefore(setinput, s);
 }
-/*-------------------------------------------------------------------------*/
-/*---------------------------버튼 동작: 버튼 클릭시 이미지 숨기기----------------------------------------------*/
+
 let OnOff = (element) => {
+    // 버튼클릭시 이미지 숨기기
     if (element.style.display != 'none') {
         element.style.display = 'none';
     } else {
         element.style.display = 'block';
     }
 }
-/*--------------------------------------------------------------------------------------------------------*/
-/*--------------------------동영상 위치를 잡아내는 함수----------------------------*/
+
 let getMediaplace = (element) => {
+    // 페이지의 동영상 요소를 찾는 함수
+
     //getimgsrc[i]를 통해 넘겨 받은 객체를 분석한다.
     //유투브 뿐만아니라 네이버, 타 플랫폼의 플레이어를 검출해낼 방법은?어차피 영상 따로 잡아야함..
     //
@@ -233,7 +232,178 @@ let getMediaplace = (element) => {
     }
 }
 
-/* ------------------------------ PreView ------------------------------ */
+let fold_all_image = (boolean) => {
+    // 이미지 전체를 가져와서 접는 함수
+
+    //모든 이미지 접기 체크박스 체크되었는가?
+    //iframe인 블로그가 존재하여 체크가 필요하다.
+    let check_iframe = document.getElementById('mainFrame')
+
+    if (check_iframe != null) {
+        document = document.getElementById('mainFrame').contentWindow.document;
+    }
+
+
+    //1.check_iframe을 실행.
+    //2.getLogNo를 통해 logno 얻기
+    //3.getelementbyid(logno)통해 하위 요소 잡기.
+    //4.getelementsbytagnname으로 img 객체 잡아내기
+    //log_no를 분리해 주는 작업
+    let log_No = getLogNo(check_iframe);
+    let identifier = 'post-view' + log_No;
+    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    let getimgsrc = getbody.getElementsByTagName('img');
+
+    for (let i = 0; i < getimgsrc.length; i++) {
+        let src = getimgsrc[i].getAttribute('src').toString();
+        let x = 1;
+        //블랭크 gif인 경우 넘기기
+        if (src.indexOf('postfiles') != -1) {
+            //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
+            //btnInput(getimgsrc[i]);
+            if (boolean) {
+                //bool=true인 경우만
+                getimgsrc[i].style.display = "none";
+                continue
+            } else {
+                getimgsrc[i].style.display = "block";
+                continue
+            }
+            continue;
+        } else if (src.indexOf('blogfiles') != -1) {
+            if (boolean) {
+                //bool=true인 경우만
+                getimgsrc[i].style.display = "none";
+                continue
+            } else {
+                getimgsrc[i].style.display = "block";
+                continue
+            }
+        } else {
+            continue;
+        }
+    }
+}
+
+let fold_all_imoticon = (boolean) => {
+    // 이모티콘 전체를 가져와서 접는 함수
+
+    //모든 이미지 접기 체크박스 체크되었는가?
+    //iframe인 블로그가 존재하여 체크가 필요하다.
+    let check_iframe = document.getElementById('mainFrame')
+
+    if (check_iframe != null) {
+        document = document.getElementById('mainFrame').contentWindow.document;
+
+    }
+
+    //let testdo = document.getElementsByTagName('div');
+
+    //1.check_iframe을 실행.
+    //2.getLogNo를 통해 logno 얻기
+    //3.getelementbyid(logno)통해 하위 요소 잡기.
+    //4.getelementsbytagnname으로 img 객체 잡아내기
+    //log_no를 분리해 주는 작업
+    let log_No = getLogNo(check_iframe);
+    let identifier = 'post-view' + log_No;
+    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    let getimgsrc = getbody.getElementsByTagName('img');
+
+    for (let i = 0; i < getimgsrc.length; i++) {
+        let src = getimgsrc[i].getAttribute('src').toString();
+        let x = 1;
+        //블랭크 gif인 경우 넘기기
+        if (src.indexOf('storep') != -1) {
+            //true인 경우 접기
+            if (boolean) {
+                getimgsrc[i].style.display = "none"
+                continue
+            } else {
+                //false인 경우 모두 펼치기
+                getimgsrc[i].style.display = "block"
+                continue
+            }
+        } else if (src.indexOf('sticker') != -1) {
+            if (boolean) {
+                getimgsrc[i].style.display = "none"
+                continue
+            } else {
+                //false인 경우 모두 펼치기
+                getimgsrc[i].style.display = "block"
+                continue
+            }
+        } else {
+            continue;
+        }
+    }
+}
+
+let fold_all_video = (boolean) => {
+    // 영상 전체를 가져와서 접는 함수
+
+    //모든 이미지 접기 체크박스 체크되었는가?
+    //iframe인 블로그가 존재하여 체크가 필요하다.
+    let check_iframe = document.getElementById('mainFrame')
+
+    if (check_iframe != null) {
+        document = document.getElementById('mainFrame').contentWindow.document;
+
+    }
+
+    //let testdo = document.getElementsByTagName('div');
+
+    //1.check_iframe을 실행.
+    //2.getLogNo를 통해 logno 얻기
+    //3.getelementbyid(logno)통해 하위 요소 잡기.
+    //4.getelementsbytagnname으로 img 객체 잡아내기
+    //log_no를 분리해 주는 작업
+    let log_No = getLogNo(check_iframe);
+    let identifier = 'post-view' + log_No;
+    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+
+    //옛날 버전에서 네이버 비디오 접기.
+    let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
+    let getViddiv = getbody.getElementsByClassName('se-main-container');
+    if (getVidSrc.length != 0) {
+
+        for (let i = 0; i < getVidSrc.length; i++) {
+            if (boolean) {
+                findYouVid[i].style.display = 'none'
+                continue
+            } else {
+                findYouVid[i].style.display = 'block'
+                continue
+            }
+        }
+    }
+    if (getViddiv.length != 0) {
+        let findYouVid = getViddiv[0].getElementsByClassName('se-component se-oembed se-l-default');
+        //let findNavVid = getViddiv[0].getElementsByClassName('se-component se-video se-l-default');
+        let findNavVid = getViddiv[0].getElementsByClassName('se-video');
+
+        for (let i = 0; i < findYouVid.length; i++) {
+            //btnInputVid(findYouVid[i]);
+            if (boolean) {
+                findYouVid[i].style.display = 'none'
+                continue
+            } else {
+                findYouVid[i].style.display = 'block'
+                continue
+            }
+        }
+        for (let i = 0; i < findNavVid.length; i++) {
+            if (boolean) {
+                findYouVid[i].style.display = 'none'
+                continue
+            } else {
+                findYouVid[i].style.display = 'block'
+                continue
+            }
+        }
+    }
+}
+
+/* ------------------------------ 미리보기 기능 ------------------------------ */
 $(function () {
     window.oncontextmenu = function () {
         return false;
@@ -267,7 +437,7 @@ $(function () {
         }
     });
 });
-/* ------------------------------ 함수정의 ------------------------------ */
+/* ------------------------------------------------------------------------------------------ 함수정의 ------------------------------------------------------------------------------------------ */
 let showTable = (code) => {
     // url 배열 확인용 함수
 
@@ -361,7 +531,7 @@ let createAnalyzeInfoContainer = (code, list) => {
     let list_length = list.length
     let current_node
     let current_node_url
-    
+
     for (let i = 0; i < list_length; i++) {
 
         current_node = list.item(i)
@@ -379,7 +549,7 @@ let createAnalyzeInfoContainer = (code, list) => {
             let multimedia_emoticon_ratio = document.createElement("div")
             let multimedia_video_ratio = document.createElement("div")
             let button_post_preview = document.createElement("button")
-            let button_keyword_preview  = document.createElement("button")
+            let button_keyword_preview = document.createElement("button")
 
             // 각 요소에 클래스 속성 추가
             analyze_info_container.classList.add('_analyze-info-container')
@@ -394,9 +564,9 @@ let createAnalyzeInfoContainer = (code, list) => {
             button_keyword_preview.classList.add('_keyword-preview')
 
             // 버튼에 type 속성 추가
-            lorem_percentage.setAttribute("type" ,"button")
-            button_post_preview.setAttribute("type" ,"button")
-            button_keyword_preview.setAttribute("type" ,"button")
+            lorem_percentage.setAttribute("type", "button")
+            button_post_preview.setAttribute("type", "button")
+            button_keyword_preview.setAttribute("type", "button")
 
             // 버튼 내부에 텍스트 추가
             button_post_preview.textContent = "게시글 미리보기"
@@ -541,7 +711,7 @@ let setAnalyzedInfo_SearchNaver = () => {
 
             // 추출한 정보를 컨테이너 내부 텍스트로 할당
             lorem_info_container.item(i).textContent = lorem_info_text
-            
+
             // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
         }
 
@@ -550,7 +720,7 @@ let setAnalyzedInfo_SearchNaver = () => {
 
         if (Array.isArray(current_multimedia_ratios) && !current_multimedia_ratios.length) {
             // 현재 블로그에 해당하는 멀티미디어 배열이 비어있지않을때 정보 출력
-            
+
             for (let j = 0; j < current_multimedia_ratios.length; j++) {
 
                 let current_single_multimedia_ratio = current_multimedia_ratios[j]['fields']
@@ -608,4 +778,3 @@ let setAnalyzeInfoEvent = () => {
         current_keyword_preview_button.addEventListener("onclick", showPostKeyword(i))
     }
 }
-
