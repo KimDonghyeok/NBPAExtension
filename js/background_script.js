@@ -30,7 +30,7 @@ const HOST_URL_HEAD = "http://" + HOST_IP + ":" + HOST_PORT + "/request/"
 let showSearchNaverPopupRule = {
     conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: {hostEquals: 'search.naver.com', schemes: ['https']}
+            pageUrl: { hostEquals: 'search.naver.com', schemes: ['https'] }
         })
     ],
     actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -39,7 +39,7 @@ let showSearchNaverPopupRule = {
 let showBlogNaverPopupRule = {
     conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: {hostEquals: 'blog.naver.com', schemes: ['https']}
+            pageUrl: { hostEquals: 'blog.naver.com', schemes: ['https'] }
         })
     ],
     actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -48,7 +48,7 @@ let showBlogNaverPopupRule = {
 let showBlogNaverPopupRule_NotSecure = {
     conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: {hostEquals: 'blog.naver.com', schemes: ['http']}
+            pageUrl: { hostEquals: 'blog.naver.com', schemes: ['http'] }
         })
     ],
     actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -73,10 +73,10 @@ chrome.pageAction.onClicked.addListener(tab => {
     let tab_code = getTabCode(current_tab_url)
 
     if (tab_code === SEARCH_XEARCH_CODE || tab_code === SEARCH_VIEW_CODE || tab_code === SEARCH_BLOG_CODE) {
-        chrome.pageAction.setPopup({tabId: current_tab_id, popup: "search_naver_popup.html"})
+        chrome.pageAction.setPopup({ tabId: current_tab_id, popup: "search_naver_popup.html" })
     }
     if (tab_code === BLOG_NAVER_CODE) {
-        chrome.pageAction.setPopup({tabId: current_tab_id, popup: "blog_naver_popup.html"})
+        chrome.pageAction.setPopup({ tabId: current_tab_id, popup: "blog_naver_popup.html" })
     }
 
     console.log(tab_code)
@@ -160,7 +160,7 @@ let getAnalyzedInfo = (tabId, json) => {
             let header;
             let arr_received_data = [];
 
-            received_arr.forEach( (element, index) => {
+            received_arr.forEach((element, index) => {
                 if (index === 0)
                     header = element
                 else
