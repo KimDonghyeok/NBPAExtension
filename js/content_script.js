@@ -58,8 +58,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             console.log(message.code)
 
             let current_url = message.url
-            fold_all_video(true)
-            multimedia_folding()
+            fold_all_imoticon(true, current_url)
+            multimedia_folding(current_url)
             // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
             //서버로 단일 URL 전송
             // sendSingleBlogURL(current_url)
@@ -76,7 +76,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         console.log("blog popup message is received!")
 
-        hideAllMultimediaByType(checkbox_id, checkbox_status)
+        hideAllMultimediaByType(checkbox_id, checkbox_status, message.url)
     }
 })
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
@@ -90,47 +90,36 @@ let addPreviewButtonListener = () => {
     });
 }
 
-let getLogNo = (document) => {
+let getLogNo = (url) => {
     // log_no 추출 함수
 
-    let blogsrc = document.getAttribute('src');
-    let blogstr = blogsrc.toString();
-    let splitSrc = blogstr.split('&');
+    url = normalizePostViewUrl(url)
+    
+    let splitSrc = url.split('/');
 
-    for (let i = 0; i < splitSrc.length; i++) {
-        console.log(splitSrc[i]);
-        if (splitSrc[i].startsWith('logNo')) {
-            console.log("이걸 잡아야함: ", splitSrc[i]);
-            addPreviewButtonListener = splitSrc[i].split("=");
-            console.log(addPreviewButtonListener[1]);
-            return addPreviewButtonListener[1];
-        }
-
-
-    }
+    let log_no = splitSrc[4]
+    return log_no
 }
 
 
 /* ------------------------------ 멀티미디어 접기 ------------------------------ */
-let multimedia_folding = () => {
+let multimedia_folding = (url) => {
+    //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
+    
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
     //이미지 접기
 
@@ -316,24 +305,23 @@ let OnOff = (element) => {
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------이미지 싹다 잡는 코드----------------------------------------------------------*/
-let fold_all_image = (boolean) => {
+let fold_all_image = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    }
+    else{
+        getbody = document.getElementById(identifier);
     }
 
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
 
     let getimgsrcold = getbody.getElementsByTagName('img');
@@ -414,20 +402,22 @@ let fold_all_image = (boolean) => {
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------이모티콘 싹다 잡는 코드--------------------------------------------------------*/
-let fold_all_imoticon = (boolean) => {
+let fold_all_imoticon = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
 
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
     let getimgsrcold = getbody.getElementsByTagName('img');
@@ -510,26 +500,22 @@ let fold_all_imoticon = (boolean) => {
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------비디오 싹다 잡는 코드----------------------------------------------------------*/
-let fold_all_video = (boolean) => {
+let fold_all_video = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
 
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
@@ -674,6 +660,7 @@ let isBlogSectionElement = (url) => {
 
 let convertBlogMeUrl = (url) => {
     // blog.me url 일 때 해당 url 을 일반화시켜 변환
+    // blog.me/
 
     let url_obj = new URL(url)
 
@@ -697,7 +684,7 @@ let getBlogUrlList = (code, url) => {
     let currentElementUrl = url
 
     if (BLOG_NAVER_ME_REGEXP.test(currentElementUrl)) {
-        currentElementUrl = convertBlogMeUrl(url)
+        currentElementUrl = normalizePostViewUrl(url)
     }
 
     switch (code) {
@@ -930,7 +917,17 @@ let setAnalyzedInfo_SearchNaver = () => {
 }
 
 let normalizePostViewUrl = (url) => {
-    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+    if (url.indexOf("m.blog.naver.com") != -1){
+        url = url.replace("m.blog.naver.com", "blog.naver.com")
+    }
+
+    if (url.indexOf("logNo") == -1){
+        return url
+    }
+
+    if (url.indexOf("blog.me") != -1){
+        return convertBlogMeUrl(url)
+    }
 
     let url_obj = new URL(url)
 
@@ -946,7 +943,7 @@ let normalizePostViewUrl = (url) => {
     console.log(url_blog_id)
     console.log(url_log_no)
 
-    let normalize_url = "https://blog.naver.com/" + url_blog_id + "?Redirect=Log&logNo=" + url_log_no
+    let normalize_url = "https://blog.naver.com/" + url_blog_id + "/" + url_log_no
 
     return normalize_url
 }
@@ -1062,16 +1059,16 @@ let setAnalyzeInfoEvent = () => {
     }
 }
 
-let hideAllMultimediaByType = (checkbox_id, checkbox_status) => {
+let hideAllMultimediaByType = (checkbox_id, checkbox_status, url) => {
     switch (checkbox_id) {
         case "all-image-close":
-            fold_all_image(checkbox_status)
+            fold_all_image(checkbox_status, url)
             break
         case "all-video-close":
-            fold_all_imoticon(checkbox_status)
+            fold_all_imoticon(checkbox_status, url)
             break
         case "all-imoticon-close":
-            fold_all_video(checkbox_status)
+            fold_all_video(checkbox_status, url)
             break
     }
 }
