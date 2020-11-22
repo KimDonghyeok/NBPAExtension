@@ -20,9 +20,6 @@
         <input type="checkbox" name="lorem-poss-view" id="lorem-poss-view">
         <label for="lorem-poss-view">로렘 확률 표시</label><br>
 
-        <input type="checkbox" name="tag-corr-view" id="tag-corr-view">
-        <label for="tag-corr-view">태그 연관성 표시</label><br>
-
         <input type="checkbox" name="image-ratio-view" id="image-ratio-view">
         <label for="image-ratio-view">이미지 비율 표시</label><br>
 
@@ -45,13 +42,6 @@
         </fieldset>
 
         <fieldset>
-            <legend>태그 연관성이 낮은 게시물 회색 처리</legend>
-            <input type="checkbox" name="tag-corr-filter" id="tag-corr-filter">
-            <input type="range" name="tag-corr-range" id="tag-corr-slider" value="0" step="10">
-            <div class="slider-value" id="tag-corr-slider-value">% 이하</div>
-        </fieldset>
-
-        <fieldset>
             <legend>이미지 비율 높은 게시물 회색 처리</legend>
             <input type="checkbox" name="image-ratio-filter" id="image-ratio-filter">
             <input type="range" name="image-ratio-range" id="image-ratio-slider" value="0" step="10">
@@ -63,6 +53,13 @@
             <input type="checkbox" name="video-ratio-filter" id="video-ratio-filter">
             <input type="range" name="video-ratio-range" id="video-ratio-slider" value="0" step="10">
             <div class="slider-value" id="video-ratio-slider-value">% 이상</div>
+        </fieldset>
+
+        <fieldset>
+            <legend>이모티콘 비율 높은 게시물 회색 처리</legend>
+            <input type="checkbox" name="imoticon-ratio-filter" id="imoticon-ratio-filter">
+            <input type="range" name="imoticon-ratio-range" id="imoticon-ratio-slider" value="0" step="10">
+            <div class="slider-value" id="imoticon-ratio-slider-value">% 이상</div>
         </fieldset>
 
     </div>
