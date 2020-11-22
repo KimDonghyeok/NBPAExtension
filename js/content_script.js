@@ -36,6 +36,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             getBlogElementsList(message.code)
             createAnalyzeInfoContainer(message.code, search_result_list)
             convertArrToJsonArr(message.code)
+            addPreviewButtonListener()
             showTable(message.code)
 
             // let test_arr = []
@@ -77,6 +78,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 })
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
+let addPreviewButtonListener = () => {
+    arr_url_obj.forEach((element, index) => {
+        let post_preview_button = document.getElementsByClassName("_post-preview")
+        let current_post_preview_button = post_preview_button.item(index)
+        current_post_preview_button.addEventListener("click", () => {
+            showPostPreview(element["url"])
+        })
+    });
+}
+
 let getLogNo = (document) => {
     // log_no 추출 함수
 
@@ -88,9 +99,9 @@ let getLogNo = (document) => {
         console.log(splitSrc[i]);
         if (splitSrc[i].startsWith('logNo')) {
             console.log("이걸 잡아야함: ", splitSrc[i]);
-            test = splitSrc[i].split("=");
-            console.log(test[1]);
-            return test[1];
+            addPreviewButtonListener = splitSrc[i].split("=");
+            console.log(addPreviewButtonListener[1]);
+            return addPreviewButtonListener[1];
         }
 
 
@@ -711,7 +722,6 @@ let setAnalyzedInfo_SearchNaver = () => {
     let length = arr_url_obj.length
 
     for (let i = 0; i < length; i++) {
-
         /* ---------- 분석정보 배열에서 로렘 확률 정보를 추출하여 출력 ----------*/
         if (analyzed_info[i].constructor === Object && Object.keys(analyzed_info[i]).length !== 0) {
             // 현재 객체가 비어있지 않을때 정보 출력 작업
@@ -797,10 +807,14 @@ $dialog.dialog('open');
     console.log("showSampleText")
 }
 
-let showPostPreview = (index) => {
+let showPostPreview = (url) => {
     // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
-
-    let target_blog_url = normalizePostViewUrl(blog_info[index]['fields']['url'])
+    let target_blog_url
+    if (url.indexOf("PostView.nhn") != -1){
+        target_blog_url = normalizePostViewUrl(url)
+    } else{
+        target_blog_url = url
+    }
     let splited_url = target_blog_url.split('//');
     let pure_url = splited_url[1];
     let new_url
@@ -852,21 +866,18 @@ let setAnalyzeInfoEvent = () => {
     // 분석 정보 컨테이너의 로렘확률 컨테이너, 게시글 미리보기 버튼, 게시글 키워드 보기 버튼에 대해 이벤트를 추가
 
     let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
-    let post_preview_button = document.getElementsByClassName("_post-preview")
     let keyword_preview_button = document.getElementsByClassName("_keyword-preview")
 
     let length = arr_url_obj.length
     for (let i = 0; i < length; i++) {
         let current_lorem_info_container = lorem_info_container.item(i)
-        let current_post_preview_button = post_preview_button.item(i)
+        
         let current_keyword_preview_button = keyword_preview_button.item(i)
 
         current_lorem_info_container.addEventListener("click", () => {
             showSampleText(i)
         })
-        current_post_preview_button.addEventListener("click", () => {
-            showPostPreview(i)
-        })
+        
         current_keyword_preview_button.addEventListener("click", () => {
             showPostKeyword(i)
         })
