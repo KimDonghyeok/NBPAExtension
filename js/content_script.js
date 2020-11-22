@@ -755,13 +755,13 @@ let showSampleText = (index) => {
 let showPostPreview = (index) => {
     // 게시글 미리보기 버튼을 클릭하면 레이어팝업으로 게시글 모바일 버전의 페이지로 보여주는 함수
     console.log("showPostPreview")
+    let target_blog_url = blog_info[index]['fields']['url']
 
 }
 
 let showPostKeyword = (index) => {
     // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
     console.log("showPostKeyword")
-
 }
 
 let setAnalyzeInfoEvent = () => {

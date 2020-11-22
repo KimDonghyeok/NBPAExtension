@@ -62,6 +62,15 @@ let checkboxMethodSelector = (checkbox) => {
     switch(checkbox.id){
         case "all-image-close":
             // 이미지 숨기기 (boolean) 함수 호출바람.
+            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                let tabId = tabs[0].id
+
+                chrome.tabs.sendMessage(tabId, {
+                    message: "ALLIMAGEHIDE",
+                    checkbox_id: checkbox.id,
+                    status: boolean
+                })
+            })
             break
         case "all-video-close":
             // 영상 숨기기 (boolean) 함수 호출바람.
