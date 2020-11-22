@@ -994,13 +994,14 @@ let showPostPreview = (url) => {
     .html('<iframe style="border: 0px; " src="' + new_url + '" width="100%" height="100%"></iframe>')
     .dialog({
         autoOpen: false,
-        z_index : 100000,
         modal: true,
         height: 600,
         width: 500,
         title: "NBPA PreViewer"
     });
-$dialog.dialog('open');
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
 }
 
 let showPostKeyword = (index) => {
@@ -1041,15 +1042,15 @@ let showPostKeyword = (index) => {
     let $dialog = $('<div></div>')
     .html('<p>' + tabel_string+ '</p>')
     .dialog({
-        z_index : 100000,
         autoOpen: false,
         modal: true,
         height: 600,
         width: 500,
         title: "KeyWord PreViewer"
     });
-$dialog.dialog('open');
-
+    $dialog.dialog('open');
+    let elem = document.getElementsByClassName("ui-dialog")[0]
+    elem.style.zIndex = "400000"
 
     console.log("showPostKeyword")
 }
