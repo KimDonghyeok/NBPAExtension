@@ -1,3 +1,7 @@
+const HOST_IP = "127.0.0.1"
+const HOST_PORT = "8080"
+const HOST_URL_HEAD = "http://" + HOST_IP + ":" + HOST_PORT + "/request/"
+
 window.onload = function() {
     console.log("onload" + Date())
 
@@ -16,14 +20,9 @@ window.onload = function() {
     syncCheckboxStatus(checkbox_all_video_close)
     syncCheckboxStatus(checkbox_all_imoticon_close)
     
-    // 피드백 제출 버튼 리스너 등록
+    // 피드백 제출 리스너 등록
     send_feedback = document.getElementById("send-feedback")
-    send_feedback.addEventListener("click", function(){
-        // 제출 시 페이지가 전환되는걸 막음
-        event.preventDefault()
-        // 피드백 타입 선택 체크, 본문 비어있는지 체크.
-        
-    })
+    addSendFeedbackListener(send_feedback)
 }
 
 
@@ -79,6 +78,135 @@ let checkboxMethodSelector = (checkbox) => {
             // 이모티콘 (boolean) 함수 호출바람.
             break
     }
+}
+
+
+// 피드백 제출 버튼 리스너
+let addSendFeedbackListener = (send_feedback) =>{
+    send_feedback.addEventListener("click", function(){
+        // 제출 시 페이지가 전환되는걸 막음
+        event.preventDefault()
+
+        // 피드백 타입 체크
+        let feedback_type = getSelectedFeedbacktype()
+        if (feedback_type == undefined){
+            alert("피드백 유형을 선택해주세요")
+            return
+        }
+
+        // 피드백 본문 비어있는지 체크.
+        feedback_description = document.getElementById("feedback-description")
+        let description
+        if (feedback_description != undefined){
+            description = feedback_description.value
+            if (!description){
+                alert("피드백 내용이 비어있습니다")
+                return
+            }
+        }
+
+        // 전송
+        submitFeedback(feedback_type, description)
+    })
+}
+
+// 선택된 피드백 타입을 반환
+let getSelectedFeedbacktype = () =>{
+    selected_feedback = document.getElementById("selected-feedback")
+    if (selected_feedback != undefined){
+        let options = selected_feedback.options
+
+        for (i = 1 ; i < options.length; i++){
+            if (options[i].selected == true){
+                selected_option = options[i]
+                return selected_option.value
+            }
+        }
+    }
+}
+
+// 피드백 관련 선택/입력 초기화
+let clearFeedback = () =>{
+    selected_feedback = document.getElementById("selected-feedback")
+    if (selected_feedback != undefined){
+        let options = selected_feedback.options
+
+        options[0].selected = true
+        for (i = 1 ; i < options.length; i++){
+            options[i].selected = false
+        }
+    }
+
+    feedback_description = document.getElementById("feedback-description")
+    if (feedback_description != undefined){
+        feedback_description.value = ""
+    }
+}
+
+let feedbackCallback = (xhr) => {
+    if (xhr.status === 200 || xhr.status === 201) {
+        const received_arr = JSON.parse(xhr.response)
+
+        let header;
+        let arr_received_data = [];
+
+        received_arr.forEach( (element, index) => {
+            if (index === 0)
+                header = element
+            else
+                arr_received_data.push(element)
+        })
+
+        // 서버의 응답 표시
+        alert(header.message)
+
+        // 서버에서 피드백을 성공적으로 받았다면 피드백 타입과 본문이랑 비워줘야함
+        if (header.success === "True") {
+            clearFeedback()
+        }
+
+    } else {
+        console.error(xhr.responseText);
+    }
+}
+
+let submitFeedback = (feedback_type, message) => {
+    data = {}
+
+    // 현재 페이지의 URL 추출
+    let current_url 
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        current_url  = tabs[0].url
+
+        if (current_url == undefined){
+            alert("[submitFeedback] current_url is undefined!")
+            return
+        }
+
+        data['url'] = current_url
+        data['feedback_type'] = feedback_type
+        data['message'] = message
+        
+        // 서버와 통신하기 위한 XMLHttpRequest 객체
+        let xhr = new XMLHttpRequest();
+
+        // 콜백 함수 등록
+        xhr.onload = function () {
+            feedbackCallback(xhr)
+        }
+
+        // 전송
+        let request_url = HOST_URL_HEAD + "user/feedback/send"
+
+        xhr.open("POST", request_url)
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+
+        // Send JSON array
+        json = JSON.stringify(data)
+        xhr.send(json);
+        console.log('hihihi')
+    })
+    
 }
 
 /* ------------------------- 로직 ------------------------- */
