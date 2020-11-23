@@ -271,7 +271,7 @@ let getAnalyzedInfoCallback = (xhr) => {
                 let lorem_percentage_div = document.getElementById("lorem_percentage")
                 lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
                 lorem_percentage_div.title = "로렘 확률 계산을 위한 샘플은 다음과 같습니다." + "\n" + analyzed_info["sample_1"] + "\n" + analyzed_info["sample_2"] + "\n" + analyzed_info["sample_3"]
-                lorem_percentage_div.style.display = "inline-block"
+                lorem_percentage_div.style.display = "block"
             }
 
             if ("multimedia_ratios" in received_data) {
@@ -288,7 +288,7 @@ let getAnalyzedInfoCallback = (xhr) => {
                     if (ratio_div != undefined){
                         ratio_div.innerHTML = ratio_type_name + " " + ratio_string
                         ratio_div.title = "이 블로그에는 " + ratio_type_name + "이(가) " + (ratio * 100).toFixed(3) + "% 만큼 포함되어 있습니다."
-                        ratio_div.style.display = "inline-block"
+                        ratio_div.style.display = "block"
                     }
                 });
             }

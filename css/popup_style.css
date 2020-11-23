@@ -80,48 +80,64 @@ width: 350px;
 }
 
 .view-info .analyze-info {
-    display: inline-block;
-    text-align: center;
+    display: block;
+    text-align: start;
 }
 
 .view-info #lorem_percentage {
+    margin: 0.5rem 0 0 0;
+    padding: 0 0.5rem;
     height: 30px;
-    width: 80px;
+    max-width: 150px;
     line-height: 30px;
-    font-size: 0.5rem;
-    color: whitesmoke;
-    background: #ff6347;
-    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #f15c5c;
+    border-color: #79bd9a;
+    border-style: none none none double;
+    border-width: thick;
 }
 
 .view-info #image_ratio {
+    margin: 0.5rem 0 0 0;
+    padding: 0 0.5rem;
     height: 30px;
-    width: 80px;
+    max-width: 150px;
     line-height: 30px;
-    font-size: 0.5rem;
-    color: whitesmoke;
-    background: #ffa500;
-    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #ffa500;
+    border-color: #79bd9a;
+    border-style: none none none double;
+    border-width: thick;
 }
 
 .view-info #imoticon_ratio {
+    margin: 0.5rem 0 0 0;
+    padding: 0 0.5rem;
     height: 30px;
-    width: 80px;
+    max-width: 150px;
     line-height: 30px;
-    font-size: 0.5rem;
-    color: whitesmoke;
-    background: #6b8e23;
-    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #6b8e23;
+    border-color: #79bd9a;
+    border-style: none none none double;
+    border-width: thick;
 }
 
 .view-info #video_ratio {
+    margin: 0.5rem 0 0 0;
+    padding: 0 0.5rem;
     height: 30px;
-    width: 80px;
+    max-width: 150px;
     line-height: 30px;
-    font-size: 0.5rem;
-    color: whitesmoke;
-    background: #6b8fff;
-    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #a9a9a9;
+    border-color: #79bd9a;
+    border-style: none none none double;
+    border-width: thick;
 }
 
 .feedback-button button {
