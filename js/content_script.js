@@ -78,6 +78,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         
         hideAllMultimediaByType(checkbox_id, checkbox_status, url)
         console.log("blog popup message is received!")
+    } else if (message.message === "CHANGESLIDER") {
+        let slider_id = message.slider_id
+        let slider_value = message.slider_value
+        let url = message.url
+
+        console.log("search popup message is received!")
+
     }
 })
 
@@ -1187,6 +1194,7 @@ let setAnalyzeInfoEvent = () => {
     }
 }
 
+// BLOG_NAVER 팝업에서 체크박스가 클릭되면 해당하는 멀티;미디어를 접는함수
 let hideAllMultimediaByType = (checkbox_id, checkbox_status, url) => {
     switch (checkbox_id){
     case "all-image-close":
@@ -1198,5 +1206,38 @@ let hideAllMultimediaByType = (checkbox_id, checkbox_status, url) => {
     case"all-imoticon-close":
         fold_all_imoticon(checkbox_status, url)
         break
+    }
+}
+
+/* ------------------------- 슬라이더 동작 처리 ------------------------- */
+
+// 현재 슬라이더 값에 따라 블로그의 배경을 회색처리
+let changeBackgroundByLoremPoss = (checkboxValue) => {
+    let lorem_info_container = document.getElementsByClassName("_lorem-percentage-container")
+    let lorem_poss = []
+
+    lorem_info_container.forEach((element, index) => {
+    })
+}
+
+
+let changeBackgroundByMultimediaRatio = (checkboxId, checkboxValue) => {
+    switch(checkboxId) {
+        case "image-ratio-slider":
+        case "video-ratio-slider":
+        case "imoticon-ratio-slider":
+            break
+    }
+}
+
+// SEARCH_NAVER 팝업에서 슬라이더 값이 변하면 블로그 배경 회색처리
+let changeBackgorundColor = (checkboxId, checkboxValue) => {
+    switch (checkboxId) {
+        case "lorem-poss-slider":
+            break
+        case "image-ratio-slider":
+        case "video-ratio-slider":
+        case "imoticon-ratio-slider":
+            break
     }
 }

@@ -135,6 +135,7 @@ let checkboxMethodSelector = (checkbox) => {
     }   
 }
 
+// checkbox 의 ID 로 실행할 함수를 실행
 let sliderMethodSelector = (slider) => {
     let sliderId = slider.id
 
@@ -145,8 +146,26 @@ let sliderMethodSelector = (slider) => {
         case "imoticon-ratio-slider":
             // 슬라이더 디스플레이어 동기화 함수 호출
             syncSliderValue(sliderId)
+            sendToContentScript(slider)
     }
 }
+/* ------------------------- 스크립트간 통신 ------------------------- */
+let sendToContentScript = (obj) =>{
+    if (obj.type === "range") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            let tabId = tabs[0].id
+            let current_url = tabs[0].url
+
+            chrome.tabs.sendMessage(tabId, {
+                message: "CHANGESLIDER",
+                slider_id: obj.id,
+                slider_value: obj.value,
+                url: current_url
+            })
+        })
+    }
+}
+
 
 /* ------------------------- 로직 ------------------------- */
 
