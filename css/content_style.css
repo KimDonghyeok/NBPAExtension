@@ -1,5 +1,62 @@
 /* 확장프로그램 생성 요소 CSS */
 ._analyze-info-container {
-    height: 100px;
-    background: #4682B4;
+    height: 60px;
+    background: #DDDDDD;
+}
+
+._lorem-percentage-container {
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+    font-size: 0.5rem;
+    color: whitesmoke;
+    background: #ff6347;
+    border-radius: 10px;
+    float: left;
+}
+
+._multimedia-image-ratio-container {
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+    font-size: 0.5rem;
+    color: whitesmoke;
+    background: #ffa500;
+    border-radius: 10px;
+    float: left;
+}
+
+._multimedia-imoticon-ratio-container {
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+    font-size: 0.5rem;
+    color: whitesmoke;
+    background: #6b8e23;
+    border-radius: 10px;
+    float: left;
+}
+
+._multimedia-video-ratio-container {
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+    font-size: 0.5rem;
+    color: whitesmoke;
+    background: #6b8fff;
+    border-radius: 10px;
+    float: left;
+}
+
+._button {
+    margin-bottom: 0.5rem;
+    height: 30px;
+    width: 80px;
+    font-size: 1rem;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    background: #a9a9a9;
+    
+    float: left;
 }
