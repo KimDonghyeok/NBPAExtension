@@ -285,9 +285,11 @@ let getAnalyzedInfoCallback = (xhr) => {
                     let div_id = getDivIdByRatioType(ratio_type)
                     let ratio_div = document.getElementById(div_id)
                     let ratio_type_name = getRatioNameByRatioType(ratio_type)
-                    ratio_div.innerHTML = ratio_type_name + " " + ratio_string
-                    ratio_div.title = "이 블로그에는 " + ratio_type_name + "이(가) " + (ratio * 100).toFixed(3) + "% 만큼 포함되어 있습니다."
-                    ratio_div.style.display = "inline-block"
+                    if (ratio_div != undefined){
+                        ratio_div.innerHTML = ratio_type_name + " " + ratio_string
+                        ratio_div.title = "이 블로그에는 " + ratio_type_name + "이(가) " + (ratio * 100).toFixed(3) + "% 만큼 포함되어 있습니다."
+                        ratio_div.style.display = "inline-block"
+                    }
                 });
             }
 
