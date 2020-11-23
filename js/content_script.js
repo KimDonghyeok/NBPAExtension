@@ -287,7 +287,7 @@ let btnInput = (s) => {
     //5.2번,3번 과정과 동일.
 
     let setinput = document.createElement('input');
-    setinput.setAttribute("value", "버튼 클릭시 이미지접기");
+    setinput.setAttribute("value", "버튼 클릭 시 숨기기");
     setinput.setAttribute("type", "button");
     setinput.style.display = "block";
     if (s.parentNode.nodeName === 'A') {
@@ -314,7 +314,7 @@ let btnInputVid = (s) => {
     //5.2번,3번 과정과 동일.
 
     let setinput = document.createElement('input');
-    setinput.setAttribute("value", "버튼 클릭시 이미지접기");
+    setinput.setAttribute("value", "버튼 클릭 시 숨기기");
     setinput.setAttribute("type", "button");
     setinput.style.display = "block";
     setinput.addEventListener('click', function () { OnOff(s); });
