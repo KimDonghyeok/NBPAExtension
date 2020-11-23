@@ -945,6 +945,9 @@ let setAnalyzedInfo_SearchNaver = () => {
             lorem_info_containers.item(i).style.display = "block"
 
             // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
+        } else {
+            // 서버에서 아직 분석하는중이면
+            lorem_info_containers.item(i).textContent = "분석하는 중"
         }
 
         /* ---------- 멀티미디어 배열에서 멀티미디어 정보(이미지, 이모티콘, 영상 비율)를 추출하여 출력 ----------*/
@@ -1076,14 +1079,31 @@ let showPostAdditionalInfo = (index) => {
     current_hyperlinks = hyperlinks[index]
 
     let max_line = 0
-    if (max_line < current_keywords.length) {
-        max_line = current_keywords.length
+    if (current_keywords != undefined){
+        if (max_line < current_keywords.length) {
+            max_line = current_keywords.length
+        }
     }
-    if (max_line < current_tags.length) {
-        max_line = current_tags.length
+    
+    if (current_tags != undefined){
+        if (max_line < current_tags.length) {
+            max_line = current_tags.length
+        }
     }
-    if (max_line < current_hyperlinks.length) {
-        max_line = current_hyperlinks.length
+
+    if (current_hyperlinks != undefined){
+        if (max_line < current_hyperlinks.length) {
+            max_line = current_hyperlinks.length
+        }
+    }
+
+    if (current_keywords === undefined && current_tags === undefined && current_hyperlinks === undefined){
+        alert("아직 분석이 되어있지 않습니다!")
+        return
+    }
+    else if (max_line === 0){
+        alert("분석정보가 없는 게시글입니다!")
+        return
     }
 
     for (i = 0; i < max_line; i++) {
@@ -1091,7 +1111,7 @@ let showPostAdditionalInfo = (index) => {
         table_string += "<tr style=\"border: 1px solid black\">"
         // 키워드 추가
         let keyword = ""
-        if (current_keywords.length > i) {
+        if (current_keywords != undefined && current_keywords.length > i) {
             let keyword_org = current_keywords[i]["fields"]["word"]
             let keyword_word_only = keyword_org.split("/")[0]
             keyword = keyword_word_only
@@ -1099,7 +1119,7 @@ let showPostAdditionalInfo = (index) => {
 
         // 해시태그 추가
         let hashtag = ""
-        if (current_tags.length > i) {
+        if (current_tags != undefined && current_tags.length > i) {
             hashtag_org = current_tags[i]["fields"]["word"]
             hashtag = "#" + hashtag_org
         }
@@ -1107,7 +1127,7 @@ let showPostAdditionalInfo = (index) => {
         // 하이퍼링크 추가
         let hyperlink = ""
         let short_hyperlink = ""
-        if (current_hyperlinks.length > i) {
+        if (current_hyperlinks != undefined && current_hyperlinks.length > i) {
             hyperlink = current_hyperlinks[i]["fields"]["word"]
             short_hyperlink = hyperlink.substring(0, 20)
             
