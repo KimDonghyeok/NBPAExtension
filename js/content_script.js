@@ -1466,13 +1466,13 @@ let getSliderValue = () => {
         for(i = 0 ; i < filter.length ; i++){
             let containers = document.getElementsByClassName('_analyze-info-container')
             let container = containers[i]
-            let parentparent = container.parentNode.parentNode
+            let parentparentparent = container.parentNode.parentNode.parentNode
             if(filter[i]){
                 // make container gray 
-                parentparent.style.backgroundColor = "#CFCFCF"
+                parentparentparent.style.backgroundColor = "#CFCFCF"
             } else {
                 // make container not gray
-                parentparent.style.backgroundColor  = ""
+                parentparentparent.style.backgroundColor  = ""
             }
         }   
     })
