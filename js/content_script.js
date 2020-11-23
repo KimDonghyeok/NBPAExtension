@@ -71,10 +71,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         deserializeData(arr_received_data)
         setAnalyzedInfo_SearchNaver()
         setAnalyzeInfoEvent()
-    } else if (message.message === "ALLIMAGEHIDE") {
+    } else if (message.message === "ALLHIDE") {
         let checkbox_id = message.checkbox_id
         let checkbox_status = message.status
-
+        let url = message.url
+        
+        hideAllMultimediaByType(checkbox_id, checkbox_status, url)
         console.log("blog popup message is received!")
     }
 })
@@ -1111,5 +1113,19 @@ let setAnalyzeInfoEvent = () => {
         current_additionalInfo_preview_button.addEventListener("click", () => {
             showPostAdditionalInfo(i)
         })
+    }
+}
+
+let hideAllMultimediaByType = (checkbox_id, checkbox_status, url) => {
+    switch (checkbox_id){
+    case "all-image-close":
+        fold_all_image(checkbox_status, url)
+        break
+    case "all-video-close":
+        fold_all_video(checkbox_status, url)
+        break
+    case"all-imoticon-close":
+        fold_all_imoticon(checkbox_status, url)
+        break
     }
 }

@@ -13,6 +13,7 @@
     background: #ff6347;
     border-radius: 10px;
     float: left;
+    display: none;
 }
 
 ._multimedia-image-ratio-container {
@@ -24,6 +25,7 @@
     background: #ffa500;
     border-radius: 10px;
     float: left;
+    display: none;
 }
 
 ._multimedia-imoticon-ratio-container {
@@ -35,6 +37,7 @@
     background: #6b8e23;
     border-radius: 10px;
     float: left;
+    display: none;
 }
 
 ._multimedia-video-ratio-container {
@@ -46,6 +49,7 @@
     background: #6b8fff;
     border-radius: 10px;
     float: left;
+    display: none;
 }
 
 ._button {
