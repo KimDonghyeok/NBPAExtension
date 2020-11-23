@@ -1458,14 +1458,15 @@ let getSliderValue = () => {
         filter = changeBackgroundByVideoRatio(filter)
 
         for(i = 0 ; i < filter.length ; i++){
-            let containers = document.getElementsByClassName('total_sub')
+            let containers = document.getElementsByClassName('_analyze-info-container')
             let container = containers[i]
+            let parentparent = container.parentNode.parentNode
             if(filter[i]){
                 // make container gray 
-                container.style.backgroundColor = "#898989"
+                parentparent.style.backgroundColor = "#CFCFCF"
             } else {
                 // make container not gray
-                container.style.backgroundColor = "#FFFFFF"
+                parentparent.style.backgroundColor  = ""
             }
         }   
     })
