@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             let current_url = message.url
 
-            multimedia_folding()
+            multimedia_folding(current_url)
             // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
             //서버로 단일 URL 전송
             // sendSingleBlogURL(current_url)
@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log("blog popup message is received!")
     }
 })
-/* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
+
 let addPreviewButtonListener = () => {
     arr_url_obj.forEach((element, index) => {
         let post_preview_buttons = document.getElementsByClassName("_post-preview")
@@ -116,47 +116,38 @@ let sampleButtonFakeEvent = () => {
     alert('아직 분석정보가 존재하지 않습니다!')
 }
 
-let getLogNo = (document) => {
+/* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
+
+let getLogNo = (url) => {
     // log_no 추출 함수
 
-    let blogsrc = document.getAttribute('src');
-    let blogstr = blogsrc.toString();
-    let splitSrc = blogstr.split('&');
+    url = normalizePostViewUrl(url)
+    
+    let splitSrc = url.split('/');
 
-    for (let i = 0; i < splitSrc.length; i++) {
-        console.log(splitSrc[i]);
-        if (splitSrc[i].startsWith('logNo')) {
-            console.log("이걸 잡아야함: ", splitSrc[i]);
-            let logNo = splitSrc[i].split("=");
-            console.log(logNo[1]);
-            return logNo[1];
-        }
-
-
-    }
+    let log_no = splitSrc[4]
+    return log_no
 }
 
 
 /* ------------------------------ 멀티미디어 접기 ------------------------------ */
-let multimedia_folding = () => {
+let multimedia_folding = (url) => {
+    //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
+    
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
     //이미지 접기
 
@@ -175,33 +166,41 @@ let multimedia_folding = () => {
                 //섬네일의 경우 넘기기
                 else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
                     continue;
-                } else if (src.indexOf('dthumb') != -1) {
+                }
+                else if (src.indexOf('dthumb') != -1) {
                     continue;
-                } else if (src.indexOf('data:image') != -1) {
+                }
+                else if (src.indexOf('data:image') != -1) {
                     //접기용 버튼 추가.
                     continue;
-                } else if (src.indexOf('storep') != -1) {
+                }
+                else if (src.indexOf('storep') != -1) {
                     //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
                     btnInput(getimgsrcnew[i]);
                     continue;
-                } else if (src.indexOf('sticker') != -1) {
+                }
+                else if (src.indexOf('sticker') != -1) {
                     btnInput(getimgsrcnew[i]);
                     continue;
-                } else if (src.indexOf('postfiles') != -1) {
+                }
+                else if (src.indexOf('postfiles') != -1) {
                     //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                     btnInput(getimgsrcnew[i]);
                     continue;
-                } else if (src.indexOf('blogfiles') != -1) {
+                }
+                else if (src.indexOf('blogfiles') != -1) {
                     //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                     btnInput(getimgsrcnew[i]);
                     continue;
-                } else {
+                }
+                else {
                     continue;
                 }
 
             }
         }
-    } else {
+    }
+    else {
         for (let i = 0; i < getimgsrcold.length; i++) {
             //let src = getimgsrcold[i].getAttribute('src').toString();
             let src = getimgsrcold[i].outerHTML
@@ -213,27 +212,34 @@ let multimedia_folding = () => {
             //섬네일의 경우 넘기기
             else if (src.indexOf('http://blogpfthumb.phinf.naver.net/') != -1) {
                 continue;
-            } else if (src.indexOf('http://dthumb') != -1) {
+            }
+            else if (src.indexOf('http://dthumb') != -1) {
                 continue;
-            } else if (src.indexOf('data:image') != -1) {
+            }
+            else if (src.indexOf('data:image') != -1) {
                 //접기용 버튼 추가.
                 continue;
-            } else if (src.indexOf('storep') != -1) {
+            }
+            else if (src.indexOf('storep') != -1) {
                 //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
                 btnInput(getimgsrcold[i]);
                 continue;
-            } else if (src.indexOf('sticker') != -1) {
+            }
+            else if (src.indexOf('sticker') != -1) {
                 btnInput(getimgsrcold[i]);
                 continue;
-            } else if (src.indexOf('postfiles') != -1) {
+            }
+            else if (src.indexOf('postfiles') != -1) {
                 //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                 btnInput(getimgsrcold[i]);
                 continue;
-            } else if (src.indexOf('blogfiles') != -1) {
+            }
+            else if (src.indexOf('blogfiles') != -1) {
                 //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                 btnInput(getimgsrcold[i]);
                 continue;
-            } else {
+            }
+            else {
                 continue;
             }
 
@@ -291,12 +297,11 @@ let btnInput = (s) => {
 
         }
         s.parentNode.parentNode.insertBefore(setinput, s.parentNode);
-    } else {
+    }
+    else {
         s.parentNode.insertBefore(setinput, s);
     }
-    setinput.addEventListener('click', function () {
-        OnOff(s);
-    });
+    setinput.addEventListener('click', function () { OnOff(s); });
 }
 /*-------------------------------------------------------------------------*/
 /*-----------------------------비디오에 버튼추가----------------------------------*/
@@ -312,9 +317,7 @@ let btnInputVid = (s) => {
     setinput.setAttribute("value", "버튼 클릭시 이미지접기");
     setinput.setAttribute("type", "button");
     setinput.style.display = "block";
-    setinput.addEventListener('click', function () {
-        OnOff(s);
-    });
+    setinput.addEventListener('click', function () { OnOff(s); });
     s.parentNode.insertBefore(setinput, s);
 }
 /*-------------------------------------------------------------------------*/
@@ -322,31 +325,31 @@ let btnInputVid = (s) => {
 let OnOff = (element) => {
     if (element.style.display != 'none') {
         element.style.display = 'none';
-    } else {
+    }
+    else {
         element.style.display = 'block';
     }
 }
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------이미지 싹다 잡는 코드----------------------------------------------------------*/
-let fold_all_image = (boolean) => {
+let fold_all_image = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    }
+    else{
+        getbody = document.getElementById(identifier);
     }
 
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
 
     let getimgsrcold = getbody.getElementsByTagName('img');
@@ -363,28 +366,32 @@ let fold_all_image = (boolean) => {
                     if (boolean) {
                         getimgsrcnew[i].style.display = "none"
                         continue
-                    } else {
+                    }
+                    else {
                         //false인 경우 모두 펼치기
                         getimgsrcnew[i].style.display = "block"
                         continue
-                    }
-                    continue;
-                } else if (src.indexOf('blogfiles') != -1) {
+                    } continue;
+                }
+                else if (src.indexOf('blogfiles') != -1) {
                     //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                     if (boolean) {
                         getimgsrcnew[i].style.display = "none"
                         continue
-                    } else {
+                    }
+                    else {
                         //false인 경우 모두 펼치기
                         getimgsrcnew[i].style.display = "block"
                         continue
                     }
-                } else {
+                }
+                else {
                     continue;
                 }
             }
         }
-    } else {
+    }
+    else {
         for (let i = 0; i < getimgsrcold.length; i++) {
             let src = getimgsrcold[i].outerHTML
             //let src = getimgsrcold[i].getAttribute('src').toString();
@@ -394,24 +401,26 @@ let fold_all_image = (boolean) => {
                 if (boolean) {
                     getimgsrcold[i].style.display = "none"
                     continue
-                } else {
+                }
+                else {
                     //false인 경우 모두 펼치기
                     getimgsrcold[i].style.display = "block"
                     continue
-                }
-                continue;
-            } else if (src.indexOf('blogfiles') != -1) {
+                } continue;
+            }
+            else if (src.indexOf('blogfiles') != -1) {
                 //사진 접기용 버튼 추가. 버튼 추가와 동시에 사진 접기
                 if (boolean) {
                     getimgsrcold[i].style.display = "none"
                     continue
-                } else {
+                }
+                else {
                     //false인 경우 모두 펼치기
                     getimgsrcold[i].style.display = "block"
                     continue
-                }
-                continue;
-            } else {
+                } continue;
+            }
+            else {
                 continue;
             }
 
@@ -421,60 +430,65 @@ let fold_all_image = (boolean) => {
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------이모티콘 싹다 잡는 코드--------------------------------------------------------*/
-let fold_all_imoticon = (boolean) => {
+let fold_all_imoticon = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
 
     let getmaincontainer = getbody.getElementsByClassName('se-main-container');
     let getimgsrcold = getbody.getElementsByTagName('img');
     if (getmaincontainer.length != 0) {
-
         let getimgsrcnew = getmaincontainer[0].getElementsByTagName('img');
-    }
-    if (getimgsrcnew.length != 0) {
-        for (let i = 0; i < getimgsrcnew.length; i++) {
+        if (getimgsrcnew.length != 0) {
+            for (let i = 0; i < getimgsrcnew.length; i++) {
 
-            let src = getimgsrcnew[i].outerHTML
+                let src = getimgsrcnew[i].outerHTML
 
-            //let src = getimgsrcnew[i].getAttribute('src').toString();
-            let x = 1;
-            //블랭크 gif인 경우 넘기기
-            if (src.indexOf('storep') != -1) {
-                //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
-                btnInput(getimgsrcnew[i]);
-                if (boolean) {
-                    getimgsrcnew[i].style.display = "none"
-                    continue
-                } else {
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
+                //let src = getimgsrcnew[i].getAttribute('src').toString();
+                let x = 1;
+                //블랭크 gif인 경우 넘기기
+                if (src.indexOf('storep') != -1) {
+                    //이모티콘 접기용 버튼추가. 버튼 추가와 동시에 이모티콘 가리기.
+                    if (boolean) {
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else {
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    }
                 }
-            } else if (src.indexOf('sticker') != -1) {
-                if (boolean) {
-                    getimgsrcnew[i].style.display = "none"
-                    continue
-                } else {
-                    //false인 경우 모두 펼치기
-                    getimgsrcnew[i].style.display = "block"
-                    continue
+                else if (src.indexOf('sticker') != -1) {
+                    if (boolean) {
+                        getimgsrcnew[i].style.display = "none"
+                        continue
+                    }
+                    else {
+                        //false인 경우 모두 펼치기
+                        getimgsrcnew[i].style.display = "block"
+                        continue
+                    }
                 }
-            } else {
-                continue;
+                else {
+                    continue;
+                }
             }
         }
-    } else {
+    }
+    else {
         for (let i = 0; i < getimgsrcold.length; i++) {
             let src = getimgsrcold[i].outerHTML
 
@@ -486,21 +500,25 @@ let fold_all_imoticon = (boolean) => {
                 if (boolean) {
                     getimgsrcold[i].style.display = "none"
                     continue
-                } else {
+                }
+                else {
                     //false인 경우 모두 펼치기
                     getimgsrcold[i].style.display = "block"
                     continue
                 }
-            } else if (src.indexOf('sticker') != -1) {
+            }
+            else if (src.indexOf('sticker') != -1) {
                 if (boolean) {
                     getimgsrcold[i].style.display = "none"
                     continue
-                } else {
+                }
+                else {
                     //false인 경우 모두 펼치기
                     getimgsrcold[i].style.display = "block"
                     continue
                 }
-            } else {
+            }
+            else {
                 continue;
             }
 
@@ -510,26 +528,22 @@ let fold_all_imoticon = (boolean) => {
 /*--------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------비디오 싹다 잡는 코드----------------------------------------------------------*/
-let fold_all_video = (boolean) => {
+let fold_all_video = (boolean, url) => {
     //모든 이미지 접기 체크박스 체크되었는가?
     //iframe인 블로그가 존재하여 체크가 필요하다.
+    let log_No = getLogNo(url);
+    let identifier = 'post-view' + log_No;
+
     let check_iframe = document.getElementById('mainFrame')
 
+    let getbody
     if (check_iframe != null) {
         document = document.getElementById('mainFrame').contentWindow.document;
-
+        getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
     }
-
-    //let testdo = document.getElementsByTagName('div');
-
-    //1.check_iframe을 실행.
-    //2.getLogNo를 통해 logno 얻기
-    //3.getelementbyid(logno)통해 하위 요소 잡기.
-    //4.getelementsbytagnname으로 img 객체 잡아내기
-    //log_no를 분리해 주는 작업
-    let log_No = getLogNo(check_iframe);
-    let identifier = 'post-view' + log_No;
-    let getbody = document.getElementById('mainFrame').contentWindow.document.getElementById(identifier);
+    else{
+        getbody = document.getElementById(identifier);
+    }
 
     //옛날 버전에서 네이버 비디오 접기.
     let getVidSrc = getbody.getElementsByClassName('u_rmcplayer');
@@ -538,10 +552,11 @@ let fold_all_video = (boolean) => {
 
         for (let i = 0; i < getVidSrc.length; i++) {
             if (boolean) {
-                findYouVid[i].style.display = 'none'
+                getVidSrc[i].style.display = 'none'
                 continue
-            } else {
-                findYouVid[i].style.display = 'block'
+            }
+            else {
+                getVidSrc[i].style.display = 'block'
                 continue
             }
         }
@@ -556,7 +571,8 @@ let fold_all_video = (boolean) => {
             if (boolean) {
                 findYouVid[i].style.display = 'none'
                 continue
-            } else {
+            }
+            else {
                 findYouVid[i].style.display = 'block'
                 continue
             }
@@ -565,27 +581,34 @@ let fold_all_video = (boolean) => {
             if (boolean) {
                 findNavVid[i].style.display = 'none'
                 continue
-            } else {
+            }
+            else {
                 findNavVid[i].style.display = 'block'
                 continue
             }
         }
     }
 
-    if (getiframe.length != 0) {
-        let getVidifram = getiframe[0]
-        console.log(getiframe[0])
-        if (getVidifram.outerHTML.indexOf("youtube") != -1) {
-            if (boolean) {
-                getVidifram[i].style.display = 'none'
-
-            } else {
-                getVidifram[i].style.display = 'block'
-
+    let getiframe = getbody.getElementsByTagName('iframe')
+    if (getiframe != undefined){
+        if (getiframe.length != 0) {
+            let getVidifram = getiframe[0]
+            console.log(getiframe[0])
+            if (getVidifram.outerHTML.indexOf("youtube") != -1) {
+                if (boolean) {
+                    getVidifram[i].style.display = 'none'
+    
+                }
+                else {
+                    getVidifram[i].style.display = 'block'
+    
+                }
             }
         }
     }
+    
 }
+
 
 /* ------------------------------ 미리보기 기능 ------------------------------ */
 $(function () {
@@ -668,8 +691,10 @@ let isBlogSectionElement = (url) => {
         return false
 }
 
+
 let convertBlogMeUrl = (url) => {
     // blog.me url 일 때 해당 url 을 일반화시켜 변환
+    // blog.me/
 
     let url_obj = new URL(url)
 
@@ -693,7 +718,7 @@ let getBlogUrlList = (code, url) => {
     let currentElementUrl = url
 
     if (BLOG_NAVER_ME_REGEXP.test(currentElementUrl)) {
-        currentElementUrl = convertBlogMeUrl(url)
+        currentElementUrl = normalizePostViewUrl(url)
     }
 
     switch (code) {
@@ -958,7 +983,17 @@ let setAnalyzedInfo_SearchNaver = () => {
 }
 
 let normalizePostViewUrl = (url) => {
-    // blog.me url 일 때 해당 url 을 일반화시켜 변환
+    if (url.indexOf("m.blog.naver.com") != -1){
+        url = url.replace("m.blog.naver.com", "blog.naver.com")
+    }
+
+    if (url.indexOf("logNo") == -1){
+        return url
+    }
+
+    if (url.indexOf("blog.me") != -1){
+        return convertBlogMeUrl(url)
+    }
 
     let url_obj = new URL(url)
 
@@ -974,7 +1009,7 @@ let normalizePostViewUrl = (url) => {
     console.log(url_blog_id)
     console.log(url_log_no)
 
-    let normalize_url = "https://blog.naver.com/" + url_blog_id + "?Redirect=Log&logNo=" + url_log_no
+    let normalize_url = "https://blog.naver.com/" + url_blog_id + "/" + url_log_no
 
     return normalize_url
 }
