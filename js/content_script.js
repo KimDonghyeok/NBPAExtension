@@ -968,19 +968,22 @@ let setAnalyzedInfo_SearchNaver = () => {
 
             // 로렘 버튼 보이게
             lorem_info_containers.item(i).style.display = "block"
-
             let current_multimedia_ratios
             if(multimedia_ratios != undefined){
                 for (j = 0 ; j < multimedia_ratios.length ; j++){
-                    let blog_info = multimedia_ratios[j][0]['fields']['blog_info']
-                    if (current_blog_info === blog_info){
-                        current_multimedia_ratios = multimedia_ratios[j]
-                        break
+                    if(multimedia_ratios[j].length > 0){
+                        let blog_info = multimedia_ratios[j][0]['fields']['blog_info']
+                        if (current_blog_info === blog_info){
+                            current_multimedia_ratios = multimedia_ratios[j]
+                            break
+                        }
                     }
+                    
                 }
             }
 
             if (current_multimedia_ratios != undefined) {
+                
                 for (let j = 0; j < current_multimedia_ratios.length; j++) {
     
                     let current_single_multimedia_ratio = current_multimedia_ratios[j]['fields']
