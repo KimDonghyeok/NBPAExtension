@@ -38,6 +38,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             convertArrToJsonArr(message.code)
             addPreviewButtonListener()
             addKeywordButtonFakeListener()
+            addSampleButtonFakeListener()
             showTable(message.code)
 
             // let test_arr = []
@@ -96,8 +97,21 @@ let addKeywordButtonFakeListener = () => {
     })
 }
 
+// 로렘 확률 버튼에 FAKE 리스너 추가
+let addSampleButtonFakeListener = () => {
+    arr_url_obj.forEach((element, index) => {
+        let sample_buttons = document.getElementsByClassName("_lorem-percentage-container")
+        let current_sample_button = sample_buttons.item(index)
+        current_sample_button.addEventListener("click", sampleButtonFakeEvent)
+    })
+}
+
 let additionalInfoButtonFakeEvent = () => {
     alert('아직 부가정보가 존재하지 않습니다!')
+}
+
+let sampleButtonFakeEvent = () => {
+    alert('아직 분석정보가 존재하지 않습니다!')
 }
 
 let getLogNo = (document) => {
@@ -889,8 +903,9 @@ let setAnalyzedInfo_SearchNaver = () => {
         if (analyzed_info[i].constructor === Object && Object.keys(analyzed_info[i]).length !== 0) {
             // 현재 객체가 비어있지 않을때 정보 출력 작업
             let current_analyzed_info = analyzed_info[i]['fields']
-            let current_lorem_info_value = current_analyzed_info['lorem_percentage'].toFixed(3)
-            let lorem_info_text = "로렘확률: " + current_lorem_info_value
+            let current_lorem_info_value = current_analyzed_info['lorem_percentage']
+            let current_lorem_percentage = (current_lorem_info_value * 100).toFixed(1)
+            let lorem_info_text = "로렘확률: " + current_lorem_percentage + "%"
 
             // 추출한 정보를 컨테이너 내부 텍스트로 할당
             lorem_info_container.item(i).textContent = lorem_info_text
@@ -901,7 +916,7 @@ let setAnalyzedInfo_SearchNaver = () => {
         /* ---------- 멀티미디어 배열에서 멀티미디어 정보(이미지, 이모티콘, 영상 비율)를 추출하여 출력 ----------*/
         let current_multimedia_ratios = multimedia_ratios[i]
 
-        if (Array.isArray(current_multimedia_ratios) && !current_multimedia_ratios.length) {
+        if (current_multimedia_ratios != undefined && current_multimedia_ratios.length > 0) {
             // 현재 블로그에 해당하는 멀티미디어 배열이 비어있지않을때 정보 출력
 
             for (let j = 0; j < current_multimedia_ratios.length; j++) {
@@ -910,8 +925,9 @@ let setAnalyzedInfo_SearchNaver = () => {
                 let current_single_multimedia_type = current_single_multimedia_ratio['ratio_type']
 
                 if (current_single_multimedia_type <= 3) {
-                    let current_single_multimedia_ratio_value = current_single_multimedia_ratio['ratio'].toFixed(3)
-                    let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + "비율: " + current_single_multimedia_ratio_value
+                    let current_single_multimedia_ratio_value = current_single_multimedia_ratio['ratio']
+                    let current_single_multimedia_ratio_percentage = (current_single_multimedia_ratio_value * 100).toFixed(1)
+                    let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + ": " + current_single_multimedia_ratio_percentage + "%"
 
                     // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
                     if (getMultimediaType(current_single_multimedia_type) === "이미지")
@@ -964,7 +980,7 @@ let showSampleText = (index) => {
             modal: true,
             height: 600,
             width: 600,
-            title: "Additional Information Viewer"
+            title: "Analyzed Info Sample Viewer"
         });
     $dialog.dialog('open');
     // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
@@ -1084,6 +1100,8 @@ let setAnalyzeInfoEvent = () => {
 
         let current_additionalInfo_preview_button = additionalInfo_preview_button.item(i)
 
+        // 로렘 확률 클릭 시 페이크 이벤트 삭제
+        current_lorem_info_container.removeEventListener("click", sampleButtonFakeEvent)
         current_lorem_info_container.addEventListener("click", () => {
             showSampleText(i)
         })
