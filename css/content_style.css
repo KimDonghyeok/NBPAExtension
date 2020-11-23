@@ -1,7 +1,110 @@
-/* 확장프로그램 생성 요소 CSS */
 ._analyze-info-container {
+    all: unset;
     height: auto;
-    /* background: #DDDDDD; */
+    margin-top: 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+._upper-container {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+._lower-container {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+._post-preview {
+    all: unset;
+    height: 20px;
+    width: 120px;
+    margin: 0.5rem;
+    padding: 0.3rem 0;
+    flex-basis: 110px;
+    color: #D8E6E7;
+    font-weight: bold;
+    text-align: center;
+    background: #6E7783;
+    border-radius: 5px;
+}
+
+._additionalInfo-preview {
+    all: unset;
+    height: 20px;
+    width: 120px;
+    margin: 0.5rem;
+    padding: 0.3rem 0;
+    flex-basis: 110px;
+    color: #D8E6E7;
+    font-weight: bold;
+    text-align: center;
+    background: #6E7783;
+    border-radius: 5px;
+}
+
+._lorem-percentage-container {
+    height: 40px;
+    width: auto;
+    margin: 0.5rem;
+    padding: 0 1rem;
+    color: #D8E6E7;
+    font-weight: bold;
+    background: #878787;
+    border-radius: 5px;
+}
+
+._multimedia-image-ratio-container {
+    height: 40px;
+    width: auto;
+    margin: 0.5rem;
+    padding: 0 1rem;
+    color: #D8E6E7;
+    font-weight: bold;
+    line-height: 40px;
+    background: #ffa500;
+    border-radius: 5px;
+}
+
+._multimedia-imoticon-ratio-container {
+    height: 40px;
+    width: auto;
+    margin: 0.5rem;
+    padding: 0 1rem;
+    color: #D8E6E7;
+    font-weight: bold;
+    line-height: 40px;
+    background: #6b8e23;
+    border-radius: 5px;
+}
+
+._multimedia-video-ratio-container {
+    height: 40px;
+    width: auto;
+    margin: 0.5rem;
+    padding: 0 1rem;
+    color: #D8E6E7;
+    font-weight: bold;
+    line-height: 40px;
+    background: #a9a9a9;
+    border-radius: 5px;
+}
+
+
+/* ---------------------------------------------------------------------------------- */
+
+
+/* ._analyze-info-container {
+    height: auto;
 }
 
 ._lorem-percentage-container {
@@ -86,4 +189,4 @@
     margin: 1px;
     padding-left: 1px;
     padding-right: 1px;
-}
+} */

@@ -776,10 +776,15 @@ let createAnalyzeInfoContainer = (code, list) => {
             // 각 분석정보 컨테이너가 들어가는 div
             let analyze_info_container = document.createElement("div")
 
+            let upper_container = document.createElement("div")
+            let lower_container = document.createElement("div")
+
+            upper_container.classList.add("_upper-container")
+            lower_container.classList.add("_lower-container")
+
             // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [부가정보 보기 버튼 (키워드, 해시태그, 하이퍼링크)]
             let button_post_preview = document.createElement("button")
             let button_additionalInfo_preview = document.createElement("button")
-            let crlf_div = document.createElement("div")                    // 개행 전용 div
             let lorem_percentage = document.createElement("button")
             let multimedia_image_ratio = document.createElement("div")
             let multimedia_imoticon_ratio = document.createElement("div")
@@ -801,20 +806,22 @@ let createAnalyzeInfoContainer = (code, list) => {
             lorem_percentage.setAttribute("type", "button")
             button_post_preview.setAttribute("type", "button")
             button_additionalInfo_preview.setAttribute("type", "button")
-            crlf_div.style.clear = "both"
 
             // 버튼 내부에 텍스트 추가
             lorem_percentage.textContent = "불러오는 중"
             button_post_preview.textContent = "게시글 미리보기"
             button_additionalInfo_preview.textContent = "부가정보 보기"
 
-            analyze_info_container.appendChild(button_post_preview)
-            analyze_info_container.appendChild(button_additionalInfo_preview)
-            analyze_info_container.appendChild(crlf_div)
-            analyze_info_container.appendChild(lorem_percentage)
-            analyze_info_container.appendChild(multimedia_image_ratio)
-            analyze_info_container.appendChild(multimedia_imoticon_ratio)
-            analyze_info_container.appendChild(multimedia_video_ratio)
+            upper_container.appendChild(button_post_preview)
+            upper_container.appendChild(button_additionalInfo_preview)
+
+            lower_container.appendChild(lorem_percentage)
+            lower_container.appendChild(multimedia_image_ratio)
+            lower_container.appendChild(multimedia_imoticon_ratio)
+            lower_container.appendChild(multimedia_video_ratio)
+
+            analyze_info_container.appendChild(upper_container)
+            analyze_info_container.appendChild(lower_container)
 
             // 타이틀 바로 위에 추가
             let total_sub = current_node.getElementsByClassName("total_sub")[0]
@@ -964,7 +971,7 @@ let setAnalyzedInfo_SearchNaver = () => {
             lorem_info_containers.item(i).textContent = lorem_info_text
 
             // 로렘 버튼 색깔 변경
-            lorem_info_containers.item(i).style.backgroundColor = "#FF6347"
+            lorem_info_containers.item(i).style.backgroundColor = "#f15c5c"
 
             // 로렘 버튼 보이게
             lorem_info_containers.item(i).style.display = "block"
