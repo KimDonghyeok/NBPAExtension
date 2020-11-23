@@ -5,66 +5,85 @@
 }
 
 ._lorem-percentage-container {
-    height: 30px;
-    width: 80px;
-    line-height: 30px;
-    font-size: 0.5rem;
+    height: 26px;
+    width: auto;
+    line-height: 26px;
+    font-size: 1.2rem;
+    font-weight: bold;
     color: whitesmoke;
     background: #878787;
-    border-radius: 10px;
+    border-radius: 9px;
     float: left;
     text-align:center;
+    margin: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 ._multimedia-image-ratio-container {
-    height: 30px;
-    width: 80px;
-    line-height: 30px;
-    font-size: 0.5rem;
+    height: 26px;
+    width: auto;
+    line-height: 26px;
+    font-size: 1.2rem;
+    font-weight: bold;
     color: whitesmoke;
     background: #ffa500;
-    border-radius: 10px;
+    border-radius: 9px;
     float: left;
     display: none;
     text-align:center;
+    margin: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 ._multimedia-imoticon-ratio-container {
-    height: 30px;
-    width: 80px;
-    line-height: 30px;
-    font-size: 0.5rem;
+    height: 26px;
+    width: auto;
+    line-height: 26px;
+    font-size: 1.2rem;
+    font-weight: bold;
     color: whitesmoke;
     background: #6b8e23;
-    border-radius: 10px;
+    border-radius: 9px;
     float: left;
     display: none;
     text-align:center;
+    margin: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 ._multimedia-video-ratio-container {
-    height: 30px;
-    width: 80px;
-    line-height: 30px;
-    font-size: 0.5rem;
+    height: 26px;
+    width: auto;
+    line-height: 26px;
+    font-size: 1.2rem;
+    font-weight: bold;
     color: whitesmoke;
     background: #6b8fff;
-    border-radius: 10px;
+    border-radius: 9px;
     float: left;
     display: none;
     text-align:center;
+    margin: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 ._button {
     margin-bottom: 0.5rem;
-    height: 30px;
-    width: 80px;
-    font-size: 1rem;
+    height: 26px;
+    width: auto;
+    font-size: 1.2rem;
+    font-weight: bold;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 9px;
     background: #a9a9a9;
-    
     float: left;
     text-align:center;
+    margin: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
 }

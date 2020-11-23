@@ -753,25 +753,25 @@ let createAnalyzeInfoContainer = (code, list) => {
             let analyze_info_container = document.createElement("div")
 
             // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [부가정보 보기 버튼 (키워드, 해시태그, 하이퍼링크)]
+            let button_post_preview = document.createElement("button")
+            let button_additionalInfo_preview = document.createElement("button")
+            let crlf_div = document.createElement("div")                    // 개행 전용 div
             let lorem_percentage = document.createElement("button")
             let multimedia_image_ratio = document.createElement("div")
             let multimedia_imoticon_ratio = document.createElement("div")
             let multimedia_video_ratio = document.createElement("div")
-            let crlf_div = document.createElement("div")
-            let button_post_preview = document.createElement("button")
-            let button_additionalInfo_preview = document.createElement("button")
 
             // 각 요소에 클래스 속성 추가
+            button_post_preview.classList.add('_button')
+            button_post_preview.classList.add('_post-preview')
+            button_additionalInfo_preview.classList.add('_button')
+            button_additionalInfo_preview.classList.add('_additionalInfo-preview')
+            
             analyze_info_container.classList.add('_analyze-info-container')
             lorem_percentage.classList.add('_lorem-percentage-container')
             multimedia_image_ratio.classList.add('_multimedia-image-ratio-container')
             multimedia_imoticon_ratio.classList.add('_multimedia-imoticon-ratio-container')
             multimedia_video_ratio.classList.add('_multimedia-video-ratio-container')
-
-            button_post_preview.classList.add('_button')
-            button_post_preview.classList.add('_post-preview')
-            button_additionalInfo_preview.classList.add('_button')
-            button_additionalInfo_preview.classList.add('_additionalInfo-preview')
 
             // 버튼에 type 속성 추가
             lorem_percentage.setAttribute("type", "button")
@@ -783,14 +783,14 @@ let createAnalyzeInfoContainer = (code, list) => {
             lorem_percentage.textContent = "불러오는 중"
             button_post_preview.textContent = "게시글 미리보기"
             button_additionalInfo_preview.textContent = "부가정보 보기"
-
+            
+            analyze_info_container.appendChild(button_post_preview)
+            analyze_info_container.appendChild(button_additionalInfo_preview)
+            analyze_info_container.appendChild(crlf_div)
             analyze_info_container.appendChild(lorem_percentage)
             analyze_info_container.appendChild(multimedia_image_ratio)
             analyze_info_container.appendChild(multimedia_imoticon_ratio)
             analyze_info_container.appendChild(multimedia_video_ratio)
-            analyze_info_container.appendChild(crlf_div)
-            analyze_info_container.appendChild(button_post_preview)
-            analyze_info_container.appendChild(button_additionalInfo_preview)
 
             // 타이틀 바로 위에 추가
             let total_sub = current_node.getElementsByClassName("total_sub")[0]
