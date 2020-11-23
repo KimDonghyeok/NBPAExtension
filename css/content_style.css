@@ -31,7 +31,7 @@
     margin: 0.5rem;
     padding: 0.3rem 0;
     flex-basis: 110px;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     text-align: center;
     background: #6E7783;
@@ -45,7 +45,7 @@
     margin: 0.5rem;
     padding: 0.3rem 0;
     flex-basis: 110px;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     text-align: center;
     background: #6E7783;
@@ -53,11 +53,12 @@
 }
 
 ._lorem-percentage-container {
+    all: unset;
     height: 40px;
     width: auto;
     margin: 0.5rem;
     padding: 0 1rem;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     background: #878787;
     border-radius: 5px;
@@ -68,7 +69,7 @@
     width: auto;
     margin: 0.5rem;
     padding: 0 1rem;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     line-height: 40px;
     background: #ffa500;
@@ -80,7 +81,7 @@
     width: auto;
     margin: 0.5rem;
     padding: 0 1rem;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     line-height: 40px;
     background: #6b8e23;
@@ -92,10 +93,10 @@
     width: auto;
     margin: 0.5rem;
     padding: 0 1rem;
-    color: #D8E6E7;
+    color: #FFFFFF;
     font-weight: bold;
     line-height: 40px;
-    background: #a9a9a9;
+    background: #008c9e;
     border-radius: 5px;
 }
 
