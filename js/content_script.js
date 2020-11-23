@@ -12,6 +12,8 @@ const SEARCH_BLOG_CODE = "_search_view_blog"
 /* ------------------------------ 변수정의 ------------------------------ */
 let search_result_list
 
+let arr_blog_element = []
+
 const arr_xearch_url = []
 const arr_view_url = []
 const arr_blog_url = []
@@ -41,17 +43,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             addSampleButtonFakeListener()
             showTable(message.code)
 
-            // let test_arr = []
-            // test_arr.push('https://blog.naver.com/lanoe600/50124020305')
-            // test_arr.push('https://blog.naver.com/iwolo8844ye/80127162828')
-            // test_arr.push('https://blog.naver.com/vostino/70142180356')
-            // test_arr.push('https://blog.naver.com/babyyej5/70145024358')
-            // test_arr.push('https://blog.naver.com/gus2253/30155510721')
-            //
-            // convertUrlToUrlObj(test_arr)
-            //
-            // json_url_data = JSON.stringify(arr_url_obj)
-
             chrome.runtime.sendMessage({
                 message: "URLDATA",
                 data: json_url_data
@@ -71,6 +62,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         deserializeData(arr_received_data)
         setAnalyzedInfo_SearchNaver()
         setAnalyzeInfoEvent()
+        changeBackgorundColor()
     } else if (message.message === "ALLHIDE") {
         let checkbox_id = message.checkbox_id
         let checkbox_status = message.status
@@ -79,12 +71,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         hideAllMultimediaByType(checkbox_id, checkbox_status, url)
         console.log("blog popup message is received!")
     } else if (message.message === "CHANGESLIDER") {
-        let slider_id = message.slider_id
-        let slider_value = message.slider_value
-        let url = message.url
+        // let slider_id = message.slider_id
+        // let slider_value = message.slider_value
 
         console.log("search popup message is received!")
-
+        changeBackgorundColor()
     }
 })
 
@@ -746,7 +737,6 @@ let convertBlogMeUrl = (url) => {
 
 let getBlogUrlList = (code, url) => {
     // 현재 페이지 코드와 한개의 html 요소를 인자로 받아 해당 요소의 url 을 코드에 따라 해당 배열에 push
-    // TODO https://pointnow.blog.me/222149996848 -> https://blog.naver.com/pointnow/222149996848 변환 작업 필요
 
     let currentElementUrl = url
 
@@ -780,6 +770,7 @@ let createAnalyzeInfoContainer = (code, list) => {
         current_node_url = current_node.querySelector('.total_tit').href
 
         if (isBlogSectionElement(current_node_url)) {
+            arr_blog_element.push(current_node)
             getBlogUrlList(code, current_node_url)
 
             // 각 분석정보 컨테이너가 들어가는 div
@@ -788,13 +779,11 @@ let createAnalyzeInfoContainer = (code, list) => {
             // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [부가정보 보기 버튼 (키워드, 해시태그, 하이퍼링크)]
             let button_post_preview = document.createElement("button")
             let button_additionalInfo_preview = document.createElement("button")
-            let crlf_div = document.createElement("div")                    // 개행 전용 div
             let lorem_percentage = document.createElement("button")
             let multimedia_image_ratio = document.createElement("div")
             let multimedia_imoticon_ratio = document.createElement("div")
             let multimedia_video_ratio = document.createElement("div")
 
-            // 각 요소에 클래스 속성 추가
             button_post_preview.classList.add('_button')
             button_post_preview.classList.add('_post-preview')
             button_additionalInfo_preview.classList.add('_button')
@@ -810,7 +799,6 @@ let createAnalyzeInfoContainer = (code, list) => {
             lorem_percentage.setAttribute("type", "button")
             button_post_preview.setAttribute("type", "button")
             button_additionalInfo_preview.setAttribute("type", "button")
-            crlf_div.style.clear = "both"
 
             // 버튼 내부에 텍스트 추가
             lorem_percentage.textContent = "불러오는 중"
@@ -819,15 +807,13 @@ let createAnalyzeInfoContainer = (code, list) => {
             
             analyze_info_container.appendChild(button_post_preview)
             analyze_info_container.appendChild(button_additionalInfo_preview)
-            analyze_info_container.appendChild(crlf_div)
             analyze_info_container.appendChild(lorem_percentage)
             analyze_info_container.appendChild(multimedia_image_ratio)
             analyze_info_container.appendChild(multimedia_imoticon_ratio)
             analyze_info_container.appendChild(multimedia_video_ratio)
-
-            // 타이틀 바로 위에 추가
-            let total_sub = current_node.getElementsByClassName("total_sub")[0]
-            total_sub.append(analyze_info_container)
+            
+            // 현재 노드의 최상단에 추가
+            current_node.prepend(analyze_info_container)
         }
     }
 }
@@ -964,6 +950,7 @@ let setAnalyzedInfo_SearchNaver = () => {
         if (analyzed_info[i] != undefined && Object.keys(analyzed_info[i]).length !== 0) {
             // 현재 객체가 비어있지 않을때 정보 출력 작업
             let current_analyzed_info = analyzed_info[i]['fields']
+            let current_blog_info = current_analyzed_info['blog_info']
             let current_lorem_info_value = current_analyzed_info['lorem_percentage']
             let current_lorem_percentage = (current_lorem_info_value * 100).toFixed(1)
             let lorem_info_text = "로렘확률: " + current_lorem_percentage + "%"
@@ -977,44 +964,49 @@ let setAnalyzedInfo_SearchNaver = () => {
             // 로렘 버튼 보이게
             lorem_info_containers.item(i).style.display = "block"
 
-            // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
+            let current_multimedia_ratios
+            if(multimedia_ratios != undefined){
+                for (j = 0 ; j < multimedia_ratios.length ; j++){
+                    let blog_info = multimedia_ratios[j][0]['fields']['blog_info']
+                    if (current_blog_info === blog_info){
+                        current_multimedia_ratios = multimedia_ratios[j]
+                        break
+                    }
+                }
+            }
+
+            if (current_multimedia_ratios != undefined) {
+                for (let j = 0; j < current_multimedia_ratios.length; j++) {
+    
+                    let current_single_multimedia_ratio = current_multimedia_ratios[j]['fields']
+                    let current_single_multimedia_type = current_single_multimedia_ratio['ratio_type']
+    
+                    if (current_single_multimedia_type <= 3) {
+                        let current_single_multimedia_ratio_value = current_single_multimedia_ratio['ratio']
+                        let current_single_multimedia_ratio_percentage = (current_single_multimedia_ratio_value * 100).toFixed(1)
+                        let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + ": " + current_single_multimedia_ratio_percentage + "%"
+    
+                        // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
+                        if (getMultimediaType(current_single_multimedia_type) === "이미지"){
+                            multimedia_image_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                            multimedia_image_ratio_container.item(i).style.display = "block"
+                        }
+                        else if (getMultimediaType(current_single_multimedia_type) === "이모티콘"){
+                            multimedia_imoticon_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                            multimedia_imoticon_ratio_container.item(i).style.display = "block"
+                        }    
+                        else if (getMultimediaType(current_single_multimedia_type) === "영상"){
+                            multimedia_video_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                            multimedia_video_ratio_container.item(i).style.display = "block"
+                        }
+                    }
+                }
+            }
         } else {
             // 서버에서 아직 분석하는중이면
             lorem_info_containers.item(i).textContent = "분석하는 중"
         }
-
-        /* ---------- 멀티미디어 배열에서 멀티미디어 정보(이미지, 이모티콘, 영상 비율)를 추출하여 출력 ----------*/
-        let current_multimedia_ratios = multimedia_ratios[i]
-
-        if (current_multimedia_ratios != undefined && current_multimedia_ratios.length > 0) {
-            // 현재 블로그에 해당하는 멀티미디어 배열이 비어있지않을때 정보 출력
-
-            for (let j = 0; j < current_multimedia_ratios.length; j++) {
-
-                let current_single_multimedia_ratio = current_multimedia_ratios[j]['fields']
-                let current_single_multimedia_type = current_single_multimedia_ratio['ratio_type']
-
-                if (current_single_multimedia_type <= 3) {
-                    let current_single_multimedia_ratio_value = current_single_multimedia_ratio['ratio']
-                    let current_single_multimedia_ratio_percentage = (current_single_multimedia_ratio_value * 100).toFixed(1)
-                    let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + ": " + current_single_multimedia_ratio_percentage + "%"
-
-                    // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
-                    if (getMultimediaType(current_single_multimedia_type) === "이미지"){
-                        multimedia_image_ratio_container.item(i).textContent = current_multimedia_ratio_text
-                        multimedia_image_ratio_container.item(i).style.display = "block"
-                    }
-                    else if (getMultimediaType(current_single_multimedia_type) === "이모티콘"){
-                        multimedia_imoticon_ratio_container.item(i).textContent = current_multimedia_ratio_text
-                        multimedia_imoticon_ratio_container.item(i).style.display = "block"
-                    }    
-                    else if (getMultimediaType(current_single_multimedia_type) === "영상"){
-                        multimedia_video_ratio_container.item(i).textContent = current_multimedia_ratio_text
-                        multimedia_video_ratio_container.item(i).style.display = "block"
-                    }
-                }
-            }
-        }
+        
     }
 }
 
@@ -1050,6 +1042,7 @@ let normalizePostViewUrl = (url) => {
     return normalize_url
 }
 
+// ------------------------------
 let showSampleText = (index) => {
     let sample1, sample2, sample3 = ""
 
@@ -1234,34 +1227,242 @@ let hideAllMultimediaByType = (checkbox_id, checkbox_status, url) => {
 }
 
 /* ------------------------- 슬라이더 동작 처리 ------------------------- */
+let filter_check_dictionary = [false, false, false, false]
+let filter_value_dictionary = [0, 0, 0, 0]
 
 // 현재 슬라이더 값에 따라 블로그의 배경을 회색처리
-let changeBackgroundByLoremPoss = (checkboxValue) => {
-    let lorem_info_container = document.getElementsByClassName("_lorem-percentage-container")
-    let lorem_poss = []
+let changeBackgroundByLoremPoss = (filter) => {
+    let sliderValue
+    if(!filter_check_dictionary[0]){
+        return filter
+    }
+    else{
+        sliderValue = filter_value_dictionary[0]
+    }
+    // 현재 페이지에서 성생된 로렘 확률 컨테이너를 탐색하여 저장
+    let list_lorem_info_container = document.getElementsByClassName("_lorem-percentage-container")
+    // 현재 페이지의 전체 분석 정보 컨테이너를 탐색하여 저장
+    let list_analyze_info_container = document.getElementsByClassName("_analyze-info-container")
 
-    lorem_info_container.forEach((element, index) => {
-    })
+    // 현재 페이지에서 생성된 로렘 확률 컨테이너의 로렘확률 값을 저장하는 배열
+    let arr_lorem_poss = []
+    // 로렘 확률 값 저장
+    if (list_lorem_info_container != undefined){
+        for(let i = 0; i < list_lorem_info_container.length; i++) {
+            let lorem_str = list_lorem_info_container.item(i).textContent
+            if(lorem_str === ""){
+                arr_lorem_poss.push(-1)
+                continue
+            }
+            let lorem_str_frag = lorem_str.split(" ")
+            let lorem_percentage = lorem_str_frag[1].split("%")
+            let lorem_possiablity = parseFloat(lorem_percentage[0])
+            arr_lorem_poss.push(lorem_possiablity)
+        }
+    
+        for (let i = 0; i < list_lorem_info_container.length; i++) {
+            if(arr_lorem_poss[i] != -1){
+                if (arr_lorem_poss[i] >= sliderValue) {
+                    filter[i] = true
+                }
+            }
+            
+        }
+    }
+    
+    return filter
 }
 
-
-let changeBackgroundByMultimediaRatio = (checkboxId, checkboxValue) => {
-    switch(checkboxId) {
-        case "image-ratio-slider":
-        case "video-ratio-slider":
-        case "imoticon-ratio-slider":
-            break
+let changeBackgroundByImageRatio = (filter) => {
+    let sliderValue
+    if(!filter_check_dictionary[1]){
+        return filter
     }
+    else{
+        sliderValue = filter_value_dictionary[1]
+    }
+
+    let list_multimedia_image_ratio = document.getElementsByClassName("_multimedia-image-ratio-container")
+
+    // 현재 페이지의 생성된 이미지 비율 컨테이너에 이미지 비율 확률 값을 저장하는 배열
+    let arr_image_ratio = []
+    //이미지 비율값 저장
+    if(list_multimedia_image_ratio != undefined){
+        for(let i = 0; i < list_multimedia_image_ratio.length; i++) {
+            let image_ratio_str = list_multimedia_image_ratio.item(i).textContent
+            if(image_ratio_str ===""){
+                arr_image_ratio.push(-1)
+                continue
+            }
+            let image_ratio_str_frag = image_ratio_str.split(" ")
+            let image_ratio_percentage = image_ratio_str_frag[1].split("%")
+            let image_ratio = parseFloat(image_ratio_percentage[0])
+            arr_image_ratio.push(image_ratio)
+        }
+    
+        for (let i = 0; i < filter.length; i++) {
+            if (list_multimedia_image_ratio.item(i).textContent === null){}
+            else {
+                if(arr_image_ratio[i] != -1) {
+                    if(arr_image_ratio[i] >= sliderValue) {
+                        filter[i] = true
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    return filter
+}
+
+let changeBackgroundByImoticonRatio = ( filter) => {
+    let sliderValue
+    if(!filter_check_dictionary[2]){
+        return filter
+    }
+    else{
+        sliderValue = filter_value_dictionary[2]
+    }
+
+    let list_multimedia_imoticon_ratio = document.getElementsByClassName("_multimedia-imoticon-ratio-container")
+
+    
+    // 현재 페이지의 생성된 이모티콘비율 컨테이너에 이모티콘 비율 확률 값을 저장하는 배열
+    let arr_imoticon_ratio = []
+    //이모티콘 비율값 저장
+    if(list_multimedia_imoticon_ratio != undefined){
+        for(let i = 0; i < list_multimedia_imoticon_ratio.length; i++) {
+            let imoticon_ratio_str = list_multimedia_imoticon_ratio.item(i).textContent
+            if (imoticon_ratio_str === ""){
+                arr_imoticon_ratio.push(-1)
+                continue
+            }
+            let imoticon_ratio_str_frag = imoticon_ratio_str.split(" ")
+            let imoticon_ratio_percentage = imoticon_ratio_str_frag[1].split("%")
+            let imoticon_ratio = parseFloat(imoticon_ratio_percentage[0])
+            arr_imoticon_ratio.push(imoticon_ratio)
+        }
+        
+    
+        for (let i = 0; i < filter.length; i++) {
+            if (list_multimedia_imoticon_ratio.item(i).textContent === null){}
+            else {
+                if(arr_imoticon_ratio != -1){
+                    if(arr_imoticon_ratio[i] >= sliderValue) {
+                        filter[i] = true
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    return filter
+}
+
+let changeBackgroundByVideoRatio = (filter) => {
+    let sliderValue
+    if(!filter_check_dictionary[3]){
+        return filter
+    }
+    else{
+        sliderValue = filter_value_dictionary[3]
+    }
+    let list_multimedia_video_ratio = document.getElementsByClassName("_multimedia-video-ratio-container")
+
+    // 현재 페이지의 생성된 이미지 비율 컨테이너에 이미지 비율 확률 값을 저장하는 배열
+    let arr_video_ratio = []
+    //이미지 비율값 저장
+    if(list_multimedia_video_ratio != undefined){
+        for(let i = 0; i < list_multimedia_video_ratio.length; i++) {
+            let video_ratio_str = list_multimedia_video_ratio.item(i).textContent
+            if(video_ratio_str === ""){
+                arr_video_ratio.push(-1)
+                continue
+            }
+            let video_ratio_str_frag = video_ratio_str.split(" ")
+            let video_ratio_percentage = video_ratio_str_frag[1].split("%")
+            let video_ratio = parseFloat(video_ratio_percentage[0])
+            arr_video_ratio.push(video_ratio)
+        }
+
+        for (let i = 0; i < filter.length; i++) {
+            if (list_multimedia_video_ratio.item(i).textContent === null){}
+            else {
+                if(arr_video_ratio[i] != -1){
+                    if(arr_video_ratio[i] >= sliderValue) {
+                        filter[i] = true
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    return filter
 }
 
 // SEARCH_NAVER 팝업에서 슬라이더 값이 변하면 블로그 배경 회색처리
-let changeBackgorundColor = (checkboxId, checkboxValue) => {
-    switch (checkboxId) {
-        case "lorem-poss-slider":
-            break
-        case "image-ratio-slider":
-        case "video-ratio-slider":
-        case "imoticon-ratio-slider":
-            break
+let changeBackgorundColor = () => {
+    if(arr_blog_element === undefined){
+        return
     }
+
+    getFilterCheck()
+    getSliderValue()
+}
+
+let getFilterCheck = () =>{
+    chrome.storage.local.get("lorem_poss_filter",function(obj){
+        filter_check_dictionary[0] = checkToBoolean(obj.lorem_poss_filter, false)
+    })
+    chrome.storage.local.get("image_ratio_filter",function(obj){
+        filter_check_dictionary[1] = checkToBoolean(obj.image_ratio_filter, false)
+    })
+    chrome.storage.local.get("imoticon_ratio_filter",function(obj){
+        filter_check_dictionary[2] = checkToBoolean(obj.imoticon_ratio_filter, false)
+    })
+    chrome.storage.local.get("video_ratio_filter",function(obj){
+        filter_check_dictionary[3] = checkToBoolean(obj.video_ratio_filter, false)
+    })
+}
+
+let getSliderValue = () => {
+    chrome.storage.local.get("lorem_poss_slider",function(obj){
+        filter_value_dictionary[0] =  obj.lorem_poss_slider
+    })
+    chrome.storage.local.get("image_ratio_slider",function(obj){
+        filter_value_dictionary[1] =  obj.image_ratio_slider
+    })
+    chrome.storage.local.get("imoticon_ratio_slider",function(obj){
+        filter_value_dictionary[2] =  obj.imoticon_ratio_slider
+        
+    })
+    chrome.storage.local.get("video_ratio_slider",function(obj){
+        filter_value_dictionary[3] =  obj.video_ratio_slider
+        // 필터 flase 로 초기화
+        let filter = []
+        for (let i = 0; i < arr_blog_element.length; i++) {
+            filter.push(false)
+        }
+
+        fliter = changeBackgroundByLoremPoss(filter)
+        fliter = changeBackgroundByImageRatio(filter)
+        filter = changeBackgroundByImoticonRatio(filter)
+        filter = changeBackgroundByVideoRatio(filter)
+
+        for(i = 0 ; i < filter.length ; i++){
+            let containers = document.getElementsByClassName('total_sub')
+            let container = containers[i]
+            if(filter[i]){
+                // make container gray 
+                container.style.backgroundColor = "#898989"
+            } else {
+                // make container not gray
+                container.style.backgroundColor = "#FFFFFF"
+            }
+        }   
+    })
+    
 }

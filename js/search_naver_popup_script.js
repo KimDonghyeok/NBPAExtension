@@ -12,17 +12,17 @@ window.onload = function() {
     console.log("onload" + Date())
 
     // 보기설정 체크박스 리스너 등록
-    checkbox_lorem_poss_view = document.getElementById("lorem-poss-view")
-    addCheckboxListener(checkbox_lorem_poss_view)
+    // checkbox_lorem_poss_view = document.getElementById("lorem-poss-view")
+    // addCheckboxListener(checkbox_lorem_poss_view)
 
-    checkbox_image_ratio_view = document.getElementById("image-ratio-view")
-    addCheckboxListener(checkbox_image_ratio_view)
+    // checkbox_image_ratio_view = document.getElementById("image-ratio-view")
+    // addCheckboxListener(checkbox_image_ratio_view)
 
-    checkbox_video_ratio_view = document.getElementById("video-ratio-view")
-    addCheckboxListener(checkbox_video_ratio_view)
+    // checkbox_video_ratio_view = document.getElementById("video-ratio-view")
+    // addCheckboxListener(checkbox_video_ratio_view)
 
-    checkbox_imoticon_ratio_view = document.getElementById("imoticon-ratio-view")
-    addCheckboxListener(checkbox_imoticon_ratio_view)
+    // checkbox_imoticon_ratio_view = document.getElementById("imoticon-ratio-view")
+    // addCheckboxListener(checkbox_imoticon_ratio_view)
 
     // 필터설정 체크박스 리스너 등록
     checkbox_lorem_poss_filter = document.getElementById("lorem-poss-filter")
@@ -51,10 +51,10 @@ window.onload = function() {
     addSliderListener(imoticon_ratio_slider)
 
     // 스토리지와 체크박스를 동기화
-    syncCheckboxStatus(checkbox_lorem_poss_view)
-    syncCheckboxStatus(checkbox_image_ratio_view)
-    syncCheckboxStatus(checkbox_video_ratio_view)
-    syncCheckboxStatus(checkbox_imoticon_ratio_view)
+    // syncCheckboxStatus(checkbox_lorem_poss_view)
+    // syncCheckboxStatus(checkbox_image_ratio_view)
+    // syncCheckboxStatus(checkbox_video_ratio_view)
+    // syncCheckboxStatus(checkbox_imoticon_ratio_view)
     syncCheckboxStatus(checkbox_lorem_poss_filter)
     syncCheckboxStatus(checkbox_image_ratio_filter)
     syncCheckboxStatus(checkbox_video_ratio_filter)
@@ -131,6 +131,7 @@ let checkboxMethodSelector = (checkbox) => {
             // 필터 활성/비활성화 함수 호출
             sliderId = getSliderId(checkboxId)
             changeSliderStatus(sliderId, boolean)
+            sendToContentScript()
             break
     }   
 }
@@ -146,24 +147,19 @@ let sliderMethodSelector = (slider) => {
         case "imoticon-ratio-slider":
             // 슬라이더 디스플레이어 동기화 함수 호출
             syncSliderValue(sliderId)
-            sendToContentScript(slider)
+            sendToContentScript()
     }
 }
 /* ------------------------- 스크립트간 통신 ------------------------- */
-let sendToContentScript = (obj) =>{
-    if (obj.type === "range") {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            let tabId = tabs[0].id
-            let current_url = tabs[0].url
+let sendToContentScript = () =>{
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        let tabId = tabs[0].id
+        let current_url = tabs[0].url
 
-            chrome.tabs.sendMessage(tabId, {
-                message: "CHANGESLIDER",
-                slider_id: obj.id,
-                slider_value: obj.value,
-                url: current_url
-            })
+        chrome.tabs.sendMessage(tabId, {
+            message: "CHANGESLIDER",
         })
-    }
+    })
 }
 
 
@@ -253,11 +249,11 @@ let saveCheckboxStatus = (checkbox) =>{
 // 체크박스를 주면 스토리지에서 동기화
 let syncCheckboxStatus = (checkbox) =>{
     switch(checkbox.id){
-        case "lorem-poss-view":
-            chrome.storage.local.get("lorem_poss_view",function(obj){
-                checkbox.checked = checkToBoolean(obj.lorem_poss_view, true)
-            })
-            break
+        // case "lorem-poss-view":
+        //     chrome.storage.local.get("lorem_poss_view",function(obj){
+        //         checkbox.checked = checkToBoolean(obj.lorem_poss_view, true)
+        //     })
+        //     break
         case "image-ratio-view":
             chrome.storage.local.get("image_ratio_view",function(obj){
                 checkbox.checked = checkToBoolean(obj.image_ratio_view, true)
