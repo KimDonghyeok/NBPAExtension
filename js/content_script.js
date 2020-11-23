@@ -979,7 +979,7 @@ let showPostPreview = (url) => {
         .dialog({
             autoOpen: false,
             modal: true,
-            height: 600,
+            height: 500,
             width: 500,
             title: "NBPA PreViewer"
         });
@@ -990,7 +990,7 @@ let showPostPreview = (url) => {
 
 let showPostKeyword = (index) => {
     // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
-    let table_string = "<table><tr><th>키워드</th><th>해시태그</th><th>외부링크</th></tr>"
+    let table_string = "<table frame=void style=\"width:100%;table-layout:fixed;\"><tr><th>키워드</th><th>해시태그</th><th>외부링크</th></tr>"
 
     current_keywords = keywords[index]
     current_tags = tags[index]
@@ -1008,16 +1008,42 @@ let showPostKeyword = (index) => {
     }
 
     for (i = 0; i < max_line; i++) {
-        table_string += "<tr>"
+        table_string += "<tr style=\"border: 1px solid black\">"
+        // 키워드 추가
+        let keyword
         if (current_keywords.length > i) {
-            table_string += "<th>" + current_keywords[i]["fields"]["word"] + "</th>"
+            let keyword_org = current_keywords[i]["fields"]["word"]
+            let keyword_word_only = keyword_org.split("/")[0]
+            if (keyword_word_only.length > 1){
+                keyword = keyword_word_only
+            }
+        } else{
+            keyword = ""
         }
+        table_string += "<td>" + keyword + "</td>"
+
+        // 해시태그 추가
+        let hashtag
         if (current_tags.length > i) {
-            table_string += "<th> #" + current_tags[i]["fields"]["word"] + "</th>"
+            hashtag_org = current_tags[i]["fields"]["word"]
+            hashtag = "#" + hashtag_org
+        } else{
+            hashtag = ""
         }
+        table_string += "<td> " + hashtag + "</td>"
+
+        // 하이퍼링크 추가
+        let hyperlink
+        let short_hyperlink
         if (current_hyperlinks.length > i) {
-            table_string += "<th>" + current_hyperlinks[i]["fields"]["word"] + "</th>"
+            hyperlink = current_hyperlinks[i]["fields"]["word"]
+            short_hyperlink = hyperlink.substring(0, 20)
+            
+        } else{
+            hyperlink = ""
+            short_hyperlink = ""
         }
+        table_string += "<td><a href=\"" + hyperlink + "\" style=\"color: #0000FF;\" title=\"" + hyperlink +"\">" + short_hyperlink + "</a></td>"
         table_string += "</tr>"
     }
 
@@ -1028,7 +1054,7 @@ let showPostKeyword = (index) => {
         .dialog({
             autoOpen: false,
             modal: true,
-            height: 600,
+            height: 500,
             width: 500,
             title: "KeyWord PreViewer"
         });
