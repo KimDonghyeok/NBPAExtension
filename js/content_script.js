@@ -641,6 +641,8 @@ $(function () {
                     title: "NBPA PreViewer"
                 });
             $dialog.dialog('open');
+            let elem = document.getElementsByClassName("ui-dialog")[0]
+            elem.style.zIndex = "400000"
         }
     });
 });
