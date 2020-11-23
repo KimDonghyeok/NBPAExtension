@@ -1009,9 +1009,6 @@ let setAnalyzedInfo_SearchNaver = () => {
                         }
                     }
                 }
-            } else {
-                // 서버에서 아직 분석하는중이면
-                lorem_info_containers.item(i).textContent = "분석하는 중"
             }
         } else {
             // 서버에서 아직 분석하는중이면
