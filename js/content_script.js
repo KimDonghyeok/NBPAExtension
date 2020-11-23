@@ -62,9 +62,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             let current_url = message.url
 
             multimedia_folding(current_url)
-            // TODO 블로그 내에서 서버로 단일 URL 보내서 분석 정보 받아오는 작업 구현
-            //서버로 단일 URL 전송
-            // sendSingleBlogURL(current_url)
+            
+            // 스토리지에서 폴드 체크상태 확인 후 이미지 자동접기
+            sync_blog_popup_checkbox(current_url)
         }
     } else if (message.message === "ANALYZEINFO") {
         arr_received_data = message.data
@@ -123,8 +123,32 @@ let sampleButtonFakeEvent = () => {
     alert('아직 분석정보가 존재하지 않습니다!')
 }
 
-/* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------------------------ 체크박스 동기화 기능 ------------------------------------------------------------------------------------------ */
 
+// checked/unchecked를 불리언으로 변환, undefined면 defaultValue 반환
+let checkToBoolean = (check, defaultValue) => {
+    if (check === undefined) {
+        return defaultValue
+    }
+    return check === "checked"
+}
+
+let sync_blog_popup_checkbox = (url) => {
+    chrome.storage.local.get("all_image_close", function (obj) {
+        boolean = checkToBoolean(obj.all_image_close, false)
+        hideAllMultimediaByType("all-image-close", boolean, url)
+    })
+    chrome.storage.local.get("all_video_close", function (obj) {
+        boolean = checkToBoolean(obj.all_video_close, false)
+        hideAllMultimediaByType("all-video-close", boolean, url)
+    })
+    chrome.storage.local.get("all_imoticon_close", function (obj) {
+        boolean = checkToBoolean(obj.all_imoticon_close, false)
+        hideAllMultimediaByType("all-imoticon-close", boolean, url)
+    })
+}
+
+/* ------------------------------ 멀티미디어 접기 ------------------------------ */
 let getLogNo = (url) => {
     // log_no 추출 함수
 
