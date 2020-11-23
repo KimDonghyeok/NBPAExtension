@@ -37,6 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             createAnalyzeInfoContainer(message.code, search_result_list)
             convertArrToJsonArr(message.code)
             addPreviewButtonListener()
+            addKeywordButtonFakeListener()
             showTable(message.code)
 
             // let test_arr = []
@@ -79,12 +80,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 /* ------------------------------------------------------------------------------------------ 멀티미디어 접기 기능 ------------------------------------------------------------------------------------------ */
 let addPreviewButtonListener = () => {
     arr_url_obj.forEach((element, index) => {
-        let post_preview_button = document.getElementsByClassName("_post-preview")
-        let current_post_preview_button = post_preview_button.item(index)
+        let post_preview_buttons = document.getElementsByClassName("_post-preview")
+        let current_post_preview_button = post_preview_buttons.item(index)
         current_post_preview_button.addEventListener("click", () => {
             showPostPreview(element["url"])
         })
     });
+}
+
+let addKeywordButtonFakeListener = () => {
+    arr_url_obj.forEach((element, index) => {
+        let additionalInfo_preview_buttons = document.getElementsByClassName("_additionalInfo-preview")
+        let current_additionalInfo_preview_button = additionalInfo_preview_buttons.item(index)
+        current_additionalInfo_preview_button.addEventListener("click", additionalInfoButtonFakeEvent)
+    })
+}
+
+let additionalInfoButtonFakeEvent = () => {
+    alert('아직 부가정보가 존재하지 않습니다!')
 }
 
 let getLogNo = (document) => {
@@ -98,9 +111,9 @@ let getLogNo = (document) => {
         console.log(splitSrc[i]);
         if (splitSrc[i].startsWith('logNo')) {
             console.log("이걸 잡아야함: ", splitSrc[i]);
-            addPreviewButtonListener = splitSrc[i].split("=");
-            console.log(addPreviewButtonListener[1]);
-            return addPreviewButtonListener[1];
+            let logNo = splitSrc[i].split("=");
+            console.log(logNo[1]);
+            return logNo[1];
         }
 
 
@@ -585,7 +598,7 @@ $(function () {
                     autoOpen: false,
                     modal: true,
                     height: 600,
-                    width: 500,
+                    width: 600,
                     title: "NBPA PreViewer"
                 });
             $dialog.dialog('open');
@@ -698,14 +711,14 @@ let createAnalyzeInfoContainer = (code, list) => {
             // 각 분석정보 컨테이너가 들어가는 div
             let analyze_info_container = document.createElement("div")
 
-            // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [키워드 미리보기 버튼 (키워드, 해시태그, 하이퍼링크)]
+            // [로렘확률 (샘플텍스트 1,2 ,3)] [이미지 비율] [이모티콘 비율] [영상 비율] [게시글 미리보기 버튼] [부가정보 보기 버튼 (키워드, 해시태그, 하이퍼링크)]
             let lorem_percentage = document.createElement("button")
             let multimedia_image_ratio = document.createElement("div")
             let multimedia_imoticon_ratio = document.createElement("div")
             let multimedia_video_ratio = document.createElement("div")
             let crlf_div = document.createElement("div")
             let button_post_preview = document.createElement("button")
-            let button_keyword_preview = document.createElement("button")
+            let button_additionalInfo_preview = document.createElement("button")
 
             // 각 요소에 클래스 속성 추가
             analyze_info_container.classList.add('_analyze-info-container')
@@ -716,18 +729,18 @@ let createAnalyzeInfoContainer = (code, list) => {
 
             button_post_preview.classList.add('_button')
             button_post_preview.classList.add('_post-preview')
-            button_keyword_preview.classList.add('_button')
-            button_keyword_preview.classList.add('_keyword-preview')
+            button_additionalInfo_preview.classList.add('_button')
+            button_additionalInfo_preview.classList.add('_additionalInfo-preview')
 
             // 버튼에 type 속성 추가
             lorem_percentage.setAttribute("type", "button")
             button_post_preview.setAttribute("type", "button")
-            button_keyword_preview.setAttribute("type", "button")
+            button_additionalInfo_preview.setAttribute("type", "button")
             crlf_div.style.clear = "both"
 
             // 버튼 내부에 텍스트 추가
             button_post_preview.textContent = "게시글 미리보기"
-            button_keyword_preview.textContent = "키워드 정보 미리보기"
+            button_additionalInfo_preview.textContent = "부가정보 보기"
 
             analyze_info_container.appendChild(lorem_percentage)
             analyze_info_container.appendChild(multimedia_image_ratio)
@@ -735,7 +748,7 @@ let createAnalyzeInfoContainer = (code, list) => {
             analyze_info_container.appendChild(multimedia_video_ratio)
             analyze_info_container.appendChild(crlf_div)
             analyze_info_container.appendChild(button_post_preview)
-            analyze_info_container.appendChild(button_keyword_preview)
+            analyze_info_container.appendChild(button_additionalInfo_preview)
 
             // 타이틀 바로 위에 추가
             let total_sub = current_node.getElementsByClassName("total_sub")[0]
@@ -950,8 +963,8 @@ let showSampleText = (index) => {
             autoOpen: false,
             modal: true,
             height: 600,
-            width: 500,
-            title: "KeyWord PreViewer"
+            width: 600,
+            title: "Additional Information Viewer"
         });
     $dialog.dialog('open');
     // 로렘확률 컨테이너를 클릭하면 로렘확률에 대한 샘플 텍스트를 레이어팝업으로 보여주는 함수
@@ -979,8 +992,8 @@ let showPostPreview = (url) => {
         .dialog({
             autoOpen: false,
             modal: true,
-            height: 500,
-            width: 500,
+            height: 600,
+            width: 600,
             title: "NBPA PreViewer"
         });
     $dialog.dialog('open');
@@ -988,8 +1001,8 @@ let showPostPreview = (url) => {
     elem.style.zIndex = "400000"
 }
 
-let showPostKeyword = (index) => {
-    // 게시글 키워드 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
+let showPostAdditionalInfo = (index) => {
+    // 게시글 부가정보 보기 버튼을 클릭하면 레이어 팝업으로 게시글 키워드(키워드 , 해시태그, 하이퍼 링크)를 보여주는 함수
     let table_string = "<table frame=void style=\"width:100%;table-layout:fixed;\"><tr><th>키워드</th><th>해시태그</th><th>외부링크</th></tr>"
 
     current_keywords = keywords[index]
@@ -1008,42 +1021,36 @@ let showPostKeyword = (index) => {
     }
 
     for (i = 0; i < max_line; i++) {
+
         table_string += "<tr style=\"border: 1px solid black\">"
         // 키워드 추가
-        let keyword
+        let keyword = ""
         if (current_keywords.length > i) {
             let keyword_org = current_keywords[i]["fields"]["word"]
             let keyword_word_only = keyword_org.split("/")[0]
-            if (keyword_word_only.length > 1){
-                keyword = keyword_word_only
-            }
-        } else{
-            keyword = ""
+            keyword = keyword_word_only
         }
-        table_string += "<td>" + keyword + "</td>"
 
         // 해시태그 추가
-        let hashtag
+        let hashtag = ""
         if (current_tags.length > i) {
             hashtag_org = current_tags[i]["fields"]["word"]
             hashtag = "#" + hashtag_org
-        } else{
-            hashtag = ""
         }
-        table_string += "<td> " + hashtag + "</td>"
 
         // 하이퍼링크 추가
-        let hyperlink
-        let short_hyperlink
+        let hyperlink = ""
+        let short_hyperlink = ""
         if (current_hyperlinks.length > i) {
             hyperlink = current_hyperlinks[i]["fields"]["word"]
             short_hyperlink = hyperlink.substring(0, 20)
             
-        } else{
-            hyperlink = ""
-            short_hyperlink = ""
         }
-        table_string += "<td><a href=\"" + hyperlink + "\" style=\"color: #0000FF;\" title=\"" + hyperlink +"\">" + short_hyperlink + "</a></td>"
+        if (keyword != "" || hashtag !== "" || hyperlink !== ""){
+            table_string += "<td>" + keyword + "</td>"
+            table_string += "<td> " + hashtag + "</td>"
+            table_string += "<td><a href=\"" + hyperlink + "\" style=\"color: #0000FF;\" title=\"" + hyperlink +"\">" + short_hyperlink + "</a></td>"   
+        }
         table_string += "</tr>"
     }
 
@@ -1054,9 +1061,9 @@ let showPostKeyword = (index) => {
         .dialog({
             autoOpen: false,
             modal: true,
-            height: 500,
-            width: 500,
-            title: "KeyWord PreViewer"
+            height: 600,
+            width: 600,
+            title: "Additional Information Viewer"
         });
     $dialog.dialog('open');
     let elem = document.getElementsByClassName("ui-dialog")[0]
@@ -1066,23 +1073,25 @@ let showPostKeyword = (index) => {
 }
 
 let setAnalyzeInfoEvent = () => {
-    // 분석 정보 컨테이너의 로렘확률 컨테이너, 게시글 미리보기 버튼, 게시글 키워드 보기 버튼에 대해 이벤트를 추가
+    // 분석 정보 컨테이너의 로렘확률 컨테이너, 게시글 미리보기 버튼, 게시글 부가정보 보기 버튼에 대해 이벤트를 추가
 
     let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
-    let keyword_preview_button = document.getElementsByClassName("_keyword-preview")
+    let additionalInfo_preview_button = document.getElementsByClassName("_additionalInfo-preview")
 
     let length = arr_url_obj.length
     for (let i = 0; i < length; i++) {
         let current_lorem_info_container = lorem_info_container.item(i)
 
-        let current_keyword_preview_button = keyword_preview_button.item(i)
+        let current_additionalInfo_preview_button = additionalInfo_preview_button.item(i)
 
         current_lorem_info_container.addEventListener("click", () => {
             showSampleText(i)
         })
 
-        current_keyword_preview_button.addEventListener("click", () => {
-            showPostKeyword(i)
+        // Fake EventListener를 삭제
+        current_additionalInfo_preview_button.removeEventListener("click", additionalInfoButtonFakeEvent)
+        current_additionalInfo_preview_button.addEventListener("click", () => {
+            showPostAdditionalInfo(i)
         })
     }
 }
