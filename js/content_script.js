@@ -928,7 +928,7 @@ let setAnalyzedInfo_SearchNaver = () => {
 
     for (let i = 0; i < length; i++) {
         /* ---------- 분석정보 배열에서 로렘 확률 정보를 추출하여 출력 ----------*/
-        if (analyzed_info[i].constructor === Object && Object.keys(analyzed_info[i]).length !== 0) {
+        if (analyzed_info[i] != undefined && Object.keys(analyzed_info[i]).length !== 0) {
             // 현재 객체가 비어있지 않을때 정보 출력 작업
             let current_analyzed_info = analyzed_info[i]['fields']
             let current_lorem_info_value = current_analyzed_info['lorem_percentage']
@@ -1146,21 +1146,22 @@ let setAnalyzeInfoEvent = () => {
 
     let length = arr_url_obj.length
     for (let i = 0; i < length; i++) {
-        let current_lorem_info_container = lorem_info_container.item(i)
+        if (analyzed_info[i] != undefined && Object.keys(analyzed_info[i]).length !== 0) {
+            // 현재 분석정보가 있을 때 페이크 이벤트 없애고 진짜 이벤트 등록함
+            let current_lorem_info_container = lorem_info_container.item(i)
+            current_lorem_info_container.removeEventListener("click", sampleButtonFakeEvent)
+            current_lorem_info_container.addEventListener("click", () => {
+                showSampleText(i)
+            })
 
-        let current_additionalInfo_preview_button = additionalInfo_preview_button.item(i)
-
-        // 로렘 확률 클릭 시 페이크 이벤트 삭제
-        current_lorem_info_container.removeEventListener("click", sampleButtonFakeEvent)
-        current_lorem_info_container.addEventListener("click", () => {
-            showSampleText(i)
-        })
-
-        // Fake EventListener를 삭제
-        current_additionalInfo_preview_button.removeEventListener("click", additionalInfoButtonFakeEvent)
-        current_additionalInfo_preview_button.addEventListener("click", () => {
-            showPostAdditionalInfo(i)
-        })
+            // 부가정보 이벤트 등록
+            // Fake EventListener를 삭제
+            let current_additionalInfo_preview_button = additionalInfo_preview_button.item(i)
+            current_additionalInfo_preview_button.removeEventListener("click", additionalInfoButtonFakeEvent)
+            current_additionalInfo_preview_button.addEventListener("click", () => {
+                showPostAdditionalInfo(i)
+            })
+        }
     }
 }
 
