@@ -755,6 +755,7 @@ let createAnalyzeInfoContainer = (code, list) => {
             crlf_div.style.clear = "both"
 
             // 버튼 내부에 텍스트 추가
+            lorem_percentage.textContent = "불러오는 중"
             button_post_preview.textContent = "게시글 미리보기"
             button_additionalInfo_preview.textContent = "부가정보 보기"
 
@@ -893,7 +894,7 @@ let getMultimediaType = (id) => {
 }
 
 let setAnalyzedInfo_SearchNaver = () => {
-    let lorem_info_container = document.getElementsByClassName('_lorem-percentage-container')
+    let lorem_info_containers = document.getElementsByClassName('_lorem-percentage-container')
     let multimedia_image_ratio_container = document.getElementsByClassName('_multimedia-image-ratio-container')
     let multimedia_imoticon_ratio_container = document.getElementsByClassName('_multimedia-imoticon-ratio-container')
     let multimedia_video_ratio_container = document.getElementsByClassName('_multimedia-video-ratio-container')
@@ -910,7 +911,13 @@ let setAnalyzedInfo_SearchNaver = () => {
             let lorem_info_text = "로렘확률: " + current_lorem_percentage + "%"
 
             // 추출한 정보를 컨테이너 내부 텍스트로 할당
-            lorem_info_container.item(i).textContent = lorem_info_text
+            lorem_info_containers.item(i).textContent = lorem_info_text
+
+            // 로렘 버튼 색깔 변경
+            lorem_info_containers.item(i).style.backgroundColor = "#FF6347"
+
+            // 로렘 버튼 보이게
+            lorem_info_containers.item(i).style.display = "block"
 
             // TODO 로렘확률 버튼 클릭 시 샘플 텍스트를 레이어 팝업으로 출력, 개별 함수로 작성
         }
@@ -932,12 +939,18 @@ let setAnalyzedInfo_SearchNaver = () => {
                     let current_multimedia_ratio_text = getMultimediaType(current_single_multimedia_type) + ": " + current_single_multimedia_ratio_percentage + "%"
 
                     // 추출한 정보를 정보타입네 따라 컨테이너 내부 텍스트로 할당
-                    if (getMultimediaType(current_single_multimedia_type) === "이미지")
+                    if (getMultimediaType(current_single_multimedia_type) === "이미지"){
                         multimedia_image_ratio_container.item(i).textContent = current_multimedia_ratio_text
-                    else if (getMultimediaType(current_single_multimedia_type) === "이모티콘")
+                        multimedia_image_ratio_container.item(i).style.display = "block"
+                    }
+                    else if (getMultimediaType(current_single_multimedia_type) === "이모티콘"){
                         multimedia_imoticon_ratio_container.item(i).textContent = current_multimedia_ratio_text
-                    else if (getMultimediaType(current_single_multimedia_type) === "영상")
+                        multimedia_imoticon_ratio_container.item(i).style.display = "block"
+                    }    
+                    else if (getMultimediaType(current_single_multimedia_type) === "영상"){
                         multimedia_video_ratio_container.item(i).textContent = current_multimedia_ratio_text
+                        multimedia_video_ratio_container.item(i).style.display = "block"
+                    }
                 }
             }
         }

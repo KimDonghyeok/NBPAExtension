@@ -1,6 +1,6 @@
 /* 확장프로그램 생성 요소 CSS */
 ._analyze-info-container {
-    height: 60px;
+    height: auto;
     /* background: #DDDDDD; */
 }
 
@@ -10,10 +10,9 @@
     line-height: 30px;
     font-size: 0.5rem;
     color: whitesmoke;
-    background: #ff6347;
+    background: #878787;
     border-radius: 10px;
     float: left;
-    display: none;
 }
 
 ._multimedia-image-ratio-container {
