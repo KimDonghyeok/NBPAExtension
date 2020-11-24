@@ -1084,7 +1084,7 @@ let showSampleText = (index) => {
             z_index: 100000,
             autoOpen: false,
             modal: true,
-            height: 600,
+            height: "auto",
             width: 600,
             title: "Analyzed Info Sample Viewer"
         });
