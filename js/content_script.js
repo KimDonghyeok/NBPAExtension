@@ -1182,7 +1182,15 @@ let showPostAdditionalInfo = (index) => {
         let short_hyperlink = ""
         if (current_hyperlinks != undefined && current_hyperlinks.length > i) {
             hyperlink = current_hyperlinks[i]["fields"]["word"]
-            short_hyperlink = hyperlink.substring(0, 20)
+
+            // http(s)://로 시작하는경우 ://이후의 주소만 취급함.
+            if(hyperlink.indexOf("://") != -1){
+                splited = hyperlink.split("://")
+                if (splited.length >= 2){
+                    hyperlink = splited[1]
+                }
+            }
+            short_hyperlink = hyperlink.substring(0, 20) + "..."
             
         }
         if (keyword != "" || hashtag !== "" || hyperlink !== ""){
