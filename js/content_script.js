@@ -964,8 +964,16 @@ let setAnalyzedInfo_SearchNaver = () => {
             let current_analyzed_info = analyzed_info[i]['fields']
             let current_blog_info = current_analyzed_info['blog_info']
             let current_lorem_info_value = current_analyzed_info['lorem_percentage']
-            let current_lorem_percentage = (current_lorem_info_value * 100).toFixed(1)
-            let lorem_info_text = "로렘확률: " + current_lorem_percentage + "%"
+
+            let lorem_info_text
+            if (current_lorem_info_value != -1){
+                let current_lorem_percentage = (current_lorem_info_value * 100).toFixed(1)
+                lorem_info_text = "로렘확률: " + current_lorem_percentage + "%"
+            }
+            else{
+                lorem_info_text = "분석불가"
+            }
+            
 
             // 추출한 정보를 컨테이너 내부 텍스트로 할당
             lorem_info_containers.item(i).textContent = lorem_info_text
