@@ -1073,6 +1073,10 @@ let showSampleText = (index) => {
     sample2 = analyzed_info[index]['fields']['sample_2']
     sample3 = analyzed_info[index]['fields']['sample_3']
 
+    if (sample1 === "" && sample2 === "" && sample3 === ""){
+        sample1 = "분석 불가! 본문 텍스트가 없거나, 적당히 긴 문장이 존재하지 않는 것 같습니다."
+    }
+
 
     let $dialog = $('<div></div>')
         .html('<p>' + sample1 + "<br>" + sample2 + "<br>" + sample3 + "<br>" + '</p>')
