@@ -1,8 +1,8 @@
-// const HOST_IP = "nbpa.ddns.net"
-// const HOST_PORT = "33067"
+const HOST_IP = "nbpa.ddns.net"
+const HOST_PORT = "33067"
 
-const HOST_IP = "127.0.0.1"
-const HOST_PORT = "8080"
+// const HOST_IP = "127.0.0.1"
+// const HOST_PORT = "8080"
 
 const HOST_URL_HEAD = "http://" + HOST_IP + ":" + HOST_PORT + "/request/"
 
