@@ -266,12 +266,16 @@ let getAnalyzedInfoCallback = (xhr) => {
             if ("analyzed_info" in received_data) {
                 let analyzed_info = JSON.parse(received_data["analyzed_info"])[0]["fields"]
                 let lorem_percentage = analyzed_info["lorem_percentage"]
-                let lorem_percentage_string = (lorem_percentage * 100).toFixed(1) + "%"
-                // 로렘 확률 표시
                 let lorem_percentage_div = document.getElementById("lorem_percentage")
-                lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
-                lorem_percentage_div.title = "로렘 확률 계산을 위한 샘플은 다음과 같습니다." + "\n" + analyzed_info["sample_1"] + "\n" + analyzed_info["sample_2"] + "\n" + analyzed_info["sample_3"]
-                lorem_percentage_div.style.display = "block"
+                if(lorem_percentage != -1){
+                    // 로렘 확률 표시
+                    let lorem_percentage_string = (lorem_percentage * 100).toFixed(1) + "%"
+                    lorem_percentage_div.innerHTML = "로렘 확률 : " + lorem_percentage_string
+                    lorem_percentage_div.title = "로렘 확률 계산을 위한 샘플은 다음과 같습니다." + "\n" + analyzed_info["sample_1"] + "\n" + analyzed_info["sample_2"] + "\n" + analyzed_info["sample_3"]
+                    lorem_percentage_div.style.display = "block"
+                } else{
+                    lorem_percentage_div.innerHTML = "분석불가"
+                }
             }
 
             if ("multimedia_ratios" in received_data) {
