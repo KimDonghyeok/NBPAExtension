@@ -1,4 +1,7 @@
-# NBPAExtension (Chrome Extension for Naver Blog Post Analyzer)
+NBPAExtension  
+(Chrome Extension for Naver Blog Post Analyzer)
+===
+
 ###### 2020년 2학기 금오공과대학교 컴퓨터소프트웨어공학과 창의융합종합설계1의 프로젝트, 네이버 블로그 게시글 분석기(NBPA)의  크롬 확장프로그램 FE 레포지토리 입니다.
 
 ## 개요
