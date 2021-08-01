@@ -16,4 +16,5 @@ Naver Blog Post Analyzer (이하 NBPA)는 **KoGPT2**를 이용한 자연어 학�
 - - -
 
 ### WARN
-현재 창의융합종합설계1 과목과 학기가 끝남에 따라 BE 서버는 운영되고 있지 않으며 레포지토리 최상단 경로 디렉토리에 시연영상이 첨부되어있습니다.
+현재 창의융합종합설계1 과목과 학기가 끝남에 따라 BE 서버는 운영되고 있지 않으며 하단 링크로 프로그램 시연영상을 확인 하실수 있습니다.
+https://drive.google.com/file/d/1jaGSApiJ7NJflSI05yiAoG4fd4mAN_2b/view?usp=sharing
