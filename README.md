@@ -30,7 +30,8 @@ Naver Blog Post Analyzer (이하 NBPA)는 **KoGPT2**를 이용한 자연어 학�
 - 네이버 블로그 게시글 내부에서 이미지, 동영상, 이모티콘 접기 기능
 
 ## 시연영상
-> 현재 창의융합종합설계1 과목과 학기가 끝남에 따라 서버는 운영되고 있지 않으며 하단 링크로 프로그램 시연영상을 확인 하실수 있습니다.
+> 현재 창의융합종합설계1 과목과 학기가 끝남에 따라 서버는 운영되고 있지 않습니다.  
+> 하단 링크로 프로그램 시연영상을 확인 하실수 있습니다.
 
 https://drive.google.com/file/d/1jaGSApiJ7NJflSI05yiAoG4fd4mAN_2b/view?usp=sharing
 
