@@ -12,6 +12,8 @@ Naver Blog Post Analyzer (이하 NBPA)는 **KoGPT2**를 이용한 자연어 학�
 
 또한 추가적인 기능으로 사용자에게 편의성을 제공합니다. 
 
+BE Repository : https://github.com/dldhk97/Naver-Blog-Post-Analyzer
+
 ## Tech Stack
 - ![Generic badge](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white) Chrome Extension
 - ![Generic badge](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
